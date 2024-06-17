@@ -3,12 +3,16 @@
 
 #include "defs.hpp"
 #include "Texture.hpp"
+#include "CompoundShader.hpp"
 #include <QOpenGLFunctions_3_3_Core>
 #include <glm/glm.hpp>
 
 class Renderer {
 private:
     QOpenGLFunctions_3_3_Core& mGl;
+    CompoundShader* mShapeShader, * mSpriteShader;
+    unsigned mVbo, mEbo, mVao;
+    glm::mat4 mProjection;
 public:
     explicit Renderer(QOpenGLFunctions_3_3_Core& gl);
     ~Renderer();
@@ -16,9 +20,12 @@ public:
     DISABLE_COPY(Renderer)
     DISABLE_MOVE(Renderer)
 
+    void setProjection(const glm::mat4& projection);
+
     void drawPoint(const glm::vec2& position, float pointSize, const glm::vec4& color);
+    void drawPoints(int count, const QVector<float>& vertices, float pointSize, const glm::vec4& color);
     void drawLine(const glm::vec2& positionStart, const glm::vec2& positionEnd, float lineWidth, const glm::vec4& color);
-    void drawRectangle(const glm::vec2& position, const glm::vec2& size, float lineWidth, const glm::vec4& color, bool filled);
+    void drawRectangle(const glm::vec2& position, const glm::vec2& dimension, float lineWidth, const glm::vec4& color, bool filled);
     void drawCircle(const glm::vec2& positionCenter, int radius, float pointSize, const glm::vec4& color, bool filled);
     void drawTexture(Texture& texture, const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color);
 };
