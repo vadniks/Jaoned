@@ -5,14 +5,13 @@
 #include <QOpenGLFunctions_3_3_Core>
 #include <glm/glm.hpp>
 
-class CompoundShader : public QObject {
-    Q_OBJECT
+class CompoundShader {
 private:
     QOpenGLFunctions_3_3_Core& mGl;
     unsigned mProgramId;
 public:
     CompoundShader(QOpenGLFunctions_3_3_Core& gl, const QString& vertexCode, const QString& fragmentCode);
-    ~CompoundShader() override;
+    ~CompoundShader();
 
     DISABLE_COPY(CompoundShader)
     DISABLE_MOVE(CompoundShader)
