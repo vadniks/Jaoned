@@ -13,6 +13,8 @@ add_compile_options("-Wpedantic")
 add_compile_options("-O3")
 #add_link_options("-s")
 
+add_compile_options("-Wno-c99-extensions")
+
 file(GLOB PROJECT_SOURCES CONFIGURE_DEPENDS src/*.cpp src/*.hpp)
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
 

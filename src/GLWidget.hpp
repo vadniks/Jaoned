@@ -7,6 +7,8 @@
 
 class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core {
     Q_OBJECT
+private:
+    QOpenGLContext* mContext;
 public:
     GLWidget();
     ~GLWidget() override;

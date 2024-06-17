@@ -1,12 +1,14 @@
 
 #include "GLWidget.hpp"
+#include <glm/glm.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
 
-GLWidget::GLWidget() {
-
+GLWidget::GLWidget() : mContext(new QOpenGLContext(this)) {
+    mContext->create();
 }
 
 GLWidget::~GLWidget() {
-
+    delete mContext;
 }
 
 QSize GLWidget::minimumSizeHint() const {
@@ -25,6 +27,11 @@ void GLWidget::initializeGL() {
 void GLWidget::paintGL() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+
+    const auto size = QOpenGLWidget::size();
+    const glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(size.width()), static_cast<float>(size.height()), 0.0f, -1.0f, 1.0f);
+
+
 }
 
 void GLWidget::resizeGL(int w, int h) {
