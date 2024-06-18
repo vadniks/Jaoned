@@ -32,7 +32,22 @@ void BoardWidget::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     mRenderer->drawRectangle(glm::vec2(100, 100), glm::vec2(100, 800), 1.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), false);
-    mRenderer->drawText("Hello World!", 50, glm::vec2(100, 100), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+    QString text("Hello World!");
+    QFont font("Sans", 15);
+    QFontMetrics metrics(font);
+    auto size = metrics.size(Qt::TextFlag::TextSingleLine, text);
+
+    QImage image(size.width(), size.height(), QImage::Format::Format_RGB16);
+    QPainter painter(&image);
+    painter.fillRect(0, 0, size.width(), size.height(), QColor(0, 0, 0, 0));
+    painter.setBrush(QBrush(QColor(255, 255, 255)));
+    painter.setPen(QPen(QColor(255, 255, 255)));
+    painter.setFont(font);
+    painter.drawText(0, 0, text);
+
+    Texture texture(*this, size.width(), size.height(), image.constBits(), GL_RGB16);
+    mRenderer->drawTexture(texture, glm::vec2(100, 100), glm::vec2(size.width(), size.height()), 0.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void BoardWidget::resizeGL(int w, int h) {
