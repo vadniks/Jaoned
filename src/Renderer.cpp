@@ -303,7 +303,7 @@ void Renderer::drawText(const QString& text, int size, const glm::vec2& position
     int offset = 0;
 //    QChar i = text[1];
     for (auto i : text) {
-        assert(FT_Load_Char(mFtFace, '!', FT_LOAD_RENDER) == 0);
+        assert(FT_Load_Char(mFtFace, i.unicode(), FT_LOAD_RENDER) == 0);
 
         auto size = glm::vec2(mFtFace->glyph->bitmap.width, mFtFace->glyph->bitmap.rows);
         auto bearing = glm::vec2(mFtFace->glyph->bitmap_left, mFtFace->glyph->bitmap_top);
