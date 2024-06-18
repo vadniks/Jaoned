@@ -6,6 +6,9 @@
 #include "CompoundShader.hpp"
 #include <QOpenGLFunctions_3_3_Core>
 #include <glm/glm.hpp>
+#include <freetype2/ft2build.h>
+
+#include FT_FREETYPE_H
 
 class Renderer final {
 private:
@@ -13,6 +16,8 @@ private:
     CompoundShader* mShapeShader, * mSpriteShader;
     unsigned mVbo, mEbo, mVao;
     glm::mat4 mProjection;
+    FT_Library mFtLib;
+    FT_Face mFtFace;
 public:
     explicit Renderer(QOpenGLFunctions_3_3_Core& gl);
     ~Renderer();
@@ -28,4 +33,5 @@ public:
     void drawRectangle(const glm::vec2& position, const glm::vec2& dimension, float lineWidth, const glm::vec4& color, bool filled);
     void drawCircle(const glm::vec2& positionCenter, int radius, float pointSize, const glm::vec4& color, bool filled);
     void drawTexture(Texture& texture, const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color);
+    void drawText(const QString& text, int size, const glm::vec2& position, const glm::vec4& color);
 };

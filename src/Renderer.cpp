@@ -43,12 +43,15 @@ static const char* const gSpriteFragmentShader = R"(
     }
 )";
 
-Renderer::Renderer(QOpenGLFunctions_3_3_Core& gl) : mGl(gl), mVbo(0), mEbo(0), mVao(0), mProjection(1.0f) {
+Renderer::Renderer(QOpenGLFunctions_3_3_Core& gl) : mGl(gl), mVbo(0), mEbo(0), mVao(0), mProjection(1.0f), mFtLib(), mFtFace() {
     mShapeShader = new CompoundShader(gl, gShapeVertexShader, gShapeFragmentShader);
     mSpriteShader = new CompoundShader(gl, gSpriteVertexShader, gSpriteFragmentShader);
     mGl.glGenBuffers(1, &mVbo);
     mGl.glGenBuffers(1, &mEbo);
     mGl.glGenVertexArrays(1, &mVao);
+
+    assert(FT_Init_FreeType(&mFtLib) == 0);
+    assert(FT_New_Face(mFtLib, "res/Roboto-Regular.ttf", 0, &mFtFace) == 0);
 }
 
 Renderer::~Renderer() {
@@ -57,6 +60,9 @@ Renderer::~Renderer() {
     mGl.glDeleteBuffers(1, &mVbo);
     mGl.glDeleteBuffers(1, &mEbo);
     mGl.glDeleteVertexArrays(1, &mVao);
+
+    assert(FT_Done_FreeType(mFtLib) == 0);
+//    assert(FT_Done_Face(mFtFace) == 0);
 }
 
 void Renderer::setProjection(const glm::mat4& projection) {
@@ -289,4 +295,15 @@ void Renderer::drawTexture(Texture& texture, const glm::vec2& position, const gl
 
     mGl.glBindBuffer(GL_ARRAY_BUFFER, 0);
     mGl.glBindVertexArray(0);
+}
+
+void Renderer::drawText(const QString& text, int size, const glm::vec2& position, const glm::vec4& color) {
+    assert(FT_Set_Pixel_Sizes(mFtFace, 0, size) == 0);
+
+    int offset = 0;
+    for (auto i : text) {
+        assert(FT_Load_Char(mFtFace, i.unicode(), FT_LOAD_RENDER) == 0);
+        Texture texture(mGl, static_cast<int>(mFtFace->glyph->bitmap.width), static_cast<int>(mFtFace->glyph->bitmap.rows), mFtFace->glyph->bitmap.buffer, GL_RED);
+        drawTexture(texture, glm::vec2(position[0] + static_cast<float>(offset), position[1]), glm::vec2(static_cast<float>(mFtFace->glyph->bitmap.width), static_cast<float>(mFtFace->glyph->bitmap.rows)), 0.0f, color);
+    }
 }
