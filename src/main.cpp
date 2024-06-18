@@ -1,8 +1,5 @@
 
 #include <dnealar/dnealar.h>
-#include <dnealar/primitives.h>
-#include <dnealar/texture.h>
-#include <dnealar/widgets.h>
 #include <cassert>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -16,25 +13,7 @@ static SDL_Window* gWindow = nullptr;
 static TTF_Font* gFont = nullptr;
 
 static void render() {
-    if (dlrWidgetsButton("Button", FONT_SIZE_DEFAULT, 50, 0))
-        SDL_Log("button clicked");
 
-    dlrPrimitivesPoint(100, 100, 5, 255, 255, 255, 255);
-    dlrPrimitivesLine(10, 10, 90, 90, 5, 255, 255, 255, 255);
-    dlrPrimitivesRectangle(110, 110, 100, 50, 1, 255, 255, 255, 255, true);
-    dlrPrimitivesRectangle(220, 170, 100, 50, 5, 255, 255, 255, 255, false);
-    dlrPrimitivesCircle(300, 300, 50, 5, 255, 255, 255, 255, false);
-    dlrPrimitivesCircle(600, 300, 50, 1, 255, 255, 255, 255, true);
-
-    SDL_Surface* surface = TTF_RenderUTF8_Blended(gFont, "Hello World!", (SDL_Color) {255, 255, 255, 255});
-    assert(surface != nullptr);
-    SDL_Surface* xSurface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA32, 0);
-    SDL_FreeSurface(surface);
-    assert(xSurface != nullptr);
-    DlrTexture* texture = dlrTextureCreate(xSurface->w, xSurface->h, reinterpret_cast<dlrByte*>(xSurface->pixels));
-    SDL_FreeSurface(xSurface);
-    dlrPrimitivesTexture(texture, 500, 0, dlrTextureWidth(texture), dlrTextureHeight(texture), 0.0f, 255, 255, 255, 255);
-    dlrTextureDestroy(texture);
 }
 
 static void loop() {
@@ -141,7 +120,7 @@ int main() {
     const int windowMinimalWidth = 16 * 50, windowMinimalHeight = 9 * 50;
 
     gWindow = SDL_CreateWindow(
-        "Dnealar",
+        "Jaoned",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
         windowMinimalWidth,
