@@ -2,6 +2,7 @@
 #include <dnealar/dnealar.h>
 #include <dnealar/primitives.h>
 #include <dnealar/texture.h>
+#include <dnealar/widgets.h>
 #include <cassert>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -15,6 +16,9 @@ static SDL_Window* gWindow = nullptr;
 static TTF_Font* gFont = nullptr;
 
 static void render() {
+    if (dlrWidgetsButton("Button", FONT_SIZE_DEFAULT, 50, 0))
+        SDL_Log("button clicked");
+
     dlrPrimitivesPoint(100, 100, 5, 255, 255, 255, 255);
     dlrPrimitivesLine(10, 10, 90, 90, 5, 255, 255, 255, 255);
     dlrPrimitivesRectangle(110, 110, 100, 50, 1, 255, 255, 255, 255, true);
