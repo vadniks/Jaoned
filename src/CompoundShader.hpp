@@ -5,7 +5,7 @@
 #include <QOpenGLFunctions_3_3_Core>
 #include <glm/glm.hpp>
 
-class CompoundShader {
+class CompoundShader final {
 private:
     QOpenGLFunctions_3_3_Core& mGl;
     unsigned mProgramId;

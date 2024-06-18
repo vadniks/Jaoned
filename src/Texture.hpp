@@ -4,7 +4,7 @@
 #include "defs.hpp"
 #include <QOpenGLFunctions_3_3_Core>
 
-class Texture {
+class Texture final {
 private:
     QOpenGLFunctions_3_3_Core& mGl;
     unsigned mId;

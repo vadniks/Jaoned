@@ -6,7 +6,7 @@
 #include <QWidget>
 #include <QVBoxLayout>
 
-class MainWidget : public QWidget {
+class MainWidget final : public QWidget {
     Q_OBJECT
 private:
     QVBoxLayout mLayout;

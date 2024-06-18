@@ -7,7 +7,7 @@
 #include <QOpenGLFunctions_3_3_Core>
 #include <glm/glm.hpp>
 
-class Renderer {
+class Renderer final {
 private:
     QOpenGLFunctions_3_3_Core& mGl;
     CompoundShader* mShapeShader, * mSpriteShader;

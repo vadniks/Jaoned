@@ -5,7 +5,7 @@
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions_3_3_Core>
 
-class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core {
+class GLWidget final : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core {
     Q_OBJECT
 private:
     QOpenGLContext* mContext;
