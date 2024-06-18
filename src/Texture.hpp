@@ -10,7 +10,7 @@ private:
     unsigned mId;
     int mWidth, mHeight;
 public:
-    Texture(QOpenGLFunctions_3_3_Core& gl, int width, int height, const QByteArray& data);
+    Texture(QOpenGLFunctions_3_3_Core& gl, int width, int height, const uchar* data);
     ~Texture();
 
     DISABLE_COPY(Texture)

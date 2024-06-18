@@ -1,5 +1,7 @@
 
 #include "BoardWidget.hpp"
+#include <QFontMetrics>
+#include <QPainter>
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
 
@@ -29,7 +31,8 @@ void BoardWidget::paintGL() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    mRenderer->drawRectangle(glm::vec2(800, 800), glm::vec2(100, 100), 1.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), false);
+    mRenderer->drawRectangle(glm::vec2(100, 100), glm::vec2(100, 800), 1.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), false);
+
 }
 
 void BoardWidget::resizeGL(int w, int h) {
