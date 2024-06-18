@@ -9,6 +9,7 @@
 class BoardWidget final : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core {
     Q_OBJECT
 private:
+    glm::mat4 mProjection;
     Renderer* mRenderer;
 public:
     BoardWidget();
