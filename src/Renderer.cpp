@@ -301,9 +301,17 @@ void Renderer::drawText(const QString& text, int size, const glm::vec2& position
     assert(FT_Set_Pixel_Sizes(mFtFace, 0, size) == 0);
 
     int offset = 0;
+//    QChar i = text[1];
     for (auto i : text) {
-        assert(FT_Load_Char(mFtFace, i.unicode(), FT_LOAD_RENDER) == 0);
-        Texture texture(mGl, static_cast<int>(mFtFace->glyph->bitmap.width), static_cast<int>(mFtFace->glyph->bitmap.rows), mFtFace->glyph->bitmap.buffer, GL_RED);
-        drawTexture(texture, glm::vec2(position[0] + static_cast<float>(offset), position[1]), glm::vec2(static_cast<float>(mFtFace->glyph->bitmap.width), static_cast<float>(mFtFace->glyph->bitmap.rows)), 0.0f, color);
+        assert(FT_Load_Char(mFtFace, '!', FT_LOAD_RENDER) == 0);
+
+        auto size = glm::vec2(mFtFace->glyph->bitmap.width, mFtFace->glyph->bitmap.rows);
+        auto bearing = glm::vec2(mFtFace->glyph->bitmap_left, mFtFace->glyph->bitmap_top);
+        auto advance = static_cast<int>(mFtFace->glyph->advance.x);
+
+        Texture texture(mGl, static_cast<int>(size[0]), static_cast<int>(size[1]), mFtFace->glyph->bitmap.buffer, GL_RED);
+        drawTexture(texture, glm::vec2(position.x + bearing.x + offset, position.y - (size.y - bearing.y)), size, 0.0f, color);
+
+        offset += advance >> 6; //mFtFace->glyph->advance.x;
     }
 }
