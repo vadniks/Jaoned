@@ -2,7 +2,7 @@
 #pragma once
 
 #include "defs.hpp"
-#include "GLWidget.hpp"
+#include "BoardWidget.hpp"
 #include <QWidget>
 #include <QVBoxLayout>
 
@@ -10,7 +10,7 @@ class MainWidget final : public QWidget {
     Q_OBJECT
 private:
     QVBoxLayout mLayout;
-    GLWidget* mGLWidget;
+    BoardWidget* mBoardWidget;
 public:
     MainWidget();
     ~MainWidget() override;

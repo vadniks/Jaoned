@@ -6,19 +6,19 @@
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions_3_3_Core>
 
-class GLWidget final : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core {
+class BoardWidget final : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core {
     Q_OBJECT
 private:
     Renderer* mRenderer;
 public:
-    GLWidget();
-    ~GLWidget() override;
+    BoardWidget();
+    ~BoardWidget() override;
 
     QSize minimumSizeHint() const override;
     QSize sizeHint() const override;
 
-    DISABLE_COPY(GLWidget)
-    DISABLE_MOVE(GLWidget)
+    DISABLE_COPY(BoardWidget)
+    DISABLE_MOVE(BoardWidget)
 protected:
     void initializeGL() override;
     void paintGL() override;
