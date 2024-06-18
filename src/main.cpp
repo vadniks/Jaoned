@@ -1,16 +1,10 @@
 
-#include <dnealar/dnealar.h>
 #include <cassert>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
-enum FontSize {
-    FONT_SIZE_DEFAULT = 16
-};
-
 static SDL_Window* gWindow = nullptr;
-static TTF_Font* gFont = nullptr;
 
 static void render() {
 
@@ -22,34 +16,26 @@ static void loop() {
 
     while (true) {
         SDL_GL_GetDrawableSize(gWindow, &width, &height);
-        dlrSetViewport(width, height);
 
         while (SDL_PollEvent(&event) == 1) {
             switch (event.type) {
                 case SDL_QUIT:
                     goto end;
                 case SDL_MOUSEMOTION:
-                    dlrUpdateMousePosition(event.motion.x, event.motion.y);
                     break;
                 case SDL_MOUSEBUTTONDOWN:
-                    dlrUpdateMouseButtonState(true);
                     break;
                 case SDL_MOUSEBUTTONUP:
-                    dlrUpdateMouseButtonState(false);
                     break;
                 case SDL_KEYDOWN:
-                    dlrKeyDown(event.key.keysym.sym == SDLK_BACKSPACE);
                     break;
                 case SDL_KEYUP:
-                    dlrKeyUp();
                     break;
                 case SDL_TEXTINPUT:
-                    dlrTextInput(event.text.text);
                     break;
             }
         }
 
-        dlrUpdateFrame();
         render();
         SDL_GL_SwapWindow(gWindow);
     }
@@ -57,55 +43,10 @@ static void loop() {
     (void) 0;
 }
 
-static void* DLR_NONNULL textTextureCreate(const char* DLR_NONNULL text, int fontSize, int r, int g, int b, int a) {
-    assert(fontSize == FONT_SIZE_DEFAULT);
-
-    SDL_Surface* surface = TTF_RenderUTF8_Blended(gFont, text, (SDL_Color) {static_cast<unsigned char>(r), static_cast<unsigned char>(g), static_cast<unsigned char>(b), static_cast<unsigned char>(a)});
-    assert(surface != nullptr);
-
-    SDL_Surface* xSurface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA32, 0);
-    assert(xSurface != nullptr);
-
-    SDL_FreeSurface(surface);
-    return xSurface;
-}
-
-static void* DLR_NONNULL wrappedTextTextureCreate(const char* DLR_NONNULL text, int width, int fontSize, int r, int g, int b, int a) {
-    assert(fontSize == FONT_SIZE_DEFAULT);
-
-    SDL_Surface* surface = TTF_RenderUTF8_Blended_Wrapped(gFont, text, (SDL_Color) {static_cast<unsigned char>(r), static_cast<unsigned char>(g), static_cast<unsigned char>(b), static_cast<unsigned char>(a)}, width);
-    assert(surface != nullptr);
-
-    SDL_Surface* xSurface = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA32, 0);
-    assert(xSurface != nullptr);
-
-    SDL_FreeSurface(surface);
-    return xSurface;
-}
-
-static void textureDestroy(void* DLR_NONNULL texture) {
-    SDL_FreeSurface(reinterpret_cast<SDL_Surface*>(texture));
-}
-
-static void textureMetrics(void* DLR_NONNULL texture, int* DLR_NONNULL width, int* DLR_NONNULL height) {
-    *width = ((SDL_Surface*) texture)->w;
-    *height = ((SDL_Surface*) texture)->h;
-}
-
-static void* DLR_NONNULL textureData(void* DLR_NONNULL texture) {
-    return ((SDL_Surface*) texture)->pixels;
-}
-
-static void textMetrics(const char* DLR_NONNULL text, int fontSize, int* DLR_NONNULL width, int* DLR_NONNULL height) {
-    assert(fontSize == FONT_SIZE_DEFAULT);
-    TTF_SizeUTF8(gFont, text, width, height);
-}
-
 int main() {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
     IMG_Init(IMG_INIT_PNG | IMG_INIT_JPG);
     TTF_Init();
-    gFont = TTF_OpenFont("res/Roboto-Regular.ttf", 16);
 
     SDL_version version;
     SDL_GetVersion(&version);
@@ -134,24 +75,11 @@ int main() {
 
     SDL_GL_SetSwapInterval(1);
 
-    dlrInit(
-        SDL_malloc,
-        SDL_realloc,
-        SDL_free,
-        textTextureCreate,
-        wrappedTextTextureCreate,
-        textureDestroy,
-        textureMetrics,
-        textureData,
-        textMetrics
-    );
     loop();
-    dlrQuit();
 
     SDL_GL_DeleteContext(glContext);
     SDL_DestroyWindow(gWindow);
 
-    TTF_CloseFont(gFont);
     TTF_Quit();
     IMG_Quit();
     SDL_Quit();
