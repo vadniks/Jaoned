@@ -24,6 +24,10 @@ QSize BoardWidget::sizeHint() const {
 void BoardWidget::initializeGL() {
     QOpenGLFunctions_3_3_Core::initializeOpenGLFunctions();
     mRenderer = new Renderer(*this);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
+
     glViewport(0, 0, 100, 100);
 }
 
@@ -38,7 +42,7 @@ void BoardWidget::paintGL() {
     QFontMetrics metrics(font);
     auto size = metrics.size(Qt::TextFlag::TextSingleLine, text);
 
-    QImage image(size.width(), size.height(), QImage::Format::Format_RGB16);
+    QImage image(size.width(), size.height(), QImage::Format::Format_RGBA8888);
     QPainter painter(&image);
     painter.fillRect(0, 0, size.width(), size.height(), QColor(0, 0, 0, 0));
     painter.setBrush(QBrush(QColor(255, 255, 255)));
@@ -46,7 +50,7 @@ void BoardWidget::paintGL() {
     painter.setFont(font);
     painter.drawText(0, 0, text);
 
-    Texture texture(*this, size.width(), size.height(), image.constBits(), GL_RGB16);
+    Texture texture(*this, size.width(), size.height(), image.constBits(), GL_RGBA);
     mRenderer->drawTexture(texture, glm::vec2(100, 100), glm::vec2(size.width(), size.height()), 0.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
