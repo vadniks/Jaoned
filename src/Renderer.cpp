@@ -61,8 +61,8 @@ Renderer::~Renderer() {
     mGl.glDeleteBuffers(1, &mEbo);
     mGl.glDeleteVertexArrays(1, &mVao);
 
+    assert(FT_Done_Face(mFtFace) == 0);
     assert(FT_Done_FreeType(mFtLib) == 0);
-//    assert(FT_Done_Face(mFtFace) == 0);
 }
 
 void Renderer::setProjection(const glm::mat4& projection) {
@@ -300,17 +300,27 @@ void Renderer::drawTexture(Texture& texture, const glm::vec2& position, const gl
 void Renderer::drawText(const QString& text, int size, const glm::vec2& position, const glm::vec4& color) {
     assert(FT_Set_Pixel_Sizes(mFtFace, 0, size) == 0);
 
+    int maxHeight = 0;
+    for (auto i : text) {
+        assert(FT_Load_Char(mFtFace, i.unicode(), FT_LOAD_RENDER) == 0);
+        const int height = static_cast<int>(mFtFace->glyph->bitmap.rows);
+        if (height > maxHeight)
+            maxHeight = height;
+    }
+
     int offset = 0;
     for (auto i : text) {
         assert(FT_Load_Char(mFtFace, i.unicode(), FT_LOAD_RENDER) == 0);
 
-        auto xSize = glm::vec2(mFtFace->glyph->bitmap.width, mFtFace->glyph->bitmap.rows);
-        auto bearing = glm::vec2(mFtFace->glyph->bitmap_left, mFtFace->glyph->bitmap_top);
-        auto advance = static_cast<int>(mFtFace->glyph->advance.x);
+        const auto xSize = glm::vec2(mFtFace->glyph->bitmap.width, mFtFace->glyph->bitmap.rows);
+        const auto advance = static_cast<int>(mFtFace->glyph->advance.x);
 
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         Texture texture(mGl, static_cast<int>(xSize[0]), static_cast<int>(xSize[1]), mFtFace->glyph->bitmap.buffer, GL_RED);
-        drawTexture(texture, glm::vec2(position.x + bearing.x + static_cast<float>(offset), position.y - xSize.y + bearing.y), xSize, 0.0f, color);
+        drawTexture(texture, glm::vec2(
+            position.x + static_cast<float>(mFtFace->glyph->bitmap_left) + static_cast<float>(offset),
+            position.y - xSize.y + static_cast<float>(maxHeight)
+        ), xSize, 0.0f, color);
 
         offset += advance >> 6;
     }
