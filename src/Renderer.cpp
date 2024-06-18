@@ -38,8 +38,14 @@ static const char* const gSpriteFragmentShader = R"(
     out vec4 color;
     uniform sampler2D sprite;
     uniform vec4 spriteColor;
+    uniform int isMono;
     void main() {
-        color = spriteColor * texture(sprite, textureCoords);
+        if (isMono == 0)
+            color = spriteColor * texture(sprite, textureCoords);
+        else {
+            vec4 sampled = texture(sprite, textureCoords);
+            color = spriteColor * vec4(sampled.r, sampled.r, sampled.r, sampled.r);
+        }
     }
 )";
 
@@ -254,7 +260,7 @@ void Renderer::drawCircle(const glm::vec2& positionCenter, int radius, float poi
         drawFilledCircle(this, positionCenter, radius, pointSize, color);
 }
 
-void Renderer::drawTexture(Texture& texture, const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color) {
+void Renderer::drawTexture(Texture& texture, const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color, bool isMono) {
     mGl.glBindVertexArray(mVao);
 
     float vertices[] = {
@@ -286,6 +292,7 @@ void Renderer::drawTexture(Texture& texture, const glm::vec2& position, const gl
     mSpriteShader->setValue("projection", mProjection);
     mSpriteShader->setValue("model", model);
     mSpriteShader->setValue("spriteColor", color);
+    mSpriteShader->setValue("isMono", isMono ? 1 : 0);
 
     mGl.glActiveTexture(GL_TEXTURE0);
     texture.bind();
@@ -320,7 +327,7 @@ void Renderer::drawText(const QString& text, int size, const glm::vec2& position
         drawTexture(texture, glm::vec2(
             position.x + static_cast<float>(mFtFace->glyph->bitmap_left) + static_cast<float>(offset),
             position.y - xSize.y + static_cast<float>(maxHeight)
-        ), xSize, 0.0f, color);
+        ), xSize, 0.0f, color, true);
 
         offset += advance >> 6;
     }

@@ -32,6 +32,6 @@ public:
     void drawLine(const glm::vec2& positionStart, const glm::vec2& positionEnd, float lineWidth, const glm::vec4& color);
     void drawRectangle(const glm::vec2& position, const glm::vec2& dimension, float lineWidth, const glm::vec4& color, bool filled);
     void drawCircle(const glm::vec2& positionCenter, int radius, float pointSize, const glm::vec4& color, bool filled);
-    void drawTexture(Texture& texture, const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color);
+    void drawTexture(Texture& texture, const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color, bool isMono);
     void drawText(const QString& text, int size, const glm::vec2& position, const glm::vec4& color);
 };
