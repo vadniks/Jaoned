@@ -2,13 +2,14 @@
 #pragma once
 
 #include "defs.hpp"
+#include "Renderer.hpp"
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions_3_3_Core>
 
 class GLWidget final : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core {
     Q_OBJECT
 private:
-    QOpenGLContext* mContext;
+    Renderer* mRenderer;
 public:
     GLWidget();
     ~GLWidget() override;

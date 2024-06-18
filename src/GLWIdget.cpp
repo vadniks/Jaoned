@@ -3,12 +3,12 @@
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
 
-GLWidget::GLWidget() : mContext(new QOpenGLContext(this)) {
-    mContext->create();
+GLWidget::GLWidget() : mRenderer(nullptr) {
+
 }
 
 GLWidget::~GLWidget() {
-    delete mContext;
+    delete mRenderer;
 }
 
 QSize GLWidget::minimumSizeHint() const {
@@ -21,6 +21,7 @@ QSize GLWidget::sizeHint() const {
 
 void GLWidget::initializeGL() {
     QOpenGLFunctions_3_3_Core::initializeOpenGLFunctions();
+    mRenderer = new Renderer(*this);
     glViewport(0, 0, 100, 100);
 }
 
@@ -30,8 +31,9 @@ void GLWidget::paintGL() {
 
     const auto size = QOpenGLWidget::size();
     const glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(size.width()), static_cast<float>(size.height()), 0.0f, -1.0f, 1.0f);
+    mRenderer->setProjection(projection);
 
-
+    mRenderer->drawRectangle(glm::vec2(10, 10), glm::vec2(100, 100), 1.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), false);
 }
 
 void GLWidget::resizeGL(int w, int h) {
