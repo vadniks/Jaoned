@@ -11,6 +11,7 @@ class BoardWidget final : public QOpenGLWidget, protected QOpenGLFunctions_3_3_C
 private:
     glm::mat4 mProjection;
     Renderer* mRenderer;
+    int mOffsetX, mOffsetY;
 public:
     BoardWidget();
     ~BoardWidget() override;
@@ -24,4 +25,7 @@ protected:
     void initializeGL() override;
     void paintGL() override;
     void resizeGL(int w, int h) override;
+    void keyPressEvent(QKeyEvent* event) override;
+private:
+    void updateProjection(int width, int height);
 };
