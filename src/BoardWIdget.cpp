@@ -5,7 +5,7 @@
 #include <glm/ext/matrix_clip_space.hpp>
 
 BoardWidget::BoardWidget() : mProjection(1.0f), mRenderer(nullptr), mOffsetX(0), mOffsetY(0) {
-    setFocusPolicy(Qt::FocusPolicy::ClickFocus);
+    setFocusPolicy(Qt::FocusPolicy::TabFocus);
 }
 
 BoardWidget::~BoardWidget() {
