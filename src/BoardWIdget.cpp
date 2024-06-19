@@ -36,9 +36,6 @@ void BoardWidget::paintGL() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    mRenderer->drawRectangle(glm::vec2(100, 100), glm::vec2(100, 800), 1.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), false);
-    mRenderer->drawText("Hello gWorld!", 32, glm::vec2(100, 100), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-
     for (const auto& i : mMouseDrawnPoints)
         mRenderer->drawPoint(glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y)), 5, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 }
