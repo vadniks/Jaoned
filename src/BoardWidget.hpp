@@ -19,7 +19,6 @@ public:
     ~BoardWidget() override;
 
     QSize minimumSizeHint() const override;
-    QSize sizeHint() const override;
 
     DISABLE_COPY(BoardWidget)
     DISABLE_MOVE(BoardWidget)

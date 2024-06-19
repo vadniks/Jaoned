@@ -19,4 +19,6 @@ public:
 
     DISABLE_COPY(MainWidget)
     DISABLE_MOVE(MainWidget)
+
+    void resizeEvent(QResizeEvent* event) override;
 };

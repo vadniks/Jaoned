@@ -5,7 +5,7 @@
 #include <glm/ext/matrix_clip_space.hpp>
 
 BoardWidget::BoardWidget() : mProjection(1.0f), mRenderer(nullptr), mOffsetX(0), mOffsetY(0), mMousePressed(false), mMouseDrawnPoints() {
-    setFocusPolicy(Qt::FocusPolicy::TabFocus);
+    setFocusPolicy(Qt::FocusPolicy::ClickFocus);
 }
 
 BoardWidget::~BoardWidget() {
@@ -14,10 +14,6 @@ BoardWidget::~BoardWidget() {
 
 QSize BoardWidget::minimumSizeHint() const {
     return {16 * 75, 9 * 75};
-}
-
-QSize BoardWidget::sizeHint() const {
-    return minimumSizeHint();
 }
 
 void BoardWidget::initializeGL() {
