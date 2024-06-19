@@ -25,6 +25,8 @@ void BoardWidget::initializeGL() {
     QOpenGLFunctions_3_3_Core::initializeOpenGLFunctions();
     mRenderer = new Renderer(*this);
 
+    glEnable(GL_MULTISAMPLE);
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
 

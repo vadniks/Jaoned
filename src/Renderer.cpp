@@ -326,7 +326,7 @@ void Renderer::drawText(const QString& text, int size, const glm::vec2& position
         Texture texture(mGl, xSize[0], xSize[1], mFtFace->glyph->bitmap.buffer, GL_RED, true);
         drawTexture(texture, glm::vec2(
             position.x + static_cast<float>(bearing.x) + static_cast<float>(offset),
-            position.y + static_cast<float>(xSize.y - bearing.y)
+            position.y - static_cast<float>(bearing.y) + static_cast<float>(maxHeight)
         ), xSize, 0.0f, color, true);
 
         offset += advance >> 6;
