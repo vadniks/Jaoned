@@ -34,6 +34,13 @@ void BoardWidget::paintGL() {
 
     for (const auto& i : mMouseDrawnPoints)
         mRenderer->drawPoint(glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y)), 5, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+    int j = 0;
+    for (const auto& i : mMouseDrawnPoints) {
+        if (j < mMouseDrawnPoints.size() - 1)
+            mRenderer->drawLine(glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y)), glm::vec2(static_cast<float>(mMouseDrawnPoints[j + 1].x), static_cast<float>(mMouseDrawnPoints[j + 1].y)), 15, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+        j++;
+    }
 }
 
 void BoardWidget::resizeGL(int w, int h) {
