@@ -2,10 +2,10 @@
 #include "Texture.hpp"
 #include <QSize>
 
-Texture::Texture(QOpenGLFunctions_3_3_Core& gl, int width, int height, const uchar* data, int format, bool mono) : mGl(gl), mId(0), mWidth(width), mHeight(height) {
+Texture::Texture(QOpenGLFunctions_3_3_Core& gl, int width, int height, const uchar* data, int format) : mGl(gl), mId(0), mWidth(width), mHeight(height) {
     mGl.glGenTextures(1, &mId);
     mGl.glBindTexture(GL_TEXTURE_2D, mId);
-    if (mono) mGl.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    if (format == GL_RED) mGl.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     mGl.glTexImage2D(
         GL_TEXTURE_2D,
         0,

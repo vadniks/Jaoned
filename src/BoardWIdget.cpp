@@ -1,7 +1,5 @@
 
 #include "BoardWidget.hpp"
-#include <QFontMetrics>
-#include <QPainter>
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
 

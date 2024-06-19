@@ -323,7 +323,7 @@ void Renderer::drawText(const QString& text, int size, const glm::vec2& position
         const auto bearing = glm::ivec2(mFtFace->glyph->bitmap_left, mFtFace->glyph->bitmap_top);
         const auto advance = static_cast<int>(mFtFace->glyph->advance.x);
 
-        Texture texture(mGl, xSize[0], xSize[1], mFtFace->glyph->bitmap.buffer, GL_RED, true);
+        Texture texture(mGl, xSize[0], xSize[1], mFtFace->glyph->bitmap.buffer, GL_RED);
         drawTexture(texture, glm::vec2(
             position.x + static_cast<float>(bearing.x) + static_cast<float>(offset),
             position.y - static_cast<float>(bearing.y) + static_cast<float>(maxHeight)
