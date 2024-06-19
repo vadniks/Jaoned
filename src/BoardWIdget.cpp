@@ -51,7 +51,7 @@ void BoardWidget::paintGL() {
         int j = 0;
         for (const auto& i : *pointsSet) {
             if (j < pointsSet->size() - 1)
-                mRenderer->drawLine(glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y)), glm::vec2(static_cast<float>(pointsSet->operator[](j + 1).x), static_cast<float>(pointsSet->operator[](j + 1).y)), 15, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+                mRenderer->drawLine(glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y)), glm::vec2(static_cast<float>(pointsSet->operator[](j + 1).x), static_cast<float>(pointsSet->operator[](j + 1).y)), 5.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
             j++;
         }
     }
