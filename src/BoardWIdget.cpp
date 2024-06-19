@@ -4,11 +4,21 @@
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
 
-BoardWidget::BoardWidget() : mProjection(1.0f), mRenderer(nullptr), mOffsetX(0), mOffsetY(0), mMousePressed(false), mMouseDrawnPoints() {
+BoardWidget::BoardWidget() :
+    mProjection(1.0f),
+    mRenderer(nullptr),
+    mOffsetX(0),
+    mOffsetY(0),
+    mMouseDrawnPoints(),
+    mCurrentMouseDrawnPoints(nullptr)
+{
     setFocusPolicy(Qt::FocusPolicy::ClickFocus);
 }
 
 BoardWidget::~BoardWidget() {
+    for (auto i : mMouseDrawnPoints)
+        delete i;
+
     delete mRenderer;
 }
 
@@ -32,14 +42,18 @@ void BoardWidget::paintGL() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    for (const auto& i : mMouseDrawnPoints)
-        mRenderer->drawPoint(glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y)), 5, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    if (mCurrentMouseDrawnPoints != nullptr) {
+        for (const auto& i: *mCurrentMouseDrawnPoints)
+            mRenderer->drawPoint(glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y)), 1, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    }
 
-    int j = 0;
-    for (const auto& i : mMouseDrawnPoints) {
-        if (j < mMouseDrawnPoints.size() - 1)
-            mRenderer->drawLine(glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y)), glm::vec2(static_cast<float>(mMouseDrawnPoints[j + 1].x), static_cast<float>(mMouseDrawnPoints[j + 1].y)), 15, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-        j++;
+    for (auto pointsSet : mMouseDrawnPoints) {
+        int j = 0;
+        for (const auto& i : *pointsSet) {
+            if (j < pointsSet->size() - 1)
+                mRenderer->drawLine(glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y)), glm::vec2(static_cast<float>(pointsSet->operator[](j + 1).x), static_cast<float>(pointsSet->operator[](j + 1).y)), 15, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+            j++;
+        }
     }
 }
 
@@ -70,20 +84,22 @@ void BoardWidget::keyPressEvent(QKeyEvent* event) {
 }
 
 void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
-    if (!mMousePressed) return;
+    if (mCurrentMouseDrawnPoints == nullptr) return;
 
     const auto pos = event->pos();
-    mMouseDrawnPoints.push_back(glm::ivec2(pos.x() + mOffsetX, pos.y() + mOffsetY));
+    mCurrentMouseDrawnPoints->push_back(glm::ivec2(pos.x() + mOffsetX, pos.y() + mOffsetY));
 
     update();
 }
 
 void BoardWidget::mousePressEvent(QMouseEvent* event) {
-    mMousePressed = true;
+    mCurrentMouseDrawnPoints = new QVector<glm::ivec2>();
 }
 
 void BoardWidget::mouseReleaseEvent(QMouseEvent* event) {
-    mMousePressed = false;
+    mMouseDrawnPoints.push_back(mCurrentMouseDrawnPoints);
+    mCurrentMouseDrawnPoints = nullptr;
+    update();
 }
 
 void BoardWidget::updateProjection(int width, int height) {

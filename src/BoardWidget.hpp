@@ -12,8 +12,8 @@ private:
     glm::mat4 mProjection;
     Renderer* mRenderer;
     int mOffsetX, mOffsetY;
-    bool mMousePressed;
-    QVector<glm::ivec2> mMouseDrawnPoints;
+    QVector<QVector<glm::ivec2>*> mMouseDrawnPoints;
+    QVector<glm::ivec2>* mCurrentMouseDrawnPoints;
 public:
     BoardWidget();
     ~BoardWidget() override;
