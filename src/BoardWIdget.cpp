@@ -71,8 +71,10 @@ void BoardWidget::keyPressEvent(QKeyEvent* event) {
 
 void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
     if (!mMousePressed) return;
+
     const auto pos = event->pos();
     mMouseDrawnPoints.push_back(glm::ivec2(pos.x(), pos.y()));
+
     update();
 }
 
