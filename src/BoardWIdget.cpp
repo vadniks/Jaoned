@@ -37,15 +37,12 @@ void BoardWidget::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     mRenderer->drawRectangle(glm::vec2(100, 100), glm::vec2(100, 800), 1.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), false);
-
     mRenderer->drawText("Hello gWorld!", 32, glm::vec2(100, 100), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-    qDebug() << "p";
 }
 
 void BoardWidget::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
     updateProjection(w, h);
-    qDebug() << "r";
 }
 
 void BoardWidget::keyPressEvent(QKeyEvent* event) {
@@ -58,18 +55,25 @@ void BoardWidget::keyPressEvent(QKeyEvent* event) {
             mOffsetX -= step;
             break;
         case Qt::Key::Key_S:
-            mOffsetX += step;
-            break;
-        case Qt::Key::Key_D:
             mOffsetY += step;
             break;
+        case Qt::Key::Key_D:
+            mOffsetX += step;
+            break;
     }
-    qDebug() << "k";
+
     updateProjection(size().width(), size().height());
     update();
 }
 
 void BoardWidget::updateProjection(int width, int height) {
-    mProjection = glm::ortho(0.0f + static_cast<float>(mOffsetX), static_cast<float>(width + mOffsetX), static_cast<float>(height + mOffsetY), 0.0f + static_cast<float>(mOffsetY), -1.0f, 1.0f);
+    mProjection = glm::ortho(
+        0.0f + static_cast<float>(mOffsetX),
+        static_cast<float>(width + mOffsetX),
+        static_cast<float>(height + mOffsetY),
+        0.0f + static_cast<float>(mOffsetY),
+        -1.0f,
+        1.0f
+    );
     mRenderer->setProjection(mProjection);
 }
