@@ -3,6 +3,7 @@
 
 #include "defs.hpp"
 #include "BoardWidget.hpp"
+#include "ControlsWidget.hpp"
 #include <QWidget>
 #include <QVBoxLayout>
 
@@ -11,6 +12,7 @@ class MainWidget final : public QWidget {
 private:
     QVBoxLayout mLayout;
     BoardWidget* mBoardWidget;
+    ControlsWidget mControlsWidget;
 public:
     MainWidget();
     ~MainWidget() override;
