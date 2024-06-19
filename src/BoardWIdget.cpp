@@ -37,7 +37,7 @@ void BoardWidget::paintGL() {
 
     mRenderer->drawRectangle(glm::vec2(100, 100), glm::vec2(100, 800), 1.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), false);
 
-    mRenderer->drawText("Hello World!", 32, glm::vec2(100, 100), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    mRenderer->drawText("Hello gWorld!", 32, glm::vec2(100, 100), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void BoardWidget::resizeGL(int w, int h) {

@@ -319,14 +319,14 @@ void Renderer::drawText(const QString& text, int size, const glm::vec2& position
     for (auto i : text) {
         assert(FT_Load_Char(mFtFace, i.unicode(), FT_LOAD_RENDER) == 0);
 
-        const auto xSize = glm::vec2(mFtFace->glyph->bitmap.width, mFtFace->glyph->bitmap.rows);
+        const auto xSize = glm::ivec2(mFtFace->glyph->bitmap.width, mFtFace->glyph->bitmap.rows);
+        const auto bearing = glm::ivec2(mFtFace->glyph->bitmap_left, mFtFace->glyph->bitmap_top);
         const auto advance = static_cast<int>(mFtFace->glyph->advance.x);
 
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        Texture texture(mGl, static_cast<int>(xSize[0]), static_cast<int>(xSize[1]), mFtFace->glyph->bitmap.buffer, GL_RED);
+        Texture texture(mGl, xSize[0], xSize[1], mFtFace->glyph->bitmap.buffer, GL_RED, true);
         drawTexture(texture, glm::vec2(
-            position.x + static_cast<float>(mFtFace->glyph->bitmap_left) + static_cast<float>(offset),
-            position.y - xSize.y + static_cast<float>(maxHeight)
+            position.x + static_cast<float>(bearing.x) + static_cast<float>(offset),
+            position.y + static_cast<float>(xSize.y - bearing.y)
         ), xSize, 0.0f, color, true);
 
         offset += advance >> 6;
