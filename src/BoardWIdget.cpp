@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
 
-BoardWidget::BoardWidget() : mProjection(1.0f), mRenderer(nullptr), mOffsetX(0), mOffsetY(0) {
+BoardWidget::BoardWidget() : mProjection(1.0f), mRenderer(nullptr), mOffsetX(0), mOffsetY(0), mMousePressed(false), mMouseDrawnPoints() {
     setFocusPolicy(Qt::FocusPolicy::TabFocus);
 }
 
@@ -38,6 +38,9 @@ void BoardWidget::paintGL() {
 
     mRenderer->drawRectangle(glm::vec2(100, 100), glm::vec2(100, 800), 1.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), false);
     mRenderer->drawText("Hello gWorld!", 32, glm::vec2(100, 100), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+
+    for (const auto& i : mMouseDrawnPoints)
+        mRenderer->drawPoint(glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y)), 5, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void BoardWidget::resizeGL(int w, int h) {
@@ -64,6 +67,21 @@ void BoardWidget::keyPressEvent(QKeyEvent* event) {
 
     updateProjection(size().width(), size().height());
     update();
+}
+
+void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
+    if (!mMousePressed) return;
+    const auto pos = event->pos();
+    mMouseDrawnPoints.push_back(glm::ivec2(pos.x(), pos.y()));
+    update();
+}
+
+void BoardWidget::mousePressEvent(QMouseEvent* event) {
+    mMousePressed = true;
+}
+
+void BoardWidget::mouseReleaseEvent(QMouseEvent* event) {
+    mMousePressed = false;
 }
 
 void BoardWidget::updateProjection(int width, int height) {

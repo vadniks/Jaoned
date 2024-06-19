@@ -12,6 +12,8 @@ private:
     glm::mat4 mProjection;
     Renderer* mRenderer;
     int mOffsetX, mOffsetY;
+    bool mMousePressed;
+    QVector<glm::ivec2> mMouseDrawnPoints;
 public:
     BoardWidget();
     ~BoardWidget() override;
@@ -26,6 +28,9 @@ protected:
     void paintGL() override;
     void resizeGL(int w, int h) override;
     void keyPressEvent(QKeyEvent* event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
 private:
     void updateProjection(int width, int height);
 };
