@@ -56,7 +56,7 @@ void BoardWidget::paintGL() {
         }
     }
 
-    mRenderer->drawRectangle(glm::vec2(100, 100), glm::vec2(110, 110), 50, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), false);
+    mRenderer->drawRectangle(glm::vec2(100, 100), glm::vec2(110, 110), 50, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), false); // TODO
 }
 
 void BoardWidget::resizeGL(int w, int h) {
