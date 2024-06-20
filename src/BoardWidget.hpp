@@ -9,11 +9,7 @@ class BoardWidget final : public QWidget {
 private:
     struct Coordinate {
         int x, y;
-
-        Coordinate(int x, int y) {
-            this->x = x;
-            this->y = y;
-        }
+        Coordinate(int x, int y);
     };
 private:
     int mOffsetX, mOffsetY;

@@ -3,6 +3,11 @@
 #include <QKeyEvent>
 #include <QPainter>
 
+BoardWidget::Coordinate::Coordinate(int x, int y) {
+    this->x = x;
+    this->y = y;
+}
+
 BoardWidget::BoardWidget() :
     mOffsetX(0),
     mOffsetY(0),
