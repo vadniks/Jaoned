@@ -82,7 +82,7 @@ void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
     switch (mMode) {
         case Mode::DRAW:
             if (mCurrentMouseDrawnPoints == nullptr) break;
-            mCurrentMouseDrawnPoints->push_back(Coordinate(event->pos().x() + mOffsetX, event->pos().y() + mOffsetY));
+            mCurrentMouseDrawnPoints->push_back(Coordinate(event->pos().x(), event->pos().y()));
             break;
         case Mode::LINE:
             if (mCurrentLine == nullptr) break;
@@ -100,7 +100,7 @@ void BoardWidget::mousePressEvent(QMouseEvent* event) {
             mCurrentMouseDrawnPoints = new QVector<Coordinate>();
             break;
         case Mode::LINE:
-            Coordinate coordinate(event->pos().x() + mOffsetX, event->pos().y() + mOffsetY);
+            Coordinate coordinate(event->pos().x(), event->pos().y());
             mCurrentLine = new LineCoordinates(coordinate, coordinate);
             break;
     }
