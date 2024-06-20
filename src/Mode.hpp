@@ -2,5 +2,5 @@
 #pragma once
 
 enum Mode {
-    DRAW, LINE, TEXT
+    DRAW, LINE, TEXT, IMAGE
 };
