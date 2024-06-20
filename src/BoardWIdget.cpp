@@ -54,16 +54,16 @@ void BoardWidget::keyPressEvent(QKeyEvent* event) {
 
     switch (event->key()) {
         case Qt::Key::Key_W:
-            mOffsetY -= step;
-            break;
-        case Qt::Key::Key_A:
-            mOffsetX -= step;
-            break;
-        case Qt::Key::Key_S:
             mOffsetY += step;
             break;
-        case Qt::Key::Key_D:
+        case Qt::Key::Key_A:
             mOffsetX += step;
+            break;
+        case Qt::Key::Key_S:
+            mOffsetY -= step;
+            break;
+        case Qt::Key::Key_D:
+            mOffsetX -= step;
             break;
     }
 
