@@ -8,7 +8,7 @@ BoardWidget::Coordinate::Coordinate(int x, int y) : x(x), y(y) {}
 BoardWidget::LineCoordinates::LineCoordinates(Coordinate start, Coordinate end) : start(start), end(end) {}
 
 BoardWidget::BoardWidget() :
-    mMode(Mode::DRAW),
+    mMode(Mode::LINE),
     mColor(static_cast<int>(0xffffffff)),
     mWidth(5),
     mOffsetX(0),
@@ -81,9 +81,12 @@ void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
     switch (mMode) {
         case Mode::DRAW:
             if (mCurrentMouseDrawnPoints == nullptr) break;
-
-            const auto pos = event->pos();
-            mCurrentMouseDrawnPoints->push_back(Coordinate(pos.x() + mOffsetX, pos.y() + mOffsetY));
+            mCurrentMouseDrawnPoints->push_back(Coordinate(event->pos().x() + mOffsetX, event->pos().y() + mOffsetY));
+            break;
+        case Mode::LINE:
+            if (mCurrentLine == nullptr) break;
+            mCurrentLine->end.x = event->pos().x();
+            mCurrentLine->end.y = event->pos().y();
             break;
     }
 
@@ -95,6 +98,10 @@ void BoardWidget::mousePressEvent(QMouseEvent* event) {
         case Mode::DRAW:
             mCurrentMouseDrawnPoints = new QVector<Coordinate>();
             break;
+        case Mode::LINE:
+            Coordinate coordinate(event->pos().x(), event->pos().y());
+            mCurrentLine = new LineCoordinates(coordinate, coordinate);
+            break;
     }
 }
 
@@ -103,6 +110,10 @@ void BoardWidget::mouseReleaseEvent(QMouseEvent* event) {
         case Mode::DRAW:
             mMouseDrawnPoints.push_back(mCurrentMouseDrawnPoints);
             mCurrentMouseDrawnPoints = nullptr;
+            break;
+        case Mode::LINE:
+            mLines.push_back(mCurrentLine);
+            mCurrentLine = nullptr;
             break;
     }
 
@@ -128,4 +139,7 @@ void BoardWidget::paintDrawn(QPainter& painter) {
 void BoardWidget::paintLines(QPainter& painter) {
     if (mCurrentLine != nullptr)
         painter.drawLine(mCurrentLine->start.x, mCurrentLine->start.y, mCurrentLine->end.x, mCurrentLine->end.y);
+
+    for (const auto& i : mLines)
+        painter.drawLine(i->start.x, i->start.y, i->end.x, i->end.y);
 }
