@@ -125,12 +125,14 @@ void BoardWidget::mouseReleaseEvent(QMouseEvent* event) {
 }
 
 void BoardWidget::updateProjection(int width, int height) {
-    mProjection = {
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
+    mProjection = glm::ortho(
+        0.0f + static_cast<float>(mOffsetX),
+        static_cast<float>(width + mOffsetX),
+        static_cast<float>(height + mOffsetY),
+        0.0f + static_cast<float>(mOffsetY),
+        -1.0f,
+        1.0f
+    );
 }
 
 void BoardWidget::paintDrawn(QPainter& painter) {
@@ -138,8 +140,12 @@ void BoardWidget::paintDrawn(QPainter& painter) {
         for (const auto& i: *mCurrentMouseDrawnPoints) {
             auto pos = glm::vec4(static_cast<float>(i.x), static_cast<float>(i.y), 0.0f, 1.0f);
             pos = mProjection * pos;
+            pos /= pos.w;
 
-            painter.drawPoint(static_cast<int>(pos.x), static_cast<int>(pos.y));
+            const auto x = (pos.x + 1) * (static_cast<float>(size().width()) / 2.0f) + 0.0f;
+            const auto y = (pos.y + 1) * (static_cast<float>(size().width()) / 2.0f) + 0.0f;
+
+            painter.drawPoint(static_cast<int>(x), static_cast<int>(y));
         }
     }
 
@@ -149,11 +155,19 @@ void BoardWidget::paintDrawn(QPainter& painter) {
             if (j < pointsSet->size() - 1) {
                 auto startPos = glm::vec4(static_cast<float>(i.x), static_cast<float>(i.y), 0.0f, 1.0f);
                 startPos = mProjection * startPos;
+                startPos /= startPos.w;
+
+                const auto sx = (startPos.x + 1) * (static_cast<float>(size().width()) / 2.0f) + 0.0f;
+                const auto sy = (startPos.y + 1) * (static_cast<float>(size().width()) / 2.0f) + 0.0f;
 
                 auto endPos = glm::vec4(static_cast<float>(pointsSet->operator[](j + 1).x), static_cast<float>(pointsSet->operator[](j + 1).y), 0.0f, 1.0f);
                 endPos = mProjection * startPos;
+                startPos /= startPos.w;
 
-                painter.drawLine(static_cast<int>(startPos.x), static_cast<int>(startPos.y), static_cast<int>(endPos.x), static_cast<int>(endPos.y));
+                const auto ex = (endPos.x + 1) * (static_cast<float>(size().width()) / 2.0f) + 0.0f;
+                const auto ey = (endPos.y + 1) * (static_cast<float>(size().width()) / 2.0f) + 0.0f;
+
+                painter.drawLine(static_cast<int>(sx), static_cast<int>(sy), static_cast<int>(ex), static_cast<int>(ey));
             }
             j++;
         }
