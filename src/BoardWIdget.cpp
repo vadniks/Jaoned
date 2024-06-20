@@ -9,6 +9,9 @@ BoardWidget::Coordinate::Coordinate(int x, int y) {
 }
 
 BoardWidget::BoardWidget() :
+    mMode(Mode::DRAW),
+    mColor(static_cast<int>(0xffffffff)),
+    mWidth(5),
     mOffsetX(0),
     mOffsetY(0),
     mMouseDrawnPoints(),
@@ -34,8 +37,14 @@ void BoardWidget::paintEvent(QPaintEvent* event) {
     painter.setBrush(QBrush(QColor(0, 0, 0)));
     painter.drawRect(0, 0, size().width(), size().height());
 
-    painter.setPen(QPen(QColor(255, 255, 255), 5));
-    painter.setBrush(QBrush(QColor(0, 0, 0)));
+    QColor color(
+        (mColor >> 0) & 0xff,
+        (mColor >> 8) & 0xff,
+        (mColor >> 16) & 0xff,
+        (mColor >> 24) & 0xff
+    );
+    painter.setPen(QPen(color, mWidth));
+    painter.setBrush(QBrush(color));
 
     if (mCurrentMouseDrawnPoints != nullptr) {
         for (const auto& i: *mCurrentMouseDrawnPoints)

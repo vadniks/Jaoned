@@ -16,6 +16,9 @@ private:
         Coordinate(int x, int y);
     };
 private:
+    Mode mMode;
+    int mColor;
+    int mWidth;
     int mOffsetX, mOffsetY;
     QVector<QVector<Coordinate>*> mMouseDrawnPoints;
     QVector<Coordinate>* mCurrentMouseDrawnPoints;
