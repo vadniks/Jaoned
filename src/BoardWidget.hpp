@@ -4,17 +4,17 @@
 #include "defs.hpp"
 #include <QWidget>
 
-struct Coordinate {
-    int x, y;
-
-    Coordinate(int x, int y) {
-        this->x = x;
-        this->y = y;
-    }
-};
-
 class BoardWidget final : public QWidget {
     Q_OBJECT
+private:
+    struct Coordinate {
+        int x, y;
+
+        Coordinate(int x, int y) {
+            this->x = x;
+            this->y = y;
+        }
+    };
 private:
     int mOffsetX, mOffsetY;
     QVector<QVector<Coordinate>*> mMouseDrawnPoints;
