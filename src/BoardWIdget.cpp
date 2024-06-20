@@ -2,7 +2,6 @@
 #include "BoardWidget.hpp"
 #include <QKeyEvent>
 #include <QPainter>
-#include <glm/ext/matrix_clip_space.hpp>
 
 BoardWidget::Coordinate::Coordinate(int x, int y) : x(x), y(y) {}
 
@@ -13,7 +12,6 @@ BoardWidget::BoardWidget() :
     mTheme(true),
     mColor(static_cast<int>(0xffffffff)),
     mPointWidth(5),
-    mProjection(1.0f),
     mOffsetX(0),
     mOffsetY(0),
     mMouseDrawnPoints(),
@@ -77,7 +75,6 @@ void BoardWidget::keyPressEvent(QKeyEvent* event) {
             break;
     }
 
-    updateProjection(size().width(), size().height());
     update();
 }
 
@@ -124,36 +121,18 @@ void BoardWidget::mouseReleaseEvent(QMouseEvent* event) {
     update();
 }
 
-void BoardWidget::updateProjection(int width, int height) {
-    mProjection = {
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
-}
-
 void BoardWidget::paintDrawn(QPainter& painter) {
     if (mCurrentMouseDrawnPoints != nullptr) {
         for (const auto& i: *mCurrentMouseDrawnPoints) {
-            auto pos = glm::vec4(static_cast<float>(i.x), static_cast<float>(i.y), 0.0f, 1.0f);
-            pos = mProjection * pos;
-            painter.drawPoint(static_cast<int>(pos.x), static_cast<int>(pos.y));
+            painter.drawPoint(static_cast<int>(i.x), static_cast<int>(i.y));
         }
     }
 
     for (auto pointsSet : mMouseDrawnPoints) {
         int j = 0;
         for (const auto& i : *pointsSet) {
-            if (j < pointsSet->size() - 1) {
-                auto startPos = glm::vec4(static_cast<float>(i.x), static_cast<float>(i.y), 0.0f, 1.0f);
-                startPos = mProjection * startPos;
-
-                auto endPos = glm::vec4(static_cast<float>(pointsSet->operator[](j + 1).x), static_cast<float>(pointsSet->operator[](j + 1).y), 0.0f, 1.0f);
-                endPos = mProjection * startPos;
-
-                painter.drawLine(static_cast<int>(startPos.x), static_cast<int>(startPos.y), static_cast<int>(endPos.x), static_cast<int>(endPos.y));
-            }
+            if (j < pointsSet->size() - 1)
+                painter.drawLine(i.x, i.y, pointsSet->operator[](j + 1).x, pointsSet->operator[](j + 1).y);
             j++;
         }
     }
