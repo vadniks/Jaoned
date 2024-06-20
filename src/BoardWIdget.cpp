@@ -41,7 +41,7 @@ void BoardWidget::paintEvent(QPaintEvent* event) {
         int j = 0;
         for (const auto& i : *pointsSet) {
             if (j < pointsSet->size() - 1)
-                painter.drawLine(i.x, i.y, pointsSet->operator[](j + 1).x, pointsSet->operator[](j + 1).y);
+                painter.drawLine(i.x + mOffsetX, i.y + mOffsetY, pointsSet->operator[](j + 1).x + mOffsetX, pointsSet->operator[](j + 1).y + mOffsetY);
             j++;
         }
     }

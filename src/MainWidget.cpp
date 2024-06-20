@@ -13,11 +13,11 @@ MainWidget::~MainWidget() {
 }
 
 void MainWidget::resizeEvent(QResizeEvent* event) {
-//    const auto size = event->size();
-//    const auto probe = mControlsWidget.size();
-//    const auto margin = (size.width() - probe.width()) / 2;
-//
-//    mBoardWidget->resize(probe.width(), size.height() - probe.height() - margin * 3);
+    const auto size = event->size();
+    const auto probe = mControlsWidget.size();
+    const auto margin = (size.width() - probe.width()) / 2;
+
+    mBoardWidget->resize(probe.width(), size.height() - probe.height() - margin * 3);
 
     QWidget::resizeEvent(event);
 }
