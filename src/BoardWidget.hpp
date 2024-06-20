@@ -2,18 +2,23 @@
 #pragma once
 
 #include "defs.hpp"
-#include "Renderer.hpp"
-#include <QOpenGLWidget>
-#include <QOpenGLFunctions_3_3_Core>
+#include <QWidget>
 
-class BoardWidget final : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core {
+struct Coordinate {
+    int x, y;
+
+    Coordinate(int x, int y) {
+        this->x = x;
+        this->y = y;
+    }
+};
+
+class BoardWidget final : public QWidget {
     Q_OBJECT
 private:
-    glm::mat4 mProjection;
-    Renderer* mRenderer;
     int mOffsetX, mOffsetY;
-    QVector<QVector<glm::ivec2>*> mMouseDrawnPoints;
-    QVector<glm::ivec2>* mCurrentMouseDrawnPoints;
+    QVector<QVector<Coordinate>*> mMouseDrawnPoints;
+    QVector<Coordinate>* mCurrentMouseDrawnPoints;
 public:
     BoardWidget();
     ~BoardWidget() override;
@@ -23,13 +28,9 @@ public:
     DISABLE_COPY(BoardWidget)
     DISABLE_MOVE(BoardWidget)
 protected:
-    void initializeGL() override;
-    void paintGL() override;
-    void resizeGL(int w, int h) override;
+    void paintEvent(QPaintEvent* event) override;
     void keyPressEvent(QKeyEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
-private:
-    void updateProjection(int width, int height);
 };
