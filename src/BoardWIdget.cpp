@@ -35,6 +35,8 @@ void BoardWidget::initializeGL() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
 
+    glEnable(GL_LINE_SMOOTH);
+
     glViewport(0, 0, 100, 100);
 }
 
@@ -44,7 +46,7 @@ void BoardWidget::paintGL() {
 
     if (mCurrentMouseDrawnPoints != nullptr) {
         for (const auto& i: *mCurrentMouseDrawnPoints)
-            mRenderer->drawPoint(glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y)), 1, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+            mRenderer->drawPoint(glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y)), 1.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     }
 
     for (auto pointsSet : mMouseDrawnPoints) {
