@@ -3,10 +3,9 @@
 #include <QKeyEvent>
 #include <QPainter>
 
-BoardWidget::Coordinate::Coordinate(int x, int y) {
-    this->x = x;
-    this->y = y;
-}
+BoardWidget::Coordinate::Coordinate(int x, int y) : x(x), y(y) {}
+
+BoardWidget::LineCoordinates::LineCoordinates(Coordinate start, Coordinate end) : start(start), end(end) {}
 
 BoardWidget::BoardWidget() :
     mMode(Mode::DRAW),
@@ -15,13 +14,18 @@ BoardWidget::BoardWidget() :
     mOffsetX(0),
     mOffsetY(0),
     mMouseDrawnPoints(),
-    mCurrentMouseDrawnPoints(nullptr)
+    mCurrentMouseDrawnPoints(nullptr),
+    mLines(),
+    mCurrentLine(nullptr)
 {
     setFocusPolicy(Qt::FocusPolicy::ClickFocus);
 }
 
 BoardWidget::~BoardWidget() {
     for (auto i : mMouseDrawnPoints)
+        delete i;
+
+    for (auto i : mLines)
         delete i;
 }
 
@@ -46,19 +50,8 @@ void BoardWidget::paintEvent(QPaintEvent* event) {
     painter.setPen(QPen(color, mWidth));
     painter.setBrush(QBrush(color));
 
-    if (mCurrentMouseDrawnPoints != nullptr) {
-        for (const auto& i: *mCurrentMouseDrawnPoints)
-            painter.drawPoint(i.x + mOffsetX, i.y + mOffsetY);
-    }
-
-    for (auto pointsSet : mMouseDrawnPoints) {
-        int j = 0;
-        for (const auto& i : *pointsSet) {
-            if (j < pointsSet->size() - 1)
-                painter.drawLine(i.x + mOffsetX, i.y + mOffsetY, pointsSet->operator[](j + 1).x + mOffsetX, pointsSet->operator[](j + 1).y + mOffsetY);
-            j++;
-        }
-    }
+    paintDrawn(painter);
+    paintLines(painter);
 
     QWidget::paintEvent(event);
 }
@@ -85,21 +78,54 @@ void BoardWidget::keyPressEvent(QKeyEvent* event) {
 }
 
 void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
-    if (mCurrentMouseDrawnPoints == nullptr) return;
+    switch (mMode) {
+        case Mode::DRAW:
+            if (mCurrentMouseDrawnPoints == nullptr) break;
 
-    const auto pos = event->pos();
-    mCurrentMouseDrawnPoints->push_back(Coordinate(pos.x() + mOffsetX, pos.y() + mOffsetY));
+            const auto pos = event->pos();
+            mCurrentMouseDrawnPoints->push_back(Coordinate(pos.x() + mOffsetX, pos.y() + mOffsetY));
+            break;
+    }
 
     update();
 }
 
 void BoardWidget::mousePressEvent(QMouseEvent* event) {
-    mCurrentMouseDrawnPoints = new QVector<Coordinate>();
+    switch (mMode) {
+        case Mode::DRAW:
+            mCurrentMouseDrawnPoints = new QVector<Coordinate>();
+            break;
+    }
 }
 
 void BoardWidget::mouseReleaseEvent(QMouseEvent* event) {
-    mMouseDrawnPoints.push_back(mCurrentMouseDrawnPoints);
-    mCurrentMouseDrawnPoints = nullptr;
+    switch (mMode) {
+        case Mode::DRAW:
+            mMouseDrawnPoints.push_back(mCurrentMouseDrawnPoints);
+            mCurrentMouseDrawnPoints = nullptr;
+            break;
+    }
 
     update();
+}
+
+void BoardWidget::paintDrawn(QPainter& painter) {
+    if (mCurrentMouseDrawnPoints != nullptr) {
+        for (const auto& i: *mCurrentMouseDrawnPoints)
+            painter.drawPoint(i.x + mOffsetX, i.y + mOffsetY);
+    }
+
+    for (auto pointsSet : mMouseDrawnPoints) {
+        int j = 0;
+        for (const auto& i : *pointsSet) {
+            if (j < pointsSet->size() - 1)
+                painter.drawLine(i.x + mOffsetX, i.y + mOffsetY, pointsSet->operator[](j + 1).x + mOffsetX, pointsSet->operator[](j + 1).y + mOffsetY);
+            j++;
+        }
+    }
+}
+
+void BoardWidget::paintLines(QPainter& painter) {
+    if (mCurrentLine != nullptr)
+        painter.drawLine(mCurrentLine->start.x, mCurrentLine->start.y, mCurrentLine->end.x, mCurrentLine->end.y);
 }

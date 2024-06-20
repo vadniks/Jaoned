@@ -15,13 +15,19 @@ private:
         int x, y;
         Coordinate(int x, int y);
     };
+    struct LineCoordinates {
+        Coordinate start, end;
+        LineCoordinates(Coordinate start, Coordinate end);
+    };
 private:
     Mode mMode;
     int mColor;
     int mWidth;
     int mOffsetX, mOffsetY;
     QVector<QVector<Coordinate>*> mMouseDrawnPoints;
-    QVector<Coordinate>* mCurrentMouseDrawnPoints;
+    QVector<Coordinate>* mCurrentMouseDrawnPoints; // nullable
+    QVector<LineCoordinates*> mLines;
+    LineCoordinates* mCurrentLine; // nullable
 public:
     BoardWidget();
     ~BoardWidget() override;
@@ -36,4 +42,7 @@ protected:
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
+private:
+    void paintDrawn(QPainter& painter);
+    void paintLines(QPainter& painter);
 };
