@@ -1,7 +1,7 @@
 
 #include "ControlsWidget.hpp"
 
-ControlsWidget::ControlsWidget() : mLayout(this), mDarkTheme(true), mColor(0), mPointSize(1), mFontSize(24) {
+ControlsWidget::ControlsWidget() : mLayout(this) {
     mThemeButton.setText("Switch theme");
     mLayout.addWidget(&mThemeButton);
 

@@ -8,7 +8,8 @@ BoardWidget::Coordinate::Coordinate(int x, int y) : x(x), y(y) {}
 BoardWidget::LineCoordinates::LineCoordinates(Coordinate start, Coordinate end) : start(start), end(end) {}
 
 BoardWidget::BoardWidget() :
-    mMode(Mode::LINE),
+    mMode(Mode::DRAW),
+    mCanvasColor(0, 0, 0),
     mColor(static_cast<int>(0xffffffff)),
     mWidth(5),
     mOffsetX(0),
@@ -38,7 +39,7 @@ void BoardWidget::paintEvent(QPaintEvent* event) {
     painter.setRenderHints(QPainter::RenderHint::Antialiasing | QPainter::RenderHint::TextAntialiasing);
 
     painter.setPen(QPen(QColor(0, 0, 0), 1));
-    painter.setBrush(QBrush(QColor(0, 0, 0)));
+    painter.setBrush(QBrush(mCanvasColor));
     painter.drawRect(0, 0, size().width(), size().height());
 
     QColor color(

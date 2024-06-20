@@ -8,7 +8,7 @@ class BoardWidget final : public QWidget {
     Q_OBJECT
 public:
     enum Mode {
-        DRAW, LINE, RECTANGLE, CIRCLE
+        DRAW, LINE, TEXT
     };
 private:
     struct Coordinate {
@@ -21,6 +21,7 @@ private:
     };
 private:
     Mode mMode;
+    QColor mCanvasColor;
     int mColor;
     int mWidth;
     int mOffsetX, mOffsetY;

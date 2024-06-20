@@ -13,10 +13,6 @@ private:
     QPushButton mDrawButton;
     QPushButton mTextButton;
     QPushButton mLineButton;
-    bool mDarkTheme;
-    int mColor;
-    int mPointSize;
-    int mFontSize;
 public:
     ControlsWidget();
 signals:
