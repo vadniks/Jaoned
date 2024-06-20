@@ -125,14 +125,12 @@ void BoardWidget::mouseReleaseEvent(QMouseEvent* event) {
 }
 
 void BoardWidget::updateProjection(int width, int height) {
-    mProjection = glm::ortho(
-        0.0f + static_cast<float>(mOffsetX),
-        static_cast<float>(width + mOffsetX),
-        static_cast<float>(height + mOffsetY),
-        0.0f + static_cast<float>(mOffsetY),
-        -1.0f,
-        1.0f
-    );
+    mProjection = {
+        1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
 }
 
 void BoardWidget::paintDrawn(QPainter& painter) {
@@ -140,8 +138,6 @@ void BoardWidget::paintDrawn(QPainter& painter) {
         for (const auto& i: *mCurrentMouseDrawnPoints) {
             auto pos = glm::vec4(static_cast<float>(i.x), static_cast<float>(i.y), 0.0f, 1.0f);
             pos = mProjection * pos;
-            pos.x = (pos.x + 1) * (static_cast<float>(size().width()) / 2.0f) + 0.0f;
-            pos.y = (pos.y + 1) * (static_cast<float>(size().width()) / 2.0f) + 0.0f;
 
             painter.drawPoint(static_cast<int>(pos.x), static_cast<int>(pos.y));
         }
@@ -153,13 +149,9 @@ void BoardWidget::paintDrawn(QPainter& painter) {
             if (j < pointsSet->size() - 1) {
                 auto startPos = glm::vec4(static_cast<float>(i.x), static_cast<float>(i.y), 0.0f, 1.0f);
                 startPos = mProjection * startPos;
-                startPos.x = (startPos.x + 1) * (static_cast<float>(size().width()) / 2.0f) + 0.0f;
-                startPos.y = (startPos.y + 1) * (static_cast<float>(size().width()) / 2.0f) + 0.0f;
 
                 auto endPos = glm::vec4(static_cast<float>(pointsSet->operator[](j + 1).x), static_cast<float>(pointsSet->operator[](j + 1).y), 0.0f, 1.0f);
                 endPos = mProjection * startPos;
-                endPos.x = (endPos.x + 1) * (static_cast<float>(size().width()) / 2.0f) + 0.0f;
-                endPos.y = (endPos.y + 1) * (static_cast<float>(size().width()) / 2.0f) + 0.0f;
 
                 painter.drawLine(static_cast<int>(startPos.x), static_cast<int>(startPos.y), static_cast<int>(endPos.x), static_cast<int>(endPos.y));
             }
