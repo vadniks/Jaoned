@@ -2,14 +2,11 @@
 #pragma once
 
 #include "defs.hpp"
+#include "Mode.hpp"
 #include <QWidget>
 
 class BoardWidget final : public QWidget {
     Q_OBJECT
-public:
-    enum Mode {
-        DRAW, LINE, TEXT
-    };
 private:
     struct Coordinate {
         int x, y;
@@ -21,9 +18,9 @@ private:
     };
 private:
     Mode mMode;
-    QColor mCanvasColor;
+    bool mTheme; // true - dark
     int mColor;
-    int mWidth;
+    int mPointWidth;
     int mOffsetX, mOffsetY;
     QVector<QVector<Coordinate>*> mMouseDrawnPoints;
     QVector<Coordinate>* mCurrentMouseDrawnPoints; // nullable
@@ -46,4 +43,14 @@ protected:
 private:
     void paintDrawn(QPainter& painter);
     void paintLines(QPainter& painter);
+public slots:
+    void setMode(Mode mode);
+    void setTheme(bool theme);
+    void setColor(int color);
+    void setPointWidth(int width);
+public:
+    Mode mode() const;
+    bool theme() const;
+    int color() const;
+    int pointWidth() const;
 };

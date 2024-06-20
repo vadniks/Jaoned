@@ -9,9 +9,9 @@ BoardWidget::LineCoordinates::LineCoordinates(Coordinate start, Coordinate end) 
 
 BoardWidget::BoardWidget() :
     mMode(Mode::DRAW),
-    mCanvasColor(0, 0, 0),
+    mTheme(true),
     mColor(static_cast<int>(0xffffffff)),
-    mWidth(5),
+    mPointWidth(5),
     mOffsetX(0),
     mOffsetY(0),
     mMouseDrawnPoints(),
@@ -39,7 +39,7 @@ void BoardWidget::paintEvent(QPaintEvent* event) {
     painter.setRenderHints(QPainter::RenderHint::Antialiasing | QPainter::RenderHint::TextAntialiasing);
 
     painter.setPen(QPen(QColor(0, 0, 0), 1));
-    painter.setBrush(QBrush(mCanvasColor));
+    painter.setBrush(QBrush(mTheme ? QColor(0, 0, 0) : QColor(255, 255, 255)));
     painter.drawRect(0, 0, size().width(), size().height());
 
     QColor color(
@@ -48,7 +48,7 @@ void BoardWidget::paintEvent(QPaintEvent* event) {
         (mColor >> 16) & 0xff,
         (mColor >> 24) & 0xff
     );
-    painter.setPen(QPen(color, mWidth));
+    painter.setPen(QPen(color, mPointWidth));
     painter.setBrush(QBrush(color));
 
     paintDrawn(painter);
@@ -100,7 +100,7 @@ void BoardWidget::mousePressEvent(QMouseEvent* event) {
             mCurrentMouseDrawnPoints = new QVector<Coordinate>();
             break;
         case Mode::LINE:
-            Coordinate coordinate(event->pos().x(), event->pos().y());
+            Coordinate coordinate(event->pos().x() + mOffsetX, event->pos().y() + mOffsetY);
             mCurrentLine = new LineCoordinates(coordinate, coordinate);
             break;
     }
@@ -143,4 +143,36 @@ void BoardWidget::paintLines(QPainter& painter) {
 
     for (const auto& i : mLines)
         painter.drawLine(i->start.x, i->start.y, i->end.x, i->end.y);
+}
+
+void BoardWidget::setMode(Mode mode) {
+    mMode = mode;
+}
+
+void BoardWidget::setTheme(bool theme) {
+    mTheme = theme;
+}
+
+void BoardWidget::setColor(int color) {
+    mColor = color;
+}
+
+void BoardWidget::setPointWidth(int width) {
+    mPointWidth = width;
+}
+
+Mode BoardWidget::mode() const {
+    return mMode;
+}
+
+bool BoardWidget::theme() const {
+    return mTheme;
+}
+
+int BoardWidget::color() const {
+    return mColor;
+}
+
+int BoardWidget::pointWidth() const {
+    return mPointWidth;
 }
