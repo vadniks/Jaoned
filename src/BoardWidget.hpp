@@ -6,6 +6,10 @@
 
 class BoardWidget final : public QWidget {
     Q_OBJECT
+public:
+    enum Mode {
+        DRAW, LINE, RECTANGLE, CIRCLE
+    };
 private:
     struct Coordinate {
         int x, y;

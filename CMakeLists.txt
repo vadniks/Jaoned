@@ -20,5 +20,3 @@ add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
 
 find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 target_link_libraries(${PROJECT_NAME} Qt::Core Qt::Gui Qt::Widgets)
-
-file(COPY res DESTINATION ${CMAKE_BINARY_DIR})
