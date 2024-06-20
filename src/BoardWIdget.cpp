@@ -23,12 +23,18 @@ QSize BoardWidget::minimumSizeHint() const {
 
 void BoardWidget::paintEvent(QPaintEvent* event) {
     QPainter painter(this);
-    painter.setPen(QPen(QColor(255, 255, 255)));
-    painter.setBrush(QBrush(QColor(255, 255, 255)));
+    painter.setRenderHints(QPainter::RenderHint::Antialiasing | QPainter::RenderHint::TextAntialiasing);
+
+    painter.setPen(QPen(QColor(0, 0, 0), 1));
+    painter.setBrush(QBrush(QColor(0, 0, 0)));
+    painter.drawRect(0, 0, size().width(), size().height());
+
+    painter.setPen(QPen(QColor(255, 255, 255), 5));
+    painter.setBrush(QBrush(QColor(0, 0, 0)));
 
     if (mCurrentMouseDrawnPoints != nullptr) {
         for (const auto& i: *mCurrentMouseDrawnPoints)
-            painter.drawPoint(i.x, i.y);
+            painter.drawPoint(i.x + mOffsetX, i.y + mOffsetY);
     }
 
     for (auto pointsSet : mMouseDrawnPoints) {
@@ -36,10 +42,11 @@ void BoardWidget::paintEvent(QPaintEvent* event) {
         for (const auto& i : *pointsSet) {
             if (j < pointsSet->size() - 1)
                 painter.drawLine(i.x, i.y, pointsSet->operator[](j + 1).x, pointsSet->operator[](j + 1).y);
-//                mRenderer->drawLine(glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y)), glm::vec2(static_cast<float>(pointsSet->operator[](j + 1).x), static_cast<float>(pointsSet->operator[](j + 1).y)), 5.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
             j++;
         }
     }
+
+    QWidget::paintEvent(event);
 }
 
 void BoardWidget::keyPressEvent(QKeyEvent* event) {
