@@ -43,7 +43,7 @@ protected:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
 private:
-    void updateProjection(int width, int height);
+    void updateProjection();
     void paintDrawn(QPainter& painter);
     void paintLines(QPainter& painter);
 public slots:

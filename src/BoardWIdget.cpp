@@ -22,6 +22,7 @@ BoardWidget::BoardWidget() :
     mCurrentLine(nullptr)
 {
     setFocusPolicy(Qt::FocusPolicy::ClickFocus);
+    updateProjection();
 }
 
 BoardWidget::~BoardWidget() {
@@ -77,7 +78,7 @@ void BoardWidget::keyPressEvent(QKeyEvent* event) {
             break;
     }
 
-    updateProjection(size().width(), size().height());
+    updateProjection();
     update();
 }
 
@@ -124,11 +125,13 @@ void BoardWidget::mouseReleaseEvent(QMouseEvent* event) {
     update();
 }
 
-void BoardWidget::updateProjection(int width, int height) {
+void BoardWidget::updateProjection() {
+    const auto xSize = size();
+
     mProjection = glm::ortho(
         0.0f + static_cast<float>(mOffsetX),
-        static_cast<float>(width + mOffsetX),
-        static_cast<float>(height + mOffsetY),
+        static_cast<float>(xSize.width() + mOffsetX),
+        static_cast<float>(xSize.height() + mOffsetY),
         0.0f + static_cast<float>(mOffsetY),
         -1.0f,
         1.0f
