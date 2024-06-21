@@ -4,6 +4,7 @@
 #include "defs.hpp"
 #include "Mode.hpp"
 #include <QWidget>
+#include <glm/glm.hpp>
 
 class BoardWidget final : public QWidget {
     Q_OBJECT
@@ -21,6 +22,7 @@ private:
     bool mTheme; // true - dark
     int mColor;
     int mPointWidth;
+    glm::mat4 mProjection;
     int mOffsetX, mOffsetY;
     QVector<QVector<Coordinate>*> mMouseDrawnPoints;
     QVector<Coordinate>* mCurrentMouseDrawnPoints; // nullable
@@ -41,6 +43,7 @@ protected:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
 private:
+    void updateProjection(int width, int height);
     void paintDrawn(QPainter& painter);
     void paintLines(QPainter& painter);
 public slots:
