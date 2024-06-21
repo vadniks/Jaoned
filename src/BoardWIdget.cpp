@@ -127,28 +127,15 @@ void BoardWidget::mouseReleaseEvent(QMouseEvent* event) {
 
 void BoardWidget::updateProjection() {
     const auto xSize = size();
-    const auto left = 0.0f + static_cast<float>(mOffsetX);
-    const auto right = static_cast<float>(xSize.width() + mOffsetX);
-    const auto bottom = static_cast<float>(xSize.height() + mOffsetY);
-    const auto top = 0.0f + static_cast<float>(mOffsetY);
-    const auto far = -1.0f;
-    const auto near = -1.0f;
 
-    mProjection = {
-        2.0f / (right - left), 0.0f, 0.0f, -(right + left) / (right - left),
-        0.0f, 2.0f / (top - bottom), 0.0f, -(top + bottom) / (top - bottom),
-        0.0f, 0.0f, -2.0f / (far - near), -(far + near) / (far - near),
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
-
-//    mProjection = glm::ortho(
-//        0.0f + static_cast<float>(mOffsetX),
-//        static_cast<float>(xSize.width() + mOffsetX),
-//        static_cast<float>(xSize.height() + mOffsetY),
-//        0.0f + static_cast<float>(mOffsetY),
-//        -1.0f,
-//        1.0f
-//    );
+    mProjection = glm::ortho(
+        0.0f + static_cast<float>(mOffsetX),
+        static_cast<float>(xSize.width() + mOffsetX),
+        static_cast<float>(xSize.height() + mOffsetY),
+        0.0f + static_cast<float>(mOffsetY),
+        -1.0f,
+        1.0f
+    );
 }
 
 void BoardWidget::paintDrawn(QPainter& painter) {
