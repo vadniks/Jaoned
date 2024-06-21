@@ -139,14 +139,17 @@ void BoardWidget::updateProjection() {
 }
 
 void BoardWidget::paintDrawn(QPainter& painter) {
+    const auto width = size().width();
+    const auto height = size().height();
+
     if (mCurrentMouseDrawnPoints != nullptr) {
         for (const auto& i: *mCurrentMouseDrawnPoints) {
             auto pos = glm::vec4(static_cast<float>(i.x), static_cast<float>(i.y), 0.0f, 1.0f);
             pos = mProjection * pos;
             pos /= pos.w;
 
-            const auto x = (pos.x + 1) * (static_cast<float>(size().width()) / 2.0f) + 0.0f;
-            const auto y = (pos.y + 1) * (static_cast<float>(size().height()) / 2.0f) + 0.0f;
+            const auto x = (pos.x + 1) * (static_cast<float>(width + mOffsetX) / 2.0f) + static_cast<float>(mOffsetX);
+            const auto y = (pos.y + 1) * (static_cast<float>(height + mOffsetY) / 2.0f) + static_cast<float>(mOffsetY);
 
             painter.drawPoint(static_cast<int>(x), static_cast<int>(y));
         }
@@ -160,15 +163,15 @@ void BoardWidget::paintDrawn(QPainter& painter) {
                 startPos = mProjection * startPos;
                 startPos /= startPos.w;
 
-                const auto sx = (startPos.x + 1) * (static_cast<float>(size().width()) / 2.0f) + 0.0f;
-                const auto sy = (startPos.y + 1) * (static_cast<float>(size().height()) / 2.0f) + 0.0f;
+                const auto sx = (startPos.x + 1) * (static_cast<float>(width + mOffsetX) / 2.0f) + static_cast<float>(mOffsetX);
+                const auto sy = (startPos.y + 1) * (static_cast<float>(height + mOffsetY) / 2.0f) + static_cast<float>(mOffsetY);
 
                 auto endPos = glm::vec4(static_cast<float>(pointsSet->operator[](j + 1).x), static_cast<float>(pointsSet->operator[](j + 1).y), 0.0f, 1.0f);
                 endPos = mProjection * endPos;
                 endPos /= endPos.w;
 
-                const auto ex = (endPos.x + 1) * (static_cast<float>(size().width()) / 2.0f) + 0.0f;
-                const auto ey = (endPos.y + 1) * (static_cast<float>(size().height()) / 2.0f) + 0.0f;
+                const auto ex = (endPos.x + 1) * (static_cast<float>(width + mOffsetX) / 2.0f) + static_cast<float>(mOffsetX);
+                const auto ey = (endPos.y + 1) * (static_cast<float>(height + mOffsetY) / 2.0f) + static_cast<float>(mOffsetY);
 
                 painter.drawLine(static_cast<int>(sx), static_cast<int>(sy), static_cast<int>(ex), static_cast<int>(ey));
             }
