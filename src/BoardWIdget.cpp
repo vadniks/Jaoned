@@ -6,7 +6,7 @@
 BoardWidget::LineCoordinates::LineCoordinates(const glm::vec2& start, const glm::vec2& end) : start(start), end(end) {}
 
 BoardWidget::BoardWidget() :
-    mMode(Mode::LINE),
+    mMode(Mode::DRAW),
     mTheme(true),
     mColor(static_cast<int>(0xffffffff)),
     mPointWidth(5),
