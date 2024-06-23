@@ -19,7 +19,7 @@ private:
 private:
     Mode mMode;
     Theme mTheme;
-    int mColor;
+    QColor mColor;
     int mPointWidth;
     glm::mat4 mProjection;
     Renderer* mRenderer;
@@ -52,11 +52,11 @@ private:
 public slots:
     void setMode(Mode mode);
     void setTheme(Theme theme);
-    void setColor(int color);
+    void setColor(QColor color);
     void setPointWidth(int width);
 public:
     Mode mode() const;
     Theme theme() const;
-    int color() const;
+    QColor color() const;
     int pointWidth() const;
 };

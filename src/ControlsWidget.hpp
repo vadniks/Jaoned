@@ -21,8 +21,9 @@ private:
 public:
     explicit ControlsWidget(BoardWidget* boardWidget);
 private slots:
-    void themeChanged();
-//    void colorChanged(int color);
+    void themeSwitchClicked();
+    void colorChangeClicked();
+    void colorSelected(QColor color);
 //    void pointWidthChanged(int width);
 //    void modeChanged(Mode mode);
 };

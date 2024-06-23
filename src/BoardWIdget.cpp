@@ -8,7 +8,7 @@ BoardWidget::LineCoordinates::LineCoordinates(const glm::vec2& start, const glm:
 BoardWidget::BoardWidget() :
     mMode(Mode::DRAW),
     mTheme(Theme::Dark),
-    mColor(static_cast<int>(0xffffffff)),
+    mColor(0xff, 0xff, 0xff),
     mPointWidth(5),
     mProjection(1.0f),
     mRenderer(nullptr),
@@ -190,10 +190,10 @@ void BoardWidget::paintLines() {
 
 glm::vec4 BoardWidget::makeGlColor() const {
     return {
-        static_cast<float>((mColor >> 0) & 0xff) / 255.0f,
-        static_cast<float>((mColor >> 8) & 0xff) / 255.0f,
-        static_cast<float>((mColor >> 16) & 0xff) / 255.0f,
-        static_cast<float>((mColor >> 24) & 0xff) / 255.0f
+        static_cast<float>(mColor.red()) / 255.0f,
+        static_cast<float>(mColor.green()) / 255.0f,
+        static_cast<float>(mColor.blue()) / 255.0f,
+        static_cast<float>(mColor.alpha()) / 255.0f
     };
 }
 
@@ -206,7 +206,7 @@ void BoardWidget::setTheme(Theme theme) {
     update();
 }
 
-void BoardWidget::setColor(int color) {
+void BoardWidget::setColor(QColor color) {
     mColor = color;
 }
 
@@ -223,7 +223,7 @@ Theme BoardWidget::theme() const {
     return mTheme;
 }
 
-int BoardWidget::color() const {
+QColor BoardWidget::color() const {
     return mColor;
 }
 
