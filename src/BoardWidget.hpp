@@ -9,13 +9,12 @@
 #include <QOpenGLFunctions_3_3_Core>
 #include <glm/glm.hpp>
 
+class DrawnElement;
+class DrawnPoint;
+class DrawnLine;
+
 class BoardWidget final : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core {
     Q_OBJECT
-private:
-    struct LineCoordinates {
-        glm::vec2 start, end;
-        LineCoordinates(const glm::vec2& start, const glm::vec2& end);
-    };
 private:
     Mode mMode;
     Theme mTheme;
@@ -24,10 +23,10 @@ private:
     glm::mat4 mProjection;
     Renderer* mRenderer;
     int mOffsetX, mOffsetY;
-    QVector<QVector<glm::vec2>*> mMouseDrawnPoints;
-    QVector<glm::vec2>* mCurrentMouseDrawnPoints; // nullable
-    QVector<LineCoordinates*> mLines;
-    LineCoordinates* mCurrentLine; // nullable
+    QVector<QVector<DrawnPoint>*> mMouseDrawnPoints;
+    QVector<DrawnPoint>* mCurrentMouseDrawnPoints; // nullable
+    QVector<DrawnLine*> mLines;
+    DrawnLine* mCurrentLine; // nullable
 public:
     BoardWidget();
     ~BoardWidget() override;
@@ -48,11 +47,11 @@ private:
     void updateProjection();
     void paintDrawn();
     void paintLines();
-    glm::vec4 makeGlColor() const;
+    glm::vec4 makeGlColor(const QColor& color) const;
 public slots:
     void setMode(Mode mode);
     void setTheme(Theme theme);
-    void setColor(QColor color);
+    void setColor(const QColor& color);
     void setPointWidth(int width);
 public:
     Mode mode() const;
