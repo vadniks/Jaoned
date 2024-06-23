@@ -55,6 +55,8 @@ void BoardWidget::paintGL() {
 
     paintDrawn();
     paintLines();
+
+    mRenderer->drawText("Hello gWorld!", 24, glm::vec2(100, 100), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void BoardWidget::resizeGL(int w, int h) {

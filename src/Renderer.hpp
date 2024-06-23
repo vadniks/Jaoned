@@ -7,8 +7,7 @@
 #include <QOpenGLFunctions_3_3_Core>
 #include <glm/glm.hpp>
 #include <freetype2/ft2build.h>
-
-#include FT_FREETYPE_H
+#include <freetype/freetype.h>
 
 class Renderer final {
 private:
