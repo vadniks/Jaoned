@@ -63,6 +63,7 @@ void ControlsWidget::colorChangeClicked() {
 }
 
 void ControlsWidget::colorSelected(QColor color) {
+    color.setAlpha(0xff);
     mBoardWidget->setColor(color);
 }
 

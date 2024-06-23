@@ -64,9 +64,6 @@ void BoardWidget::initializeGL() {
 
     glEnable(GL_MULTISAMPLE);
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
-
     glViewport(0, 0, 100, 100);
 }
 
@@ -188,8 +185,8 @@ void BoardWidget::paintDrawn() {
                 const auto width = static_cast<float>(i.size);
 
                 mRenderer->drawLine(startPos, endPos, width, color);
-                mRenderer->drawPoint(startPos, width, color);
-                mRenderer->drawPoint(endPos, width, color);
+                mRenderer->drawPoint(startPos, width * 0.75f, color);
+                mRenderer->drawPoint(endPos, width * 0.75f, color);
             }
             j++;
         }
