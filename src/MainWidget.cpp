@@ -2,7 +2,7 @@
 #include "MainWidget.hpp"
 #include <QResizeEvent>
 
-MainWidget::MainWidget() : mLayout(this), mBoardWidget(new BoardWidget()) {
+MainWidget::MainWidget() : mLayout(this), mBoardWidget(new BoardWidget()), mControlsWidget(mBoardWidget) {
     mLayout.addWidget(&mControlsWidget, 0, Qt::AlignTop);
     mLayout.addWidget(mBoardWidget, 0, Qt::AlignVCenter);
     mLayout.addStretch();

@@ -7,7 +7,7 @@ BoardWidget::LineCoordinates::LineCoordinates(const glm::vec2& start, const glm:
 
 BoardWidget::BoardWidget() :
     mMode(Mode::DRAW),
-    mTheme(true),
+    mTheme(Theme::Dark),
     mColor(static_cast<int>(0xffffffff)),
     mPointWidth(5),
     mProjection(1.0f),
@@ -50,7 +50,11 @@ void BoardWidget::initializeGL() {
 }
 
 void BoardWidget::paintGL() {
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    if (mTheme == Theme::Dark)
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    else
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+
     glClear(GL_COLOR_BUFFER_BIT);
 
     paintDrawn();
@@ -197,8 +201,9 @@ void BoardWidget::setMode(Mode mode) {
     mMode = mode;
 }
 
-void BoardWidget::setTheme(bool theme) {
+void BoardWidget::setTheme(Theme theme) {
     mTheme = theme;
+    update();
 }
 
 void BoardWidget::setColor(int color) {
@@ -214,7 +219,7 @@ Mode BoardWidget::mode() const {
     return mMode;
 }
 
-bool BoardWidget::theme() const {
+Theme BoardWidget::theme() const {
     return mTheme;
 }
 

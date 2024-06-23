@@ -1,10 +1,11 @@
 
 #include "ControlsWidget.hpp"
 
-ControlsWidget::ControlsWidget() : mLayout(this) {
+ControlsWidget::ControlsWidget(BoardWidget* boardWidget) : mBoardWidget(boardWidget), mLayout(this) {
     mLayout.addStretch();
 
     mThemeButton.setText("Switch theme");
+    connect(&mThemeButton, &QPushButton::clicked, this, &ControlsWidget::themeChanged);
     mLayout.addWidget(&mThemeButton);
 
     mColorButton.setText("Color");
@@ -25,4 +26,8 @@ ControlsWidget::ControlsWidget() : mLayout(this) {
     mLayout.addWidget(&mLineButton);
 
     mLayout.addStretch();
+}
+
+void ControlsWidget::themeChanged() {
+    mBoardWidget->setTheme(mBoardWidget->theme() == Theme::Dark ? Theme::Light : Theme::Dark);
 }

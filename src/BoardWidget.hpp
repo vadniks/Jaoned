@@ -3,6 +3,7 @@
 
 #include "defs.hpp"
 #include "Mode.hpp"
+#include "Theme.hpp"
 #include "Renderer.hpp"
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions_3_3_Core>
@@ -17,7 +18,7 @@ private:
     };
 private:
     Mode mMode;
-    bool mTheme; // true - dark
+    Theme mTheme;
     int mColor;
     int mPointWidth;
     glm::mat4 mProjection;
@@ -50,12 +51,12 @@ private:
     glm::vec4 makeGlColor() const;
 public slots:
     void setMode(Mode mode);
-    void setTheme(bool theme);
+    void setTheme(Theme theme);
     void setColor(int color);
     void setPointWidth(int width);
 public:
     Mode mode() const;
-    bool theme() const;
+    Theme theme() const;
     int color() const;
     int pointWidth() const;
 };
