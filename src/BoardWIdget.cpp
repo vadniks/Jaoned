@@ -1,12 +1,9 @@
 
 #include "BoardWidget.hpp"
 #include <QKeyEvent>
-#include <QPainter>
 #include <glm/ext/matrix_clip_space.hpp>
 
-BoardWidget::Coordinate::Coordinate(int x, int y) : x(x), y(y) {}
-
-BoardWidget::LineCoordinates::LineCoordinates(Coordinate start, Coordinate end) : start(start), end(end) {}
+BoardWidget::LineCoordinates::LineCoordinates(const glm::vec2& start, const glm::vec2& end) : start(start), end(end) {}
 
 BoardWidget::BoardWidget() :
     mMode(Mode::DRAW),
@@ -14,6 +11,7 @@ BoardWidget::BoardWidget() :
     mColor(static_cast<int>(0xffffffff)),
     mPointWidth(5),
     mProjection(1.0f),
+    mRenderer(nullptr),
     mOffsetX(0),
     mOffsetY(0),
     mMouseDrawnPoints(),
@@ -22,7 +20,6 @@ BoardWidget::BoardWidget() :
     mCurrentLine(nullptr)
 {
     setFocusPolicy(Qt::FocusPolicy::ClickFocus);
-    updateProjection();
 }
 
 BoardWidget::~BoardWidget() {
@@ -31,33 +28,41 @@ BoardWidget::~BoardWidget() {
 
     for (auto i : mLines)
         delete i;
+
+    delete mRenderer;
 }
 
 QSize BoardWidget::minimumSizeHint() const {
     return {16 * 75, 9 * 75};
 }
 
-void BoardWidget::paintEvent(QPaintEvent* event) {
-    QPainter painter(this);
-    painter.setRenderHints(QPainter::RenderHint::Antialiasing | QPainter::RenderHint::TextAntialiasing);
+void BoardWidget::initializeGL() {
+    QOpenGLFunctions_3_3_Core::initializeOpenGLFunctions();
+    mRenderer = new Renderer(*this);
+    updateProjection();
 
-    painter.setPen(QPen(QColor(0, 0, 0), 1));
-    painter.setBrush(QBrush(mTheme ? QColor(0, 0, 0) : QColor(255, 255, 255)));
-    painter.drawRect(0, 0, size().width(), size().height());
+    glEnable(GL_MULTISAMPLE);
 
-    QColor color(
-        (mColor >> 0) & 0xff,
-        (mColor >> 8) & 0xff,
-        (mColor >> 16) & 0xff,
-        (mColor >> 24) & 0xff
-    );
-    painter.setPen(QPen(color, mPointWidth));
-    painter.setBrush(QBrush(color));
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
 
-    paintDrawn(painter);
-    paintLines(painter);
+    glViewport(0, 0, 100, 100);
+}
 
-    QWidget::paintEvent(event);
+void BoardWidget::paintGL() {
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    paintDrawn();
+    paintLines();
+
+//    mRenderer->drawLine(glm::vec2(100, 100), glm::vec2(200, 200), 20, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+//    mRenderer->drawLine(glm::vec2(300, 300), glm::vec2(350, 300), 1, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+}
+
+void BoardWidget::resizeGL(int w, int h) {
+    glViewport(0, 0, w, h);
+    updateProjection();
 }
 
 void BoardWidget::keyPressEvent(QKeyEvent* event) {
@@ -86,12 +91,12 @@ void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
     switch (mMode) {
         case Mode::DRAW:
             if (mCurrentMouseDrawnPoints == nullptr) break;
-            mCurrentMouseDrawnPoints->push_back(Coordinate(event->pos().x() + mOffsetX, event->pos().y() + mOffsetY));
+            mCurrentMouseDrawnPoints->push_back(glm::vec2(static_cast<float>(event->pos().x() + mOffsetX), static_cast<float>(event->pos().y() + mOffsetY)));
             break;
         case Mode::LINE:
             if (mCurrentLine == nullptr) break;
-            mCurrentLine->end.x = event->pos().x();
-            mCurrentLine->end.y = event->pos().y();
+            mCurrentLine->end.x = static_cast<float>(event->pos().x());
+            mCurrentLine->end.y = static_cast<float>(event->pos().y());
             break;
     }
 
@@ -101,11 +106,11 @@ void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
 void BoardWidget::mousePressEvent(QMouseEvent* event) {
     switch (mMode) {
         case Mode::DRAW:
-            mCurrentMouseDrawnPoints = new QVector<Coordinate>();
+            mCurrentMouseDrawnPoints = new QVector<glm::vec2>();
             break;
         case Mode::LINE:
-            Coordinate coordinate(event->pos().x(), event->pos().y());
-            mCurrentLine = new LineCoordinates(coordinate, coordinate);
+            glm::vec2 start(static_cast<float>(event->pos().x()), static_cast<float>(event->pos().y()));
+            mCurrentLine = new LineCoordinates(start, start);
             break;
     }
 }
@@ -136,56 +141,41 @@ void BoardWidget::updateProjection() {
         -1.0f,
         1.0f
     );
+
+    mRenderer->setProjection(mProjection);
 }
 
-void BoardWidget::paintDrawn(QPainter& painter) {
-    const auto width = size().width();
-    const auto height = size().height();
-
+void BoardWidget::paintDrawn() {
     if (mCurrentMouseDrawnPoints != nullptr) {
-        for (const auto& i: *mCurrentMouseDrawnPoints) {
-            auto pos = glm::vec4(static_cast<float>(i.x), static_cast<float>(i.y), 0.0f, 1.0f);
-            pos = mProjection * pos;
-            pos /= pos.w;
-
-            const auto x = (pos.x + 1) * (static_cast<float>(width + mOffsetX) / 2.0f) + static_cast<float>(mOffsetX);
-            const auto y = (pos.y + 1) * (static_cast<float>(height + mOffsetY) / 2.0f) + static_cast<float>(mOffsetY);
-
-            painter.drawPoint(static_cast<int>(x), static_cast<int>(y));
-        }
+        for (const auto& i: *mCurrentMouseDrawnPoints)
+            mRenderer->drawPoint(glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y)), 5.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     }
 
     for (auto pointsSet : mMouseDrawnPoints) {
         int j = 0;
         for (const auto& i : *pointsSet) {
             if (j < pointsSet->size() - 1) {
-                auto startPos = glm::vec4(static_cast<float>(i.x), static_cast<float>(i.y), 0.0f, 1.0f);
-                startPos = mProjection * startPos;
-                startPos /= startPos.w;
-
-                const auto sx = (startPos.x + 1) * (static_cast<float>(width + mOffsetX) / 2.0f) + static_cast<float>(mOffsetX);
-                const auto sy = (startPos.y + 1) * (static_cast<float>(height + mOffsetY) / 2.0f) + static_cast<float>(mOffsetY);
-
-                auto endPos = glm::vec4(static_cast<float>(pointsSet->operator[](j + 1).x), static_cast<float>(pointsSet->operator[](j + 1).y), 0.0f, 1.0f);
-                endPos = mProjection * endPos;
-                endPos /= endPos.w;
-
-                const auto ex = (endPos.x + 1) * (static_cast<float>(width + mOffsetX) / 2.0f) + static_cast<float>(mOffsetX);
-                const auto ey = (endPos.y + 1) * (static_cast<float>(height + mOffsetY) / 2.0f) + static_cast<float>(mOffsetY);
-
-                painter.drawLine(static_cast<int>(sx), static_cast<int>(sy), static_cast<int>(ex), static_cast<int>(ey));
+                auto startPos = glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y));
+                auto endPos = glm::vec2(static_cast<float>(pointsSet->operator[](j + 1).x), static_cast<float>(pointsSet->operator[](j + 1).y));
+                mRenderer->drawLine(startPos, endPos, 5.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
             }
             j++;
         }
     }
 }
 
-void BoardWidget::paintLines(QPainter& painter) {
-    if (mCurrentLine != nullptr)
-        painter.drawLine(mCurrentLine->start.x, mCurrentLine->start.y, mCurrentLine->end.x, mCurrentLine->end.y);
+void BoardWidget::paintLines() {
+    if (mCurrentLine != nullptr) {
+        auto startPos = glm::vec2(static_cast<float>(mCurrentLine->start.x), static_cast<float>(mCurrentLine->start.y));
+        auto endPos = glm::vec2(static_cast<float>(mCurrentLine->end.x), static_cast<float>(mCurrentLine->end.y));
+        mRenderer->drawLine(startPos, endPos, 5.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    }
 
-    for (const auto& i : mLines)
-        painter.drawLine(i->start.x, i->start.y, i->end.x, i->end.y);
+    for (const auto& i : mLines) {
+        auto startPos = glm::vec2(static_cast<float>(i->start.x), static_cast<float>(i->start.y));
+        auto endPos = glm::vec2(static_cast<float>(i->end.x), static_cast<float>(i->end.y));
+        mRenderer->drawLine(startPos, endPos, 5.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+    }
 }
 
 void BoardWidget::setMode(Mode mode) {

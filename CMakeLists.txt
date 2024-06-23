@@ -18,5 +18,8 @@ add_compile_options("-Wno-c99-extensions")
 file(GLOB PROJECT_SOURCES CONFIGURE_DEPENDS src/*.cpp src/*.hpp)
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCES})
 
-find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
-target_link_libraries(${PROJECT_NAME} Qt::Core Qt::Gui Qt::Widgets)
+find_package(Qt6 COMPONENTS Core Gui Widgets OpenGLWidgets OpenGL REQUIRED)
+target_link_libraries(${PROJECT_NAME} Qt::Core Qt::Gui Qt::Widgets Qt::OpenGL Qt::OpenGLWidgets freetype)
+include_directories(/usr/include/freetype2)
+
+file(COPY res DESTINATION ${CMAKE_BINARY_DIR})

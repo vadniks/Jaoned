@@ -3,19 +3,17 @@
 
 #include "defs.hpp"
 #include "Mode.hpp"
-#include <QWidget>
+#include "Renderer.hpp"
+#include <QOpenGLWidget>
+#include <QOpenGLFunctions_3_3_Core>
 #include <glm/glm.hpp>
 
-class BoardWidget final : public QWidget {
+class BoardWidget final : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core {
     Q_OBJECT
 private:
-    struct Coordinate {
-        int x, y;
-        Coordinate(int x, int y);
-    };
     struct LineCoordinates {
-        Coordinate start, end;
-        LineCoordinates(Coordinate start, Coordinate end);
+        glm::vec2 start, end;
+        LineCoordinates(const glm::vec2& start, const glm::vec2& end);
     };
 private:
     Mode mMode;
@@ -23,9 +21,10 @@ private:
     int mColor;
     int mPointWidth;
     glm::mat4 mProjection;
+    Renderer* mRenderer;
     int mOffsetX, mOffsetY;
-    QVector<QVector<Coordinate>*> mMouseDrawnPoints;
-    QVector<Coordinate>* mCurrentMouseDrawnPoints; // nullable
+    QVector<QVector<glm::vec2>*> mMouseDrawnPoints;
+    QVector<glm::vec2>* mCurrentMouseDrawnPoints; // nullable
     QVector<LineCoordinates*> mLines;
     LineCoordinates* mCurrentLine; // nullable
 public:
@@ -37,15 +36,17 @@ public:
     DISABLE_COPY(BoardWidget)
     DISABLE_MOVE(BoardWidget)
 protected:
-    void paintEvent(QPaintEvent* event) override;
+    void initializeGL() override;
+    void paintGL() override;
+    void resizeGL(int w, int h) override;
     void keyPressEvent(QKeyEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
 private:
     void updateProjection();
-    void paintDrawn(QPainter& painter);
-    void paintLines(QPainter& painter);
+    void paintDrawn();
+    void paintLines();
 public slots:
     void setMode(Mode mode);
     void setTheme(bool theme);
