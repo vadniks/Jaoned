@@ -28,6 +28,8 @@ private:
     QVector<DrawnLine*> mLines;
     DrawnLine* mCurrentLine; // nullable
 public:
+    static inline int MAX_POINT_WIDTH = 100;
+public:
     BoardWidget();
     ~BoardWidget() override;
 

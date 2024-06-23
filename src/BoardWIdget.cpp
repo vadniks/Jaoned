@@ -227,7 +227,7 @@ void BoardWidget::setColor(const QColor& color) {
 }
 
 void BoardWidget::setPointWidth(int width) {
-    assert(width > 0 && width <= 100);
+    assert(width > 0 && width <= MAX_POINT_WIDTH);
     mPointWidth = width;
 }
 
