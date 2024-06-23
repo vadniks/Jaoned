@@ -2,7 +2,12 @@
 #include "ControlsWidget.hpp"
 #include <QColorDialog>
 
-ControlsWidget::ControlsWidget(BoardWidget* boardWidget) : mBoardWidget(boardWidget), mLayout(this) {
+ControlsWidget::ControlsWidget(BoardWidget* boardWidget) :
+    mBoardWidget(boardWidget),
+    mLayout(this),
+    mPointWidthLayout(&mPointWidthWidget),
+    mPointWidthSlider(Qt::Orientation::Horizontal)
+{
     mLayout.addStretch();
 
     mThemeButton.setText("Switch theme");
@@ -13,8 +18,24 @@ ControlsWidget::ControlsWidget(BoardWidget* boardWidget) : mBoardWidget(boardWid
     connect(&mColorButton, &QPushButton::clicked, this, &ControlsWidget::colorChangeClicked);
     mLayout.addWidget(&mColorButton);
 
-    mPointWidthButton.setText("Point width");
-    mLayout.addWidget(&mPointWidthButton);
+    QFont pointWidthFont = mPointWidthLabel.font();
+    pointWidthFont.setPointSize(10);
+
+    mPointWidthLabel.setText("Width:");
+    mPointWidthLabel.setFont(pointWidthFont);
+
+    mPointWidthSlider.setTickInterval(1);
+    mPointWidthSlider.setMinimum(1);
+    mPointWidthSlider.setMaximum(BoardWidget::MAX_POINT_WIDTH);
+    mPointWidthSlider.setValue(mBoardWidget->pointWidth());
+    mPointWidthSlider.setTickPosition(QSlider::TicksAbove);
+    mPointWidthSlider.setFixedSize(300, 20);
+    connect(&mPointWidthSlider, &QSlider::valueChanged, this, &ControlsWidget::pointWidthChanged);
+
+    mPointWidthLayout.addWidget(&mPointWidthLabel);
+    mPointWidthLayout.addWidget(&mPointWidthSlider);
+
+    mLayout.addWidget(&mPointWidthWidget);
 
     mLayout.addStretch();
 
@@ -43,4 +64,8 @@ void ControlsWidget::colorChangeClicked() {
 
 void ControlsWidget::colorSelected(QColor color) {
     mBoardWidget->setColor(color);
+}
+
+void ControlsWidget::pointWidthChanged(int width) {
+    mBoardWidget->setPointWidth(width);
 }

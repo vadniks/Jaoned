@@ -5,7 +5,9 @@
 #include "BoardWidget.hpp"
 #include <QWidget>
 #include <QHBoxLayout>
-#include <QPushButton>
+#include <QPushButton> // TODO: optimize includes
+#include <QSlider>
+#include <QLabel>
 
 class ControlsWidget final : public QWidget {
     Q_OBJECT
@@ -14,7 +16,10 @@ private:
     QHBoxLayout mLayout;
     QPushButton mThemeButton;
     QPushButton mColorButton;
-    QPushButton mPointWidthButton;
+    QWidget mPointWidthWidget;
+    QHBoxLayout mPointWidthLayout;
+    QLabel mPointWidthLabel;
+    QSlider mPointWidthSlider;
     QPushButton mDrawButton;
     QPushButton mTextButton;
     QPushButton mLineButton;
@@ -24,6 +29,5 @@ private slots:
     void themeSwitchClicked();
     void colorChangeClicked();
     void colorSelected(QColor color);
-//    void pointWidthChanged(int width);
-//    void modeChanged(Mode mode);
+    void pointWidthChanged(int width);
 };
