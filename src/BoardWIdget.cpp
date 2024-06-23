@@ -6,7 +6,7 @@
 BoardWidget::LineCoordinates::LineCoordinates(const glm::vec2& start, const glm::vec2& end) : start(start), end(end) {}
 
 BoardWidget::BoardWidget() :
-    mMode(Mode::DRAW),
+    mMode(Mode::LINE),
     mTheme(true),
     mColor(static_cast<int>(0xffffffff)),
     mPointWidth(5),
@@ -55,9 +55,6 @@ void BoardWidget::paintGL() {
 
     paintDrawn();
     paintLines();
-
-//    mRenderer->drawLine(glm::vec2(100, 100), glm::vec2(200, 200), 20, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-//    mRenderer->drawLine(glm::vec2(300, 300), glm::vec2(350, 300), 1, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void BoardWidget::resizeGL(int w, int h) {
@@ -95,8 +92,8 @@ void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
             break;
         case Mode::LINE:
             if (mCurrentLine == nullptr) break;
-            mCurrentLine->end.x = static_cast<float>(event->pos().x());
-            mCurrentLine->end.y = static_cast<float>(event->pos().y());
+            mCurrentLine->end.x = static_cast<float>(event->pos().x() + mOffsetX);
+            mCurrentLine->end.y = static_cast<float>(event->pos().y() + mOffsetY);
             break;
     }
 
@@ -109,7 +106,7 @@ void BoardWidget::mousePressEvent(QMouseEvent* event) {
             mCurrentMouseDrawnPoints = new QVector<glm::vec2>();
             break;
         case Mode::LINE:
-            glm::vec2 start(static_cast<float>(event->pos().x()), static_cast<float>(event->pos().y()));
+            glm::vec2 start(static_cast<float>(event->pos().x() + mOffsetX), static_cast<float>(event->pos().y() + mOffsetY));
             mCurrentLine = new LineCoordinates(start, start);
             break;
     }
