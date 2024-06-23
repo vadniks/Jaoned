@@ -19,7 +19,7 @@ private:
     QPushButton mTextButton;
     QPushButton mLineButton;
 public:
-    ControlsWidget(BoardWidget* boardWidget);
+    explicit ControlsWidget(BoardWidget* boardWidget);
 private slots:
     void themeChanged();
 //    void colorChanged(int color);
