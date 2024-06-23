@@ -183,7 +183,11 @@ void BoardWidget::paintDrawn() {
             if (j < pointsSet->size() - 1) {
                 const auto startPos = glm::vec2(static_cast<float>(i.pos.x), static_cast<float>(i.pos.y));
                 const auto endPos = glm::vec2(static_cast<float>(pointsSet->operator[](j + 1).pos.x), static_cast<float>(pointsSet->operator[](j + 1).pos.y));
-                mRenderer->drawLine(startPos, endPos, static_cast<float>(mPointWidth), makeGlColor(i.color));
+                const glm::vec4 color = makeGlColor(i.color);
+
+                mRenderer->drawLine(startPos, endPos, static_cast<float>(mPointWidth), color);
+                mRenderer->drawPoint(startPos, static_cast<float>(mPointWidth), color);
+                mRenderer->drawPoint(endPos, static_cast<float>(mPointWidth), color);
             }
             j++;
         }
