@@ -147,17 +147,19 @@ void BoardWidget::updateProjection() {
 
 void BoardWidget::paintDrawn() {
     if (mCurrentMouseDrawnPoints != nullptr) {
-        for (const auto& i: *mCurrentMouseDrawnPoints)
-            mRenderer->drawPoint(glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y)), 5.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+        for (const auto& i: *mCurrentMouseDrawnPoints) {
+            const auto pos = glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y));
+            mRenderer->drawPoint(pos, static_cast<float>(mPointWidth), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+        }
     }
 
     for (auto pointsSet : mMouseDrawnPoints) {
         int j = 0;
         for (const auto& i : *pointsSet) {
             if (j < pointsSet->size() - 1) {
-                auto startPos = glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y));
-                auto endPos = glm::vec2(static_cast<float>(pointsSet->operator[](j + 1).x), static_cast<float>(pointsSet->operator[](j + 1).y));
-                mRenderer->drawLine(startPos, endPos, 5.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+                const auto startPos = glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y));
+                const auto endPos = glm::vec2(static_cast<float>(pointsSet->operator[](j + 1).x), static_cast<float>(pointsSet->operator[](j + 1).y));
+                mRenderer->drawLine(startPos, endPos, static_cast<float>(mPointWidth), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
             }
             j++;
         }
@@ -166,15 +168,15 @@ void BoardWidget::paintDrawn() {
 
 void BoardWidget::paintLines() {
     if (mCurrentLine != nullptr) {
-        auto startPos = glm::vec2(static_cast<float>(mCurrentLine->start.x), static_cast<float>(mCurrentLine->start.y));
-        auto endPos = glm::vec2(static_cast<float>(mCurrentLine->end.x), static_cast<float>(mCurrentLine->end.y));
-        mRenderer->drawLine(startPos, endPos, 5.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+        const auto startPos = glm::vec2(static_cast<float>(mCurrentLine->start.x), static_cast<float>(mCurrentLine->start.y));
+        const auto endPos = glm::vec2(static_cast<float>(mCurrentLine->end.x), static_cast<float>(mCurrentLine->end.y));
+        mRenderer->drawLine(startPos, endPos, static_cast<float>(mPointWidth), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     }
 
     for (const auto& i : mLines) {
-        auto startPos = glm::vec2(static_cast<float>(i->start.x), static_cast<float>(i->start.y));
-        auto endPos = glm::vec2(static_cast<float>(i->end.x), static_cast<float>(i->end.y));
-        mRenderer->drawLine(startPos, endPos, 5.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+        const auto startPos = glm::vec2(static_cast<float>(i->start.x), static_cast<float>(i->start.y));
+        const auto endPos = glm::vec2(static_cast<float>(i->end.x), static_cast<float>(i->end.y));
+        mRenderer->drawLine(startPos, endPos, static_cast<float>(mPointWidth), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
     }
 }
 
@@ -191,6 +193,7 @@ void BoardWidget::setColor(int color) {
 }
 
 void BoardWidget::setPointWidth(int width) {
+    assert(width > 0 && width <= 100);
     mPointWidth = width;
 }
 
