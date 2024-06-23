@@ -99,26 +99,6 @@ void Renderer::drawPoint(const glm::vec2& position, float pointSize, const glm::
     mGl.glBindVertexArray(0);
 }
 
-void Renderer::drawPoints(int count, const QVector<float>& vertices, float pointSize, const glm::vec4& color) {
-    mGl.glBindVertexArray(mVao);
-
-    mGl.glBindBuffer(GL_ARRAY_BUFFER, mVbo);
-    mGl.glBufferData(GL_ARRAY_BUFFER, static_cast<long>(count * sizeof(float)), vertices.data(), GL_DYNAMIC_DRAW);
-
-    mGl.glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), reinterpret_cast<void*>(0));
-    mGl.glEnableVertexAttribArray(0);
-
-    mShapeShader->use();
-    mShapeShader->setValue("projection", mProjection);
-    mShapeShader->setValue("color", color);
-
-    mGl.glPointSize(static_cast<float>(pointSize));
-    mGl.glDrawArrays(GL_POINTS, 0, count);
-
-    mGl.glBindBuffer(GL_ARRAY_BUFFER, 0);
-    mGl.glBindVertexArray(0);
-}
-
 void Renderer::drawLine(const glm::vec2& positionStart, const glm::vec2& positionEnd, float lineWidth, const glm::vec4& color) {
     const float dx = positionEnd.x - positionStart.x;
     const float dy = positionEnd.y - positionStart.y;
