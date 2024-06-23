@@ -6,15 +6,16 @@
 class DrawnElement {
 public:
     QColor color;
+    int size;
 
-    explicit DrawnElement(QColor color) : color(color) {}
+    explicit DrawnElement(QColor color, int size) : color(color), size(size) {}
 };
 
 class DrawnPoint final : public DrawnElement {
 public:
     glm::vec2 pos;
 
-    DrawnPoint(const glm::vec2& pos, const QColor& color) : DrawnElement(color), pos(pos) {}
+    DrawnPoint(const glm::vec2& pos, const QColor& color, int size) : DrawnElement(color, size), pos(pos) {}
 };
 
 class DrawnLine final : public DrawnElement {
@@ -22,7 +23,7 @@ public:
     glm::vec2 start;
     glm::vec2 end;
 
-    DrawnLine(const glm::vec2& start, const glm::vec2 end, const QColor& color) : DrawnElement(color), start(start), end(end) {}
+    DrawnLine(const glm::vec2& start, const glm::vec2 end, const QColor& color, int size) : DrawnElement(color, size), start(start), end(end) {}
 };
 
 BoardWidget::BoardWidget() :
@@ -115,7 +116,7 @@ void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
     switch (mMode) {
         case Mode::DRAW:
             if (mCurrentMouseDrawnPoints == nullptr) break;
-            mCurrentMouseDrawnPoints->push_back(DrawnPoint(glm::vec2(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY)), mColor));
+            mCurrentMouseDrawnPoints->push_back(DrawnPoint(glm::vec2(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY)), mColor, mPointWidth));
             break;
         case Mode::LINE:
             if (mCurrentLine == nullptr) break;
@@ -134,7 +135,7 @@ void BoardWidget::mousePressEvent(QMouseEvent* event) {
             break;
         case Mode::LINE:
             glm::vec2 start(static_cast<float>(event->pos().x() + mOffsetX), static_cast<float>(event->pos().y() + mOffsetY));
-            mCurrentLine = new DrawnLine(start, start, mColor);
+            mCurrentLine = new DrawnLine(start, start, mColor, mPointWidth);
             break;
     }
 }
@@ -173,7 +174,7 @@ void BoardWidget::paintDrawn() {
     if (mCurrentMouseDrawnPoints != nullptr) {
         for (const auto& i: *mCurrentMouseDrawnPoints) {
             const auto pos = glm::vec2(static_cast<float>(i.pos.x), static_cast<float>(i.pos.y));
-            mRenderer->drawPoint(pos, static_cast<float>(mPointWidth), makeGlColor(i.color));
+            mRenderer->drawPoint(pos, static_cast<float>(i.size), makeGlColor(i.color));
         }
     }
 
@@ -183,11 +184,12 @@ void BoardWidget::paintDrawn() {
             if (j < pointsSet->size() - 1) {
                 const auto startPos = glm::vec2(static_cast<float>(i.pos.x), static_cast<float>(i.pos.y));
                 const auto endPos = glm::vec2(static_cast<float>(pointsSet->operator[](j + 1).pos.x), static_cast<float>(pointsSet->operator[](j + 1).pos.y));
-                const glm::vec4 color = makeGlColor(i.color);
+                const auto color = makeGlColor(i.color);
+                const auto width = static_cast<float>(i.size);
 
-                mRenderer->drawLine(startPos, endPos, static_cast<float>(mPointWidth), color);
-                mRenderer->drawPoint(startPos, static_cast<float>(mPointWidth), color);
-                mRenderer->drawPoint(endPos, static_cast<float>(mPointWidth), color);
+                mRenderer->drawLine(startPos, endPos, width, color);
+                mRenderer->drawPoint(startPos, width, color);
+                mRenderer->drawPoint(endPos, width, color);
             }
             j++;
         }
@@ -198,13 +200,13 @@ void BoardWidget::paintLines() {
     if (mCurrentLine != nullptr) {
         const auto startPos = glm::vec2(static_cast<float>(mCurrentLine->start.x), static_cast<float>(mCurrentLine->start.y));
         const auto endPos = glm::vec2(static_cast<float>(mCurrentLine->end.x), static_cast<float>(mCurrentLine->end.y));
-        mRenderer->drawLine(startPos, endPos, static_cast<float>(mPointWidth), makeGlColor(mCurrentLine->color));
+        mRenderer->drawLine(startPos, endPos, static_cast<float>(mCurrentLine->size), makeGlColor(mCurrentLine->color));
     }
 
     for (const auto& i : mLines) {
         const auto startPos = glm::vec2(static_cast<float>(i->start.x), static_cast<float>(i->start.y));
         const auto endPos = glm::vec2(static_cast<float>(i->end.x), static_cast<float>(i->end.y));
-        mRenderer->drawLine(startPos, endPos, static_cast<float>(mPointWidth), makeGlColor(i->color));
+        mRenderer->drawLine(startPos, endPos, static_cast<float>(i->size), makeGlColor(i->color));
     }
 }
 
