@@ -85,15 +85,18 @@ void BoardWidget::keyPressEvent(QKeyEvent* event) {
 }
 
 void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
+    const int x = event->pos().x();
+    const int y = event->pos().y();
+
     switch (mMode) {
         case Mode::DRAW:
             if (mCurrentMouseDrawnPoints == nullptr) break;
-            mCurrentMouseDrawnPoints->push_back(glm::vec2(static_cast<float>(event->pos().x() + mOffsetX), static_cast<float>(event->pos().y() + mOffsetY)));
+            mCurrentMouseDrawnPoints->push_back(glm::vec2(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY)));
             break;
         case Mode::LINE:
             if (mCurrentLine == nullptr) break;
-            mCurrentLine->end.x = static_cast<float>(event->pos().x() + mOffsetX);
-            mCurrentLine->end.y = static_cast<float>(event->pos().y() + mOffsetY);
+            mCurrentLine->end.x = static_cast<float>(x + mOffsetX);
+            mCurrentLine->end.y = static_cast<float>(y + mOffsetY);
             break;
     }
 
@@ -112,7 +115,7 @@ void BoardWidget::mousePressEvent(QMouseEvent* event) {
     }
 }
 
-void BoardWidget::mouseReleaseEvent(QMouseEvent* event) {
+void BoardWidget::mouseReleaseEvent(QMouseEvent*) {
     switch (mMode) {
         case Mode::DRAW:
             mMouseDrawnPoints.push_back(mCurrentMouseDrawnPoints);

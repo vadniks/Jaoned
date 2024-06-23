@@ -120,8 +120,8 @@ void Renderer::drawPoints(int count, const QVector<float>& vertices, float point
 }
 
 void Renderer::drawLine(const glm::vec2& positionStart, const glm::vec2& positionEnd, float lineWidth, const glm::vec4& color) {
-    float dx = positionEnd.x - positionStart.x;
-    float dy = positionEnd.y - positionStart.y;
+    const float dx = positionEnd.x - positionStart.x;
+    const float dy = positionEnd.y - positionStart.y;
 
     glm::vec2 normal(-dy, dx);
     normal = glm::normalize(normal);
@@ -129,10 +129,10 @@ void Renderer::drawLine(const glm::vec2& positionStart, const glm::vec2& positio
     normal.x *= lineWidth * 0.5f;
     normal.y *= lineWidth * 0.5f;
 
-    glm::vec2 c1 = positionStart - normal;
-    glm::vec2 c2 = positionStart + normal;
-    glm::vec2 c3 = positionEnd - normal;
-    glm::vec2 c4 = positionEnd + normal;
+    const glm::vec2 c1 = positionStart - normal;
+    const glm::vec2 c2 = positionStart + normal;
+    const glm::vec2 c3 = positionEnd - normal;
+    const glm::vec2 c4 = positionEnd + normal;
 
     mGl.glBindVertexArray(mVao);
 
