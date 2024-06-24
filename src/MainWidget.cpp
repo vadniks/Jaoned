@@ -20,6 +20,8 @@
 #include <QResizeEvent>
 
 MainWidget::MainWidget() : mLayout(this), mBoardWidget(new BoardWidget()), mControlsWidget(mBoardWidget) {
+    connect(&mControlsWidget, &ControlsWidget::updated, this, &MainWidget::controlsWidgetUpdated);
+
     mLayout.addWidget(&mControlsWidget, 0, Qt::AlignTop);
     mLayout.addWidget(mBoardWidget, 0, Qt::AlignVCenter);
     mLayout.addStretch();
@@ -30,11 +32,18 @@ MainWidget::~MainWidget() {
 }
 
 void MainWidget::resizeEvent(QResizeEvent* event) {
-    const auto size = event->size();
+    resizeBoardWidget();
+    QWidget::resizeEvent(event);
+}
+
+void MainWidget::resizeBoardWidget() {
+    const auto size = this->size();
     const auto probe = mControlsWidget.size();
     const auto margin = (size.width() - probe.width()) / 2;
 
     mBoardWidget->resize(probe.width(), size.height() - probe.height() - margin * 3);
+}
 
-    QWidget::resizeEvent(event);
+void MainWidget::controlsWidgetUpdated() {
+    resizeBoardWidget();
 }

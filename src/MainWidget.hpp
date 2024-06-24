@@ -38,4 +38,8 @@ public:
     DISABLE_MOVE(MainWidget)
 
     void resizeEvent(QResizeEvent* event) override;
+private:
+    void resizeBoardWidget();
+private slots:
+    void controlsWidgetUpdated();
 };

@@ -50,4 +50,6 @@ private slots:
     void colorSelected(QColor color);
     void pointWidthChanged(int width);
     void modeSelected(Mode mode);
+signals:
+    void updated();
 };

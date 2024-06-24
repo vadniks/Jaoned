@@ -90,10 +90,13 @@ ControlsWidget::ControlsWidget(BoardWidget* boardWidget) :
     mLayout.addWidget(&mModeLabel);
 
     mLayout.addStretch();
+
+    emit updated();
 }
 
 void ControlsWidget::themeSwitchClicked() {
     mBoardWidget->setTheme(mBoardWidget->theme() == Theme::Dark ? Theme::Light : Theme::Dark);
+    emit updated();
 }
 
 void ControlsWidget::colorChangeClicked() {
@@ -101,15 +104,20 @@ void ControlsWidget::colorChangeClicked() {
     dialog.setModal(true);
     connect(&dialog, &QColorDialog::colorSelected, this, &ControlsWidget::colorSelected);
     dialog.exec();
+
+    emit updated();
 }
 
 void ControlsWidget::colorSelected(QColor color) {
     color.setAlpha(0xff);
     mBoardWidget->setColor(color);
+
+    emit updated();
 }
 
 void ControlsWidget::pointWidthChanged(int width) {
     mBoardWidget->setPointWidth(width);
+    emit updated();
 }
 
 void ControlsWidget::modeSelected(Mode mode) {
@@ -120,4 +128,6 @@ void ControlsWidget::modeSelected(Mode mode) {
         mPointWidthSlider.setValue(24);
         mBoardWidget->setPointWidth(24);
     }
+
+    emit updated();
 }
