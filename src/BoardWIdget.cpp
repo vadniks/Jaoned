@@ -126,12 +126,16 @@ void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
 }
 
 void BoardWidget::mousePressEvent(QMouseEvent* event) {
+    const int x = event->pos().x();
+    const int y = event->pos().y();
+
     switch (mMode) {
         case Mode::DRAW:
             mCurrentMouseDrawnPoints = new QVector<DrawnPoint>();
+            mCurrentMouseDrawnPoints->push_back(DrawnPoint(glm::vec2(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY)), mColor, mPointWidth));
             break;
         case Mode::LINE:
-            glm::vec2 start(static_cast<float>(event->pos().x() + mOffsetX), static_cast<float>(event->pos().y() + mOffsetY));
+            glm::vec2 start(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY));
             mCurrentLine = new DrawnLine(start, start, mColor, mPointWidth);
             break;
     }
@@ -168,13 +172,6 @@ void BoardWidget::updateProjection() {
 }
 
 void BoardWidget::paintDrawn() {
-    if (mCurrentMouseDrawnPoints != nullptr) {
-        for (const auto& i: *mCurrentMouseDrawnPoints) {
-            const auto pos = glm::vec2(static_cast<float>(i.pos.x), static_cast<float>(i.pos.y));
-            mRenderer->drawPoint(pos, static_cast<float>(i.size), makeGlColor(i.color));
-        }
-    }
-
     for (auto pointsSet : mMouseDrawnPoints) {
         int j = 0;
         for (const auto& i : *pointsSet) {
@@ -185,10 +182,16 @@ void BoardWidget::paintDrawn() {
                 const auto width = static_cast<float>(i.size);
 
                 mRenderer->drawLine(startPos, endPos, width, color);
-                mRenderer->drawPoint(startPos, width * 0.75f, color);
-                mRenderer->drawPoint(endPos, width * 0.75f, color);
+                mRenderer->drawPoint(startPos, width, color); // TODO: draw circle
             }
             j++;
+        }
+    }
+
+    if (mCurrentMouseDrawnPoints != nullptr) {
+        for (const auto& i: *mCurrentMouseDrawnPoints) {
+            const auto pos = glm::vec2(static_cast<float>(i.pos.x), static_cast<float>(i.pos.y));
+            mRenderer->drawPoint(pos, static_cast<float>(i.size), makeGlColor(i.color));
         }
     }
 }
