@@ -183,7 +183,7 @@ void Renderer::drawLine(const glm::vec2& positionStart, const glm::vec2& positio
     mGl.glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), reinterpret_cast<void*>(0));
     mGl.glEnableVertexAttribArray(0);
 
-    const unsigned indicesFilled[] = {
+    const unsigned indices[] = {
         0, 1, 3,
         3, 0, 2
     };
@@ -191,8 +191,8 @@ void Renderer::drawLine(const glm::vec2& positionStart, const glm::vec2& positio
     mGl.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEbo);
     mGl.glBufferData(
         GL_ELEMENT_ARRAY_BUFFER,
-        sizeof(indicesFilled),
-        indicesFilled,
+        sizeof(indices),
+        indices,
         GL_DYNAMIC_DRAW
     );
 
