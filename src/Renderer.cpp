@@ -175,7 +175,7 @@ void Renderer::drawLine(const glm::vec2& positionStart, const glm::vec2& positio
     mGl.glBindVertexArray(0);
 }
 
-void Renderer::drawFilledCircle(const glm::vec2& positionCenter, int radius, const glm::vec4& color) { // TODO: it's not filled actually, improve the algorithm
+void Renderer::drawHollowCircle(const glm::vec2& positionCenter, int radius, const glm::vec4& color) {
     int count = 0;
     QVector<float> vertices;
 
@@ -186,12 +186,10 @@ void Renderer::drawFilledCircle(const glm::vec2& positionCenter, int radius, con
     };
 
     float x, y;
-    const float h = static_cast<float>(radius) * 2.0f;
-    const float k = static_cast<float>(radius) * 2.0f;
     for (int i = 0; i < 180; i++) {
-        x = static_cast<float>(radius) * cosf(static_cast<float>(i)) - h;
-        y = static_cast<float>(radius) * sinf(static_cast<float>(i)) + k;
-        addVertex(x + k, y - h);
+        x = static_cast<float>(radius) * cosf(static_cast<float>(i));
+        y = static_cast<float>(radius) * sinf(static_cast<float>(i));
+        addVertex(x, y);
     }
 
     if (count > 0)

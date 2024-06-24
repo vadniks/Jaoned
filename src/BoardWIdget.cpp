@@ -183,7 +183,7 @@ void BoardWidget::paintDrawn() {
 
                 mRenderer->drawLine(startPos, endPos, width, color);
                 mRenderer->drawPoint(startPos, width * 0.7f, color);
-                mRenderer->drawFilledCircle(startPos, static_cast<int>(width / 2.0f), color);
+                mRenderer->drawHollowCircle(startPos, static_cast<int>(width / 2.0f), color);
             }
             j++;
         }
@@ -192,8 +192,8 @@ void BoardWidget::paintDrawn() {
     if (mCurrentMouseDrawnPoints != nullptr) {
         for (const auto& i: *mCurrentMouseDrawnPoints) {
             const auto pos = glm::vec2(static_cast<float>(i.pos.x), static_cast<float>(i.pos.y));
-//            mRenderer->drawPoint(pos, static_cast<float>(i.size) * 0.7f, makeGlColor(i.color));
-            mRenderer->drawFilledCircle(pos, static_cast<int>(static_cast<float>(i.size) / 2.0f), makeGlColor(i.color));
+            mRenderer->drawPoint(pos, static_cast<float>(i.size) * 0.7f, makeGlColor(i.color));
+            mRenderer->drawHollowCircle(pos, static_cast<int>(static_cast<float>(i.size) / 2.0f), makeGlColor(i.color));
         }
     }
 }
