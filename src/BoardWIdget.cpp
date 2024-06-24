@@ -270,6 +270,9 @@ void BoardWidget::paintLines() {
 }
 
 void BoardWidget::paintTexts() {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
+
     for (auto i : mTexts)
         mRenderer->drawText(i->text, i->size, i->pos, makeGlColor(i->color));
 
@@ -277,6 +280,9 @@ void BoardWidget::paintTexts() {
         mRenderer->drawLine(mCurrentText->pos, mCurrentText->pos + glm::vec2(0.0f, static_cast<float>(mCurrentText->size)), 1.0f, makeGlColor(mCurrentText->color));
         mRenderer->drawText(mCurrentText->text, mCurrentText->size, mCurrentText->pos, makeGlColor(mCurrentText->color));
     }
+
+    glBlendFunc(GL_SRC_COLOR, GL_ZERO);
+    glDisable(GL_BLEND);
 }
 
 void BoardWidget::setMode(Mode mode) {
