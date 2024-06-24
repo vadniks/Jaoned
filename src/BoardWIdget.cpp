@@ -141,10 +141,9 @@ void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
             mCurrentLine->end.y = static_cast<float>(y + mOffsetY);
             break;
         case Mode::TEXT:
-            if (mCurrentText != nullptr) {
-                mCurrentText->pos.x = static_cast<float>(x + mOffsetX);
-                mCurrentText->pos.y = static_cast<float>(y + mOffsetY);
-            }
+            if (mCurrentText == nullptr) break;
+            mCurrentText->pos.x = static_cast<float>(x + mOffsetX);
+            mCurrentText->pos.y = static_cast<float>(y + mOffsetY);
             break;
         case Mode::IMAGE:
             break;
@@ -269,8 +268,10 @@ void BoardWidget::paintTexts() {
     for (auto i : mTexts)
         mRenderer->drawText(i->text, i->size, i->pos, makeGlColor(i->color));
 
-    if (mCurrentText != nullptr)
+    if (mCurrentText != nullptr) {
+        mRenderer->drawLine(mCurrentText->pos, mCurrentText->pos + glm::vec2(0.0f, static_cast<float>(mCurrentText->size)), 1.0f, makeGlColor(mCurrentText->color));
         mRenderer->drawText(mCurrentText->text, mCurrentText->size, mCurrentText->pos, makeGlColor(mCurrentText->color));
+    }
 }
 
 void BoardWidget::setMode(Mode mode) {
