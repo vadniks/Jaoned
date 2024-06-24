@@ -170,7 +170,7 @@ void BoardWidget::mousePressEvent(QMouseEvent* event) {
         case Mode::TEXT:
             {
                 glm::vec2 pos(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY));
-                mCurrentText = new DrawnText("", pos, 24, mColor);
+                mCurrentText = new DrawnText("", pos, mPointWidth, mColor);
             }
             break;
         case Mode::IMAGE:

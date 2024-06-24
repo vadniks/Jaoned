@@ -98,4 +98,9 @@ void ControlsWidget::pointWidthChanged(int width) {
 void ControlsWidget::modeSelected(Mode mode) {
     mBoardWidget->setMode(mode);
     mModeLabel.setText(makeModeString(mode));
+
+    if (mode == Mode::TEXT) {
+        mPointWidthSlider.setValue(24);
+        mBoardWidget->setPointWidth(24);
+    }
 }
