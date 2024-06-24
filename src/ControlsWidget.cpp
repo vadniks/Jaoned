@@ -5,13 +5,13 @@
 static QString makeModeString(Mode mode) {
     const QString prefix = "Currently: ";
     switch (mode) {
-        case DRAW:
+        case Mode::DRAW:
             return prefix + "draw";
-        case LINE:
+        case Mode::LINE:
             return prefix + "line";
-        case TEXT:
+        case Mode::TEXT:
             return prefix + "text";
-        case IMAGE:
+        case Mode::IMAGE:
             return prefix + "image";
     }
 }
