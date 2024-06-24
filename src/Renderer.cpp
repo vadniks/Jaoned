@@ -242,7 +242,7 @@ void Renderer::drawTexture(Texture& texture, const glm::vec2& position, const gl
     };
 
     mGl.glBindBuffer(GL_ARRAY_BUFFER, mVbo);
-    mGl.glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    mGl.glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
 
     mGl.glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), reinterpret_cast<void*>(0));
     mGl.glEnableVertexAttribArray(0);
