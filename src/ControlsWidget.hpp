@@ -22,7 +22,7 @@
 #include "BoardWidget.hpp"
 #include <QWidget>
 #include <QHBoxLayout>
-#include <QPushButton> // TODO: optimize includes
+#include <QPushButton>
 #include <QSlider>
 #include <QLabel>
 

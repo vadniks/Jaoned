@@ -66,7 +66,22 @@ static const char* const gSpriteFragmentShader = R"(
     }
 )";
 
-Renderer::Renderer(QOpenGLFunctions_3_3_Core& gl) : mGl(gl), mVbo(0), mEbo(0), mVao(0), mProjection(1.0f), mFtLib(), mFtFace() {
+static const char* FONT_FILE = "res/Roboto-Regular.ttf";
+static const char* PROJECTION = "projection";
+static const char* COLOR = "color";
+static const char* MODEL = "model";
+static const char* SPRITE_COLOR = "spriteColor";
+static const char* IS_MONO = "isMono";
+
+Renderer::Renderer(QOpenGLFunctions_3_3_Core& gl) :
+    mGl(gl),
+    mVbo(0),
+    mEbo(0),
+    mVao(0),
+    mProjection(1.0f),
+    mFtLib(),
+    mFtFace()
+{
     mShapeShader = new CompoundShader(gl, gShapeVertexShader, gShapeFragmentShader);
     mSpriteShader = new CompoundShader(gl, gSpriteVertexShader, gSpriteFragmentShader);
     mGl.glGenBuffers(1, &mVbo);
@@ -74,7 +89,7 @@ Renderer::Renderer(QOpenGLFunctions_3_3_Core& gl) : mGl(gl), mVbo(0), mEbo(0), m
     mGl.glGenVertexArrays(1, &mVao);
 
     assert(FT_Init_FreeType(&mFtLib) == 0);
-    assert(FT_New_Face(mFtLib, "res/Roboto-Regular.ttf", 0, &mFtFace) == 0);
+    assert(FT_New_Face(mFtLib, FONT_FILE, 0, &mFtFace) == 0);
 }
 
 Renderer::~Renderer() {
@@ -106,10 +121,10 @@ void Renderer::drawPoint(const glm::vec2& position, float pointSize, const glm::
     mGl.glEnableVertexAttribArray(0);
 
     mShapeShader->use();
-    mShapeShader->setValue("projection", mProjection);
-    mShapeShader->setValue("color", color);
+    mShapeShader->setValue(PROJECTION, mProjection);
+    mShapeShader->setValue(COLOR, color);
 
-    mGl.glPointSize(static_cast<float>(pointSize));
+    mGl.glPointSize(pointSize);
     mGl.glDrawArrays(GL_POINTS, 0, 1);
 
     mGl.glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -128,8 +143,8 @@ void Renderer::drawPoints(int count, const QVector<float>& vertices, float point
     mGl.glEnableVertexAttribArray(0);
 
     mShapeShader->use();
-    mShapeShader->setValue("projection", mProjection); // TODO: extract constants
-    mShapeShader->setValue("color", color);
+    mShapeShader->setValue(PROJECTION, mProjection);
+    mShapeShader->setValue(COLOR, color);
 
     mGl.glPointSize(pointSize);
     mGl.glDrawArrays(drawMode, 0, count);
@@ -182,10 +197,10 @@ void Renderer::drawLine(const glm::vec2& positionStart, const glm::vec2& positio
     );
 
     mShapeShader->use();
-    mShapeShader->setValue("projection", mProjection);
-    mShapeShader->setValue("color", color);
+    mShapeShader->setValue(PROJECTION, mProjection);
+    mShapeShader->setValue(COLOR, color);
 
-    mGl.glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, static_cast<void*>(0));
+    mGl.glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, reinterpret_cast<void*>(0));
 
     mGl.glBindBuffer(GL_ARRAY_BUFFER, 0);
     mGl.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -242,10 +257,10 @@ void Renderer::drawTexture(Texture& texture, const glm::vec2& position, const gl
     model = glm::scale(model, glm::vec3(size[0], size[1], 1.0f));
 
     mSpriteShader->use();
-    mSpriteShader->setValue("projection", mProjection);
-    mSpriteShader->setValue("model", model);
-    mSpriteShader->setValue("spriteColor", color);
-    mSpriteShader->setValue("isMono", isMono ? 1 : 0);
+    mSpriteShader->setValue(PROJECTION, mProjection);
+    mSpriteShader->setValue(MODEL, model);
+    mSpriteShader->setValue(SPRITE_COLOR, color);
+    mSpriteShader->setValue(IS_MONO, isMono ? 1 : 0);
 
     mGl.glActiveTexture(GL_TEXTURE0);
     texture.bind();
