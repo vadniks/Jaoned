@@ -6,24 +6,25 @@
 class DrawnElement {
 public:
     QColor color;
-    int size;
 
-    explicit DrawnElement(QColor color, int size) : color(color), size(size) {}
+    explicit DrawnElement(QColor color) : color(color) {}
 };
 
 class DrawnPoint final : public DrawnElement {
 public:
     glm::vec2 pos;
+    int width;
 
-    DrawnPoint(const glm::vec2& pos, const QColor& color, int size) : DrawnElement(color, size), pos(pos) {}
+    DrawnPoint(const glm::vec2& pos, const QColor& color, int width) : DrawnElement(color), pos(pos), width(width) {}
 };
 
 class DrawnLine final : public DrawnElement {
 public:
     glm::vec2 start;
     glm::vec2 end;
+    int width;
 
-    DrawnLine(const glm::vec2& start, const glm::vec2 end, const QColor& color, int size) : DrawnElement(color, size), start(start), end(end) {}
+    DrawnLine(const glm::vec2& start, const glm::vec2 end, const QColor& color, int width) : DrawnElement(color), start(start), end(end), width(width) {}
 };
 
 BoardWidget::BoardWidget() :
@@ -188,7 +189,7 @@ void BoardWidget::paintDrawn() {
                 const auto startPos = glm::vec2(static_cast<float>(i.pos.x), static_cast<float>(i.pos.y));
                 const auto endPos = glm::vec2(static_cast<float>(pointsSet->operator[](j + 1).pos.x), static_cast<float>(pointsSet->operator[](j + 1).pos.y));
                 const auto color = makeGlColor(i.color);
-                const auto width = static_cast<float>(i.size);
+                const auto width = static_cast<float>(i.width);
 
                 mRenderer->drawLine(startPos, endPos, width, color);
                 mRenderer->drawPoint(startPos, width * 0.7f, color);
@@ -201,8 +202,8 @@ void BoardWidget::paintDrawn() {
     if (mCurrentMouseDrawnPoints != nullptr) {
         for (const auto& i: *mCurrentMouseDrawnPoints) {
             const auto pos = glm::vec2(static_cast<float>(i.pos.x), static_cast<float>(i.pos.y));
-            mRenderer->drawPoint(pos, static_cast<float>(i.size) * 0.7f, makeGlColor(i.color));
-            mRenderer->drawHollowCircle(pos, static_cast<int>(static_cast<float>(i.size) / 2.0f), makeGlColor(i.color));
+            mRenderer->drawPoint(pos, static_cast<float>(i.width) * 0.7f, makeGlColor(i.color));
+            mRenderer->drawHollowCircle(pos, static_cast<int>(static_cast<float>(i.width) / 2.0f), makeGlColor(i.color));
         }
     }
 }
@@ -211,13 +212,13 @@ void BoardWidget::paintLines() {
     for (const auto& i : mLines) {
         const auto startPos = glm::vec2(static_cast<float>(i->start.x), static_cast<float>(i->start.y));
         const auto endPos = glm::vec2(static_cast<float>(i->end.x), static_cast<float>(i->end.y));
-        mRenderer->drawLine(startPos, endPos, static_cast<float>(i->size), makeGlColor(i->color));
+        mRenderer->drawLine(startPos, endPos, static_cast<float>(i->width), makeGlColor(i->color));
     }
 
     if (mCurrentLine != nullptr) {
         const auto startPos = glm::vec2(static_cast<float>(mCurrentLine->start.x), static_cast<float>(mCurrentLine->start.y));
         const auto endPos = glm::vec2(static_cast<float>(mCurrentLine->end.x), static_cast<float>(mCurrentLine->end.y));
-        mRenderer->drawLine(startPos, endPos, static_cast<float>(mCurrentLine->size), makeGlColor(mCurrentLine->color));
+        mRenderer->drawLine(startPos, endPos, static_cast<float>(mCurrentLine->width), makeGlColor(mCurrentLine->color));
     }
 }
 
