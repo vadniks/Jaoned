@@ -169,12 +169,9 @@ void BoardWidget::mousePressEvent(QMouseEvent* event) {
             }
             break;
         case Mode::TEXT:
-            if (mCurrentText == nullptr) {
+            {
                 glm::vec2 pos(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY));
                 mCurrentText = new DrawnText("", pos, 24, mColor);
-            } else {
-                mTexts.push_back(mCurrentText);
-                mCurrentText = nullptr;
             }
             break;
         case Mode::IMAGE:
@@ -193,6 +190,8 @@ void BoardWidget::mouseReleaseEvent(QMouseEvent*) {
             mCurrentLine = nullptr;
             break;
         case Mode::TEXT:
+            mTexts.push_back(mCurrentText);
+            mCurrentText = nullptr;
             break;
         case Mode::IMAGE:
             break;
