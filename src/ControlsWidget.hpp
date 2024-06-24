@@ -24,7 +24,7 @@ private:
     QPushButton mLineButton;
     QPushButton mTextButton;
     QPushButton mImageButton;
-    QLabel mDrawModeLabel;
+    QLabel mModeLabel;
 public:
     explicit ControlsWidget(BoardWidget* boardWidget);
 private slots:

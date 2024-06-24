@@ -2,7 +2,7 @@
 #include "ControlsWidget.hpp"
 #include <QColorDialog>
 
-static QString makeDrawModeString(Mode mode) {
+static QString makeModeString(Mode mode) {
     const QString prefix = "Currently: ";
     switch (mode) {
         case DRAW:
@@ -69,8 +69,8 @@ ControlsWidget::ControlsWidget(BoardWidget* boardWidget) :
     connect(&mImageButton, &QPushButton::clicked, this, [this](){ modeSelected(Mode::IMAGE); });
     mLayout.addWidget(&mImageButton);
 
-    mDrawModeLabel.setText(makeDrawModeString(mBoardWidget->mode()));
-    mLayout.addWidget(&mDrawModeLabel);
+    mModeLabel.setText(makeModeString(mBoardWidget->mode()));
+    mLayout.addWidget(&mModeLabel);
 
     mLayout.addStretch();
 }
@@ -97,5 +97,5 @@ void ControlsWidget::pointWidthChanged(int width) {
 
 void ControlsWidget::modeSelected(Mode mode) {
     mBoardWidget->setMode(mode);
-    mDrawModeLabel.setText(makeDrawModeString(mode));
+    mModeLabel.setText(makeModeString(mode));
 }
