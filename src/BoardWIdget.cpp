@@ -27,7 +27,7 @@ public:
 };
 
 BoardWidget::BoardWidget() :
-    mMode(Mode::DRAW),
+    mMode(Mode::LINE),
     mTheme(Theme::Dark),
     mColor(0xff, 0xff, 0xff),
     mPointWidth(5),
@@ -199,16 +199,16 @@ void BoardWidget::paintDrawn() {
 }
 
 void BoardWidget::paintLines() {
-    if (mCurrentLine != nullptr) {
-        const auto startPos = glm::vec2(static_cast<float>(mCurrentLine->start.x), static_cast<float>(mCurrentLine->start.y));
-        const auto endPos = glm::vec2(static_cast<float>(mCurrentLine->end.x), static_cast<float>(mCurrentLine->end.y));
-        mRenderer->drawLine(startPos, endPos, static_cast<float>(mCurrentLine->size), makeGlColor(mCurrentLine->color));
-    }
-
     for (const auto& i : mLines) {
         const auto startPos = glm::vec2(static_cast<float>(i->start.x), static_cast<float>(i->start.y));
         const auto endPos = glm::vec2(static_cast<float>(i->end.x), static_cast<float>(i->end.y));
         mRenderer->drawLine(startPos, endPos, static_cast<float>(i->size), makeGlColor(i->color));
+    }
+
+    if (mCurrentLine != nullptr) {
+        const auto startPos = glm::vec2(static_cast<float>(mCurrentLine->start.x), static_cast<float>(mCurrentLine->start.y));
+        const auto endPos = glm::vec2(static_cast<float>(mCurrentLine->end.x), static_cast<float>(mCurrentLine->end.y));
+        mRenderer->drawLine(startPos, endPos, static_cast<float>(mCurrentLine->size), makeGlColor(mCurrentLine->color));
     }
 }
 
