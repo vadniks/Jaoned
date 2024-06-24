@@ -7,7 +7,7 @@ class DrawnElement {
 public:
     QColor color;
 
-    explicit DrawnElement(QColor color) : color(color) {}
+    explicit DrawnElement(const QColor& color) : color(color) {}
 };
 
 class DrawnPoint final : public DrawnElement {
@@ -24,7 +24,17 @@ public:
     glm::vec2 end;
     int width;
 
+    // TODO: change order of arguments
     DrawnLine(const glm::vec2& start, const glm::vec2 end, const QColor& color, int width) : DrawnElement(color), start(start), end(end), width(width) {}
+};
+
+class DrawnText final : public DrawnElement {
+public:
+    QString text;
+    glm::vec2 pos;
+    int size;
+
+    DrawnText(const QString& text, const glm::vec2& pos, int size, const QColor& color) : DrawnElement(color), text(text), pos(pos), size(size) {}
 };
 
 BoardWidget::BoardWidget() :
@@ -39,7 +49,9 @@ BoardWidget::BoardWidget() :
     mMouseDrawnPoints(),
     mCurrentMouseDrawnPoints(nullptr),
     mLines(),
-    mCurrentLine(nullptr)
+    mCurrentLine(nullptr),
+    mTexts(),
+    mCurrentText(nullptr)
 {
     setFocusPolicy(Qt::FocusPolicy::ClickFocus);
 }
@@ -49,6 +61,9 @@ BoardWidget::~BoardWidget() {
         delete i;
 
     for (auto i : mLines)
+        delete i;
+
+    for (auto i : mTexts)
         delete i;
 
     delete mRenderer;
@@ -78,6 +93,7 @@ void BoardWidget::paintGL() {
 
     paintDrawn();
     paintLines();
+    paintTexts();
 }
 
 void BoardWidget::resizeGL(int w, int h) {
@@ -89,19 +105,22 @@ void BoardWidget::keyPressEvent(QKeyEvent* event) {
     const auto step = 10;
 
     switch (event->key()) {
-        case Qt::Key::Key_W:
+        case Qt::Key::Key_Up:
             mOffsetY -= step;
             break;
-        case Qt::Key::Key_A:
+        case Qt::Key::Key_Left:
             mOffsetX -= step;
             break;
-        case Qt::Key::Key_S:
+        case Qt::Key::Key_Down:
             mOffsetY += step;
             break;
-        case Qt::Key::Key_D:
+        case Qt::Key::Key_Right:
             mOffsetX += step;
             break;
     }
+
+    if (mCurrentText != nullptr)
+        mCurrentText->text = mCurrentText->text + event->text();
 
     updateProjection();
     update();
@@ -121,6 +140,14 @@ void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
             mCurrentLine->end.x = static_cast<float>(x + mOffsetX);
             mCurrentLine->end.y = static_cast<float>(y + mOffsetY);
             break;
+        case Mode::TEXT:
+            if (mCurrentText != nullptr) {
+                mCurrentText->pos.x = static_cast<float>(x + mOffsetX);
+                mCurrentText->pos.y = static_cast<float>(y + mOffsetY);
+            }
+            break;
+        case Mode::IMAGE:
+            break;
     }
 
     update();
@@ -136,8 +163,21 @@ void BoardWidget::mousePressEvent(QMouseEvent* event) {
             mCurrentMouseDrawnPoints->push_back(DrawnPoint(glm::vec2(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY)), mColor, mPointWidth));
             break;
         case Mode::LINE:
-            glm::vec2 start(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY));
-            mCurrentLine = new DrawnLine(start, start, mColor, mPointWidth);
+            {
+                glm::vec2 start(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY));
+                mCurrentLine = new DrawnLine(start, start, mColor, mPointWidth);
+            }
+            break;
+        case Mode::TEXT:
+            if (mCurrentText == nullptr) {
+                glm::vec2 pos(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY));
+                mCurrentText = new DrawnText("", pos, 24, mColor);
+            } else {
+                mTexts.push_back(mCurrentText);
+                mCurrentText = nullptr;
+            }
+            break;
+        case Mode::IMAGE:
             break;
     }
 }
@@ -151,6 +191,10 @@ void BoardWidget::mouseReleaseEvent(QMouseEvent*) {
         case Mode::LINE:
             mLines.push_back(mCurrentLine);
             mCurrentLine = nullptr;
+            break;
+        case Mode::TEXT:
+            break;
+        case Mode::IMAGE:
             break;
     }
 
@@ -209,7 +253,7 @@ void BoardWidget::paintDrawn() {
 }
 
 void BoardWidget::paintLines() {
-    for (const auto& i : mLines) {
+    for (auto i : mLines) {
         const auto startPos = glm::vec2(static_cast<float>(i->start.x), static_cast<float>(i->start.y));
         const auto endPos = glm::vec2(static_cast<float>(i->end.x), static_cast<float>(i->end.y));
         mRenderer->drawLine(startPos, endPos, static_cast<float>(i->width), makeGlColor(i->color));
@@ -220,6 +264,14 @@ void BoardWidget::paintLines() {
         const auto endPos = glm::vec2(static_cast<float>(mCurrentLine->end.x), static_cast<float>(mCurrentLine->end.y));
         mRenderer->drawLine(startPos, endPos, static_cast<float>(mCurrentLine->width), makeGlColor(mCurrentLine->color));
     }
+}
+
+void BoardWidget::paintTexts() {
+    for (auto i : mTexts)
+        mRenderer->drawText(i->text, i->size, i->pos, makeGlColor(i->color));
+
+    if (mCurrentText != nullptr)
+        mRenderer->drawText(mCurrentText->text, mCurrentText->size, mCurrentText->pos, makeGlColor(mCurrentText->color));
 }
 
 void BoardWidget::setMode(Mode mode) {

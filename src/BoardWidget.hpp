@@ -12,6 +12,7 @@
 class DrawnElement;
 class DrawnPoint;
 class DrawnLine;
+class DrawnText;
 
 class BoardWidget final : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core {
     Q_OBJECT
@@ -27,6 +28,8 @@ private:
     QVector<DrawnPoint>* mCurrentMouseDrawnPoints; // nullable
     QVector<DrawnLine*> mLines;
     DrawnLine* mCurrentLine; // nullable
+    QVector<DrawnText*> mTexts;
+    DrawnText* mCurrentText; // nullable
 public:
     static inline int MAX_POINT_WIDTH = 100;
 public:
@@ -49,6 +52,7 @@ private:
     void updateProjection();
     void paintDrawn();
     void paintLines();
+    void paintTexts();
 public slots:
     void setMode(Mode mode);
     void setTheme(Theme theme);
