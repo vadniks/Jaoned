@@ -27,7 +27,7 @@ public:
 };
 
 BoardWidget::BoardWidget() :
-    mMode(Mode::LINE),
+    mMode(Mode::DRAW),
     mTheme(Theme::Dark),
     mColor(0xff, 0xff, 0xff),
     mPointWidth(5),
