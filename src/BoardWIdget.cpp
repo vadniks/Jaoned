@@ -189,8 +189,13 @@ void BoardWidget::mouseReleaseEvent(QMouseEvent*) {
             mCurrentLine = nullptr;
             break;
         case Mode::TEXT:
-            mTexts.push_back(mCurrentText);
-            mCurrentText = nullptr;
+            if (!mCurrentText->text.isEmpty()) {
+                mTexts.push_back(mCurrentText);
+                mCurrentText = nullptr;
+            } else {
+                delete mCurrentText;
+                mCurrentText = nullptr;
+            }
             break;
         case Mode::IMAGE:
             break;
