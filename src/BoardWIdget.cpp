@@ -182,7 +182,7 @@ void BoardWidget::paintDrawn() {
                 const auto width = static_cast<float>(i.size);
 
                 mRenderer->drawLine(startPos, endPos, width, color);
-                mRenderer->drawPoint(startPos, width, color); // TODO: draw circle
+                mRenderer->drawFilledCircle(startPos, static_cast<int>(width / 2.0f), color);
             }
             j++;
         }
