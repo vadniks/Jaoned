@@ -171,6 +171,15 @@ void BoardWidget::updateProjection() {
     mRenderer->setProjection(mProjection);
 }
 
+static glm::vec4 makeGlColor(const QColor& color) {
+    return {
+        static_cast<float>(color.red()) / 255.0f,
+        static_cast<float>(color.green()) / 255.0f,
+        static_cast<float>(color.blue()) / 255.0f,
+        static_cast<float>(color.alpha()) / 255.0f
+    };
+}
+
 void BoardWidget::paintDrawn() {
     for (auto pointsSet : mMouseDrawnPoints) {
         int j = 0;
@@ -210,15 +219,6 @@ void BoardWidget::paintLines() {
         const auto endPos = glm::vec2(static_cast<float>(mCurrentLine->end.x), static_cast<float>(mCurrentLine->end.y));
         mRenderer->drawLine(startPos, endPos, static_cast<float>(mCurrentLine->size), makeGlColor(mCurrentLine->color));
     }
-}
-
-glm::vec4 BoardWidget::makeGlColor(const QColor& color) const {
-    return {
-        static_cast<float>(color.red()) / 255.0f,
-        static_cast<float>(color.green()) / 255.0f,
-        static_cast<float>(color.blue()) / 255.0f,
-        static_cast<float>(color.alpha()) / 255.0f
-    };
 }
 
 void BoardWidget::setMode(Mode mode) {

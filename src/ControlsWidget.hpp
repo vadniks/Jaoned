@@ -21,8 +21,10 @@ private:
     QLabel mPointWidthLabel;
     QSlider mPointWidthSlider;
     QPushButton mDrawButton;
-    QPushButton mTextButton;
     QPushButton mLineButton;
+    QPushButton mTextButton;
+    QPushButton mImageButton;
+    QLabel mDrawModeLabel;
 public:
     explicit ControlsWidget(BoardWidget* boardWidget);
 private slots:

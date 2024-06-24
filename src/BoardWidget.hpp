@@ -49,7 +49,6 @@ private:
     void updateProjection();
     void paintDrawn();
     void paintLines();
-    glm::vec4 makeGlColor(const QColor& color) const;
 public slots:
     void setMode(Mode mode);
     void setTheme(Theme theme);

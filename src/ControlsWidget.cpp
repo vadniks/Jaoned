@@ -2,6 +2,20 @@
 #include "ControlsWidget.hpp"
 #include <QColorDialog>
 
+static QString makeDrawModeString(Mode mode) {
+    const QString prefix = "Currently: ";
+    switch (mode) {
+        case DRAW:
+            return prefix + "draw";
+        case LINE:
+            return prefix + "line";
+        case TEXT:
+            return prefix + "text";
+        case IMAGE:
+            return prefix + "image";
+    }
+}
+
 ControlsWidget::ControlsWidget(BoardWidget* boardWidget) :
     mBoardWidget(boardWidget),
     mLayout(this),
@@ -42,11 +56,17 @@ ControlsWidget::ControlsWidget(BoardWidget* boardWidget) :
     mDrawButton.setText("Draw");
     mLayout.addWidget(&mDrawButton);
 
+    mLineButton.setText("Line");
+    mLayout.addWidget(&mLineButton);
+
     mTextButton.setText("Text");
     mLayout.addWidget(&mTextButton);
 
-    mLineButton.setText("Line");
-    mLayout.addWidget(&mLineButton);
+    mImageButton.setText("Image");
+    mLayout.addWidget(&mImageButton);
+
+    mDrawModeLabel.setText(makeDrawModeString(mBoardWidget->mode()));
+    mLayout.addWidget(&mDrawModeLabel);
 
     mLayout.addStretch();
 }
