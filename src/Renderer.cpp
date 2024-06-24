@@ -177,15 +177,19 @@ void Renderer::drawFilledCircle(const glm::vec2& positionCenter, int radius, con
     int count = 0;
     QVector<float> vertices;
 
-    const int segments = 100;
-    for (int i = 0; i < segments; i++) {
-        const float theta = 2.0f * M_PIf * static_cast<float>(i) / static_cast<float>(segments);
-        const float x = static_cast<float>(radius) * cosf(theta);
-        const float y = static_cast<float>(radius) * sinf(theta);
-
+    const auto addVertex = [&](float x, float y) {
         count += 2;
         vertices.resize(static_cast<long>(count * sizeof(float)));
         vertices[count - 2] = positionCenter.x + x; vertices[count - 1] = positionCenter.y + y;
+    };
+
+    float x, y;
+    const float h = static_cast<float>(radius) * 2.0f;
+    const float k = static_cast<float>(radius) * 2.0f;
+    for (int i = 0; i < 180; i++) {
+        x = static_cast<float>(radius) * cosf(static_cast<float>(i)) - h;
+        y = static_cast<float>(radius) * sinf(static_cast<float>(i)) + k;
+        addVertex(x + k, y - h);
     }
 
     if (count > 0)
