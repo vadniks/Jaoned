@@ -27,7 +27,7 @@ public:
     void setProjection(const glm::mat4& projection);
 
     void drawPoint(const glm::vec2& position, float pointSize, const glm::vec4& color);
-    void drawPoints(int count, const QVector<float>& vertices, float pointSize, const glm::vec4& color);
+    void drawPoints(int count, const QVector<float>& vertices, float pointSize, const glm::vec4& color, int drawMode);
     void drawLine(const glm::vec2& positionStart, const glm::vec2& positionEnd, float lineWidth, const glm::vec4& color);
     void drawFilledCircle(const glm::vec2& positionCenter, int radius, const glm::vec4& color);
     void drawTexture(Texture& texture, const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color, bool isMono = false);

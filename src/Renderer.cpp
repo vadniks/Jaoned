@@ -99,7 +99,9 @@ void Renderer::drawPoint(const glm::vec2& position, float pointSize, const glm::
     mGl.glBindVertexArray(0);
 }
 
-void Renderer::drawPoints(int count, const QVector<float>& vertices, float pointSize, const glm::vec4& color) {
+void Renderer::drawPoints(int count, const QVector<float>& vertices, float pointSize, const glm::vec4& color, int drawMode) {
+    assert(drawMode == GL_POINTS || drawMode == GL_TRIANGLES);
+
     mGl.glBindVertexArray(mVao);
 
     mGl.glBindBuffer(GL_ARRAY_BUFFER, mVbo);
@@ -113,7 +115,7 @@ void Renderer::drawPoints(int count, const QVector<float>& vertices, float point
     mShapeShader->setValue("color", color);
 
     mGl.glPointSize(static_cast<float>(pointSize));
-    mGl.glDrawArrays(GL_POINTS, 0, count);
+    mGl.glDrawArrays(drawMode, 0, count);
 
     mGl.glBindBuffer(GL_ARRAY_BUFFER, 0);
     mGl.glBindVertexArray(0);
@@ -173,7 +175,7 @@ void Renderer::drawLine(const glm::vec2& positionStart, const glm::vec2& positio
     mGl.glBindVertexArray(0);
 }
 
-void Renderer::drawFilledCircle(const glm::vec2& positionCenter, int radius, const glm::vec4& color) {
+void Renderer::drawFilledCircle(const glm::vec2& positionCenter, int radius, const glm::vec4& color) { // TODO: it's not filled actually, improve the algorithm
     int count = 0;
     QVector<float> vertices;
 
@@ -193,7 +195,7 @@ void Renderer::drawFilledCircle(const glm::vec2& positionCenter, int radius, con
     }
 
     if (count > 0)
-        drawPoints(count, vertices, 1.0f, color);
+        drawPoints(count, vertices, 1.0f, color, GL_TRIANGLES);
 }
 
 void Renderer::drawTexture(Texture& texture, const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color, bool isMono) {
