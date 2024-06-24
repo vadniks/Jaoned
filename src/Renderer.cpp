@@ -114,7 +114,7 @@ void Renderer::drawPoints(int count, const QVector<float>& vertices, float point
     mShapeShader->setValue("projection", mProjection); // TODO: extract constants
     mShapeShader->setValue("color", color);
 
-    mGl.glPointSize(static_cast<float>(pointSize));
+    mGl.glPointSize(pointSize);
     mGl.glDrawArrays(drawMode, 0, count);
 
     mGl.glBindBuffer(GL_ARRAY_BUFFER, 0);

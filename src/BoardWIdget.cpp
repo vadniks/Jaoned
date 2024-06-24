@@ -192,7 +192,7 @@ void BoardWidget::paintDrawn() {
     if (mCurrentMouseDrawnPoints != nullptr) {
         for (const auto& i: *mCurrentMouseDrawnPoints) {
             const auto pos = glm::vec2(static_cast<float>(i.pos.x), static_cast<float>(i.pos.y));
-            mRenderer->drawPoint(pos, static_cast<float>(i.size) * 0.7f, makeGlColor(i.color));
+//            mRenderer->drawPoint(pos, static_cast<float>(i.size) * 0.7f, makeGlColor(i.color));
             mRenderer->drawFilledCircle(pos, static_cast<int>(static_cast<float>(i.size) / 2.0f), makeGlColor(i.color));
         }
     }
