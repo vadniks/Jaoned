@@ -32,4 +32,5 @@ private slots:
     void colorChangeClicked();
     void colorSelected(QColor color);
     void pointWidthChanged(int width);
+    void modeSelected(Mode mode);
 };

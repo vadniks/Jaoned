@@ -54,15 +54,19 @@ ControlsWidget::ControlsWidget(BoardWidget* boardWidget) :
     mLayout.addStretch();
 
     mDrawButton.setText("Draw");
+    connect(&mDrawButton, &QPushButton::clicked, this, [this](){ modeSelected(Mode::DRAW); });
     mLayout.addWidget(&mDrawButton);
 
     mLineButton.setText("Line");
+    connect(&mLineButton, &QPushButton::clicked, this, [this](){ modeSelected(Mode::LINE); });
     mLayout.addWidget(&mLineButton);
 
     mTextButton.setText("Text");
+    connect(&mTextButton, &QPushButton::clicked, this, [this](){ modeSelected(Mode::TEXT); });
     mLayout.addWidget(&mTextButton);
 
     mImageButton.setText("Image");
+    connect(&mImageButton, &QPushButton::clicked, this, [this](){ modeSelected(Mode::IMAGE); });
     mLayout.addWidget(&mImageButton);
 
     mDrawModeLabel.setText(makeDrawModeString(mBoardWidget->mode()));
@@ -89,4 +93,9 @@ void ControlsWidget::colorSelected(QColor color) {
 
 void ControlsWidget::pointWidthChanged(int width) {
     mBoardWidget->setPointWidth(width);
+}
+
+void ControlsWidget::modeSelected(Mode mode) {
+    mBoardWidget->setMode(mode);
+    mDrawModeLabel.setText(makeDrawModeString(mode));
 }
