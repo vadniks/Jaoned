@@ -20,19 +20,17 @@
 #include <QKeyEvent>
 #include <glm/ext/matrix_clip_space.hpp>
 
-class DrawnElement {
-public:
-    QColor color;
+// TODO: add clear button
 
-    explicit DrawnElement(const QColor& color) : color(color) {}
-};
+class DrawnElement {};
 
 class DrawnPoint final : public DrawnElement {
 public:
     glm::vec2 pos;
     int width;
+    QColor color;
 
-    DrawnPoint(const glm::vec2& pos, const QColor& color, int width) : DrawnElement(color), pos(pos), width(width) {}
+    DrawnPoint(const glm::vec2& pos, int width, const QColor& color) : pos(pos), width(width), color(color) {}
 };
 
 class DrawnLine final : public DrawnElement {
@@ -40,9 +38,9 @@ public:
     glm::vec2 start;
     glm::vec2 end;
     int width;
+    QColor color;
 
-    // TODO: change order of arguments
-    DrawnLine(const glm::vec2& start, const glm::vec2 end, const QColor& color, int width) : DrawnElement(color), start(start), end(end), width(width) {}
+    DrawnLine(const glm::vec2& start, const glm::vec2 end, int width, const QColor& color) : start(start), end(end), width(width), color(color) {}
 };
 
 class DrawnText final : public DrawnElement {
@@ -50,8 +48,9 @@ public:
     QString text;
     glm::vec2 pos;
     int size;
+    QColor color;
 
-    DrawnText(const QString& text, const glm::vec2& pos, int size, const QColor& color) : DrawnElement(color), text(text), pos(pos), size(size) {}
+    DrawnText(const QString& text, const glm::vec2& pos, int size, const QColor& color) : text(text), pos(pos), size(size), color(color) {}
 };
 
 class DrawnImage final : public DrawnElement {
@@ -60,7 +59,7 @@ public:
     glm::vec2 size;
     Texture* texture;
 
-    DrawnImage(const glm::vec2& pos, const glm::vec2& size, Texture* texture) : DrawnElement(QColor(255, 255, 255)), pos(pos), size(size), texture(texture) {}
+    DrawnImage(const glm::vec2& pos, const glm::vec2& size, Texture* texture) : pos(pos), size(size), texture(texture) {}
 
     ~DrawnImage() {
         delete texture;
@@ -174,7 +173,7 @@ void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
     switch (mMode) {
         case Mode::DRAW:
             if (mCurrentMouseDrawnPoints == nullptr) break;
-            mCurrentMouseDrawnPoints->push_back(DrawnPoint(glm::vec2(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY)), mColor, mPointWidth));
+            mCurrentMouseDrawnPoints->push_back(DrawnPoint(glm::vec2(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY)), mPointWidth, mColor));
             break;
         case Mode::LINE:
             if (mCurrentLine == nullptr) break;
@@ -203,12 +202,12 @@ void BoardWidget::mousePressEvent(QMouseEvent* event) {
     switch (mMode) {
         case Mode::DRAW:
             mCurrentMouseDrawnPoints = new QVector<DrawnPoint>();
-            mCurrentMouseDrawnPoints->push_back(DrawnPoint(glm::vec2(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY)), mColor, mPointWidth));
+            mCurrentMouseDrawnPoints->push_back(DrawnPoint(glm::vec2(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY)), mPointWidth, mColor));
             break;
         case Mode::LINE:
             {
                 glm::vec2 start(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY));
-                mCurrentLine = new DrawnLine(start, start, mColor, mPointWidth);
+                mCurrentLine = new DrawnLine(start, start, mPointWidth, mColor);
             }
             break;
         case Mode::TEXT:
@@ -352,11 +351,13 @@ void BoardWidget::paintTexts() {
 void BoardWidget::paintImages() {
     blending(true);
 
+    const auto color = glm::vec4(1.0f);
+
     for (auto i : mImages)
-        mRenderer->drawTexture(*(i->texture), i->pos, i->size, 0.0f, makeGlColor(i->color));
+        mRenderer->drawTexture(*(i->texture), i->pos, i->size, 0.0f, color);
 
     if (mDrawCurrentImage)
-        mRenderer->drawTexture(*(mCurrentImage->texture), mCurrentImage->pos, mCurrentImage->size, 0.0f, makeGlColor(mCurrentImage->color));
+        mRenderer->drawTexture(*(mCurrentImage->texture), mCurrentImage->pos, mCurrentImage->size, 0.0f, color);
 
     blending(false);
 }
