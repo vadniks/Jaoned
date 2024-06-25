@@ -28,7 +28,7 @@
 #include <glm/glm.hpp>
 
 class DrawnElement;
-class DrawnPoint;
+class DrawnPointsSet;
 class DrawnLine;
 class DrawnText;
 class DrawnImage;
@@ -43,8 +43,8 @@ private:
     glm::mat4 mProjection;
     Renderer* mRenderer;
     int mOffsetX, mOffsetY;
-    QVector<QVector<DrawnPoint>*> mMouseDrawnPoints; // TODO: rename
-    QVector<DrawnPoint>* mCurrentMouseDrawnPoints; // nullable
+    QVector<DrawnPointsSet*> mPointsSets;
+    DrawnPointsSet* mCurrentPointsSet; // nullable
     QVector<DrawnLine*> mLines;
     DrawnLine* mCurrentLine; // nullable
     QVector<DrawnText*> mTexts;
