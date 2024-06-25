@@ -406,6 +406,15 @@ void BoardWidget::setCurrentTexture(const glm::vec2& size, const uchar* data) {
     mCurrentImage = new DrawnImage(glm::vec2(0.0f), size, texture);
 }
 
+void BoardWidget::clear() {
+    for (auto i : mElements)
+        delete i;
+
+    mElements.clear();
+
+    update();
+}
+
 Mode BoardWidget::mode() const {
     return mMode;
 }

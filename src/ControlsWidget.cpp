@@ -93,6 +93,12 @@ ControlsWidget::ControlsWidget(BoardWidget* boardWidget) :
 
     mLayout.addStretch();
 
+    mClearButton.setText("Clear");
+    connect(&mClearButton, &QPushButton::clicked, this, &ControlsWidget::clearClicked);
+    mLayout.addWidget(&mClearButton);
+
+    mLayout.addStretch();
+
     emit updated();
 }
 
@@ -158,5 +164,10 @@ void ControlsWidget::imageSelected(const QString& path) {
     modeSelected(Mode::IMAGE);
     mBoardWidget->setCurrentTexture(glm::vec2(image.width(), image.height()), image.toImage().convertToFormat(QImage::Format::Format_RGBA8888).constBits());
 
+    emit updated();
+}
+
+void ControlsWidget::clearClicked() {
+    mBoardWidget->clear();
     emit updated();
 }

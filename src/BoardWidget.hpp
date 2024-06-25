@@ -80,6 +80,7 @@ public slots:
     void setColor(const QColor& color);
     void setPointWidth(int width);
     void setCurrentTexture(const glm::vec2& size, const uchar* data);
+    void clear();
 public:
     Mode mode() const;
     Theme theme() const;

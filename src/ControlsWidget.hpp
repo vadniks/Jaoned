@@ -42,6 +42,7 @@ private:
     QPushButton mTextButton;
     QPushButton mImageButton;
     QLabel mModeLabel;
+    QPushButton mClearButton;
 public:
     explicit ControlsWidget(BoardWidget* boardWidget);
     void updateMode();
@@ -53,6 +54,7 @@ private slots:
     void modeSelected(Mode mode);
     void imageSelectClicked();
     void imageSelected(const QString& path);
+    void clearClicked();
 signals:
-    void updated();
+    void updated(); // implemented elsewhere by QtMoc automatically
 };
