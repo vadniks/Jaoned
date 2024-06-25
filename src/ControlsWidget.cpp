@@ -152,7 +152,7 @@ void ControlsWidget::imageSelected(const QString& path) {
     }
 
     modeSelected(Mode::IMAGE);
-    mBoardWidget->addImage(glm::vec2(image.width(), image.height()), image.toImage().convertToFormat(QImage::Format::Format_RGBA8888).constBits());
+    mBoardWidget->setCurrentTexture(glm::vec2(image.width(), image.height()), image.toImage().convertToFormat(QImage::Format::Format_RGBA8888).constBits());
 
     emit updated();
 }

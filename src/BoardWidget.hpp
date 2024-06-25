@@ -49,6 +49,8 @@ private:
     QVector<DrawnText*> mTexts;
     DrawnText* mCurrentText; // nullable
     QVector<DrawnImage*> mImages;
+    DrawnImage* mCurrentImage; // nullable
+    bool mDrawCurrentImage;
 public:
     static inline int MAX_POINT_WIDTH = 100;
 public:
@@ -78,7 +80,7 @@ public slots:
     void setTheme(Theme theme);
     void setColor(const QColor& color);
     void setPointWidth(int width);
-    void addImage(const glm::vec2& size, const uchar* data);
+    void setCurrentTexture(const glm::vec2& size, const uchar* data);
 public:
     Mode mode() const;
     Theme theme() const;

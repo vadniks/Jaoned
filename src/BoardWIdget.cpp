@@ -54,17 +54,20 @@ public:
     DrawnText(const QString& text, const glm::vec2& pos, int size, const QColor& color) : DrawnElement(color), text(text), pos(pos), size(size) {}
 };
 
-class DrawnImage final : DrawnElement {
+class DrawnImage final : public DrawnElement {
 public:
     glm::vec2 pos;
     glm::vec2 size;
     Texture* texture;
 
-    DrawnImage(const glm::vec2& pos, const glm::vec2& size, Texture* texture) : DrawnElement(QColor(0, 0, 0, 0)), pos(pos), size(size), texture(texture) {}
+    DrawnImage(const glm::vec2& pos, const glm::vec2& size, Texture* texture) : DrawnElement(QColor(255, 255, 255)), pos(pos), size(size), texture(texture) {}
 
     ~DrawnImage() {
         delete texture;
     }
+
+    DISABLE_COPY(DrawnImage)
+    DISABLE_MOVE(DrawnImage)
 };
 
 BoardWidget::BoardWidget() :
@@ -81,7 +84,10 @@ BoardWidget::BoardWidget() :
     mLines(),
     mCurrentLine(nullptr),
     mTexts(),
-    mCurrentText(nullptr)
+    mCurrentText(nullptr),
+    mImages(),
+    mCurrentImage(nullptr),
+    mDrawCurrentImage(false)
 {
     setFocusPolicy(Qt::FocusPolicy::ClickFocus);
 }
@@ -180,6 +186,9 @@ void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
             mCurrentText->pos.y = static_cast<float>(y + mOffsetY);
             break;
         case Mode::IMAGE:
+            if (mCurrentImage == nullptr) break;
+            mCurrentImage->pos.x = static_cast<float>(x + mOffsetX);
+            mCurrentImage->pos.y = static_cast<float>(y + mOffsetY);
             break;
     }
 
@@ -208,6 +217,11 @@ void BoardWidget::mousePressEvent(QMouseEvent* event) {
             }
             break;
         case Mode::IMAGE:
+            {
+                glm::vec2 pos(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY));
+                mCurrentImage->pos = pos;
+                mDrawCurrentImage = true;
+            }
             break;
     }
 }
@@ -232,6 +246,9 @@ void BoardWidget::mouseReleaseEvent(QMouseEvent*) {
             }
             break;
         case Mode::IMAGE:
+            mDrawCurrentImage = false;
+            mImages.push_back(mCurrentImage);
+            mCurrentImage = nullptr;
             break;
     }
 
@@ -331,7 +348,10 @@ void BoardWidget::paintImages() {
     blending(true);
 
     for (auto i : mImages)
-        mRenderer->drawTexture(*(i->texture), i->pos, i->size, 0.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+        mRenderer->drawTexture(*(i->texture), i->pos, i->size, 0.0f, makeGlColor(i->color));
+
+    if (mDrawCurrentImage)
+        mRenderer->drawTexture(*(mCurrentImage->texture), mCurrentImage->pos, mCurrentImage->size, 0.0f, makeGlColor(mCurrentImage->color));
 
     blending(false);
 }
@@ -354,22 +374,10 @@ void BoardWidget::setPointWidth(int width) {
     mPointWidth = width;
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma ide diagnostic ignored "bugprone-integer-division"
-
-void BoardWidget::addImage(const glm::vec2& size, const uchar* data) {
-    const QSize frameSize = this->size();
+void BoardWidget::setCurrentTexture(const glm::vec2& size, const uchar* data) {
     auto* texture = new Texture(*this, static_cast<int>(size.x), static_cast<int>(size.y), data);
-
-    mImages.push_back(new DrawnImage(
-        glm::vec2(static_cast<float>(frameSize.width() / 2 - static_cast<int>(size.x) / 2 + mOffsetX), static_cast<float>(frameSize.height() / 2 - static_cast<int>(size.y) / 2 + mOffsetY)),
-        size,
-        texture
-    ));
+    mCurrentImage = new DrawnImage(glm::vec2(0.0f), size, texture);
 }
-
-#pragma clang diagnostic pop
 
 Mode BoardWidget::mode() const {
     return mMode;
