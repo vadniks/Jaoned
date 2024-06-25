@@ -303,9 +303,18 @@ void BoardWidget::paintLines() {
     }
 }
 
+static void blending(bool enable) {
+    if (enable) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
+    } else {
+        glBlendFunc(GL_SRC_COLOR, GL_ZERO);
+        glDisable(GL_BLEND);
+    }
+}
+
 void BoardWidget::paintTexts() {
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
+    blending(true);
 
     for (auto i : mTexts)
         mRenderer->drawText(i->text, i->size, i->pos, makeGlColor(i->color));
@@ -315,19 +324,16 @@ void BoardWidget::paintTexts() {
         mRenderer->drawText(mCurrentText->text, mCurrentText->size, mCurrentText->pos, makeGlColor(mCurrentText->color));
     }
 
-    glBlendFunc(GL_SRC_COLOR, GL_ZERO);
-    glDisable(GL_BLEND);
+    blending(false);
 }
 
 void BoardWidget::paintImages() {
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
+    blending(true);
 
     for (auto i : mImages)
         mRenderer->drawTexture(*(i->texture), i->pos, i->size, 0.0f, makeGlColor(mColor));
 
-    glBlendFunc(GL_SRC_COLOR, GL_ZERO);
-    glDisable(GL_BLEND);
+    blending(false);
 }
 
 void BoardWidget::setMode(Mode mode) {
