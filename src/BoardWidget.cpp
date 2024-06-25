@@ -201,21 +201,17 @@ void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
 
     switch (mMode) {
         case Mode::DRAW:
-            if (mCurrentPointsSet == nullptr) break; // TODO: remove <--
             mCurrentPointsSet->points.push_back(glm::vec2(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY)));
             break;
         case Mode::LINE:
-            if (mCurrentLine == nullptr) break;
             mCurrentLine->end.x = static_cast<float>(x + mOffsetX);
             mCurrentLine->end.y = static_cast<float>(y + mOffsetY);
             break;
         case Mode::TEXT:
-            if (mCurrentText == nullptr) break;
             mCurrentText->pos.x = static_cast<float>(x + mOffsetX);
             mCurrentText->pos.y = static_cast<float>(y + mOffsetY);
             break;
         case Mode::IMAGE:
-            if (mCurrentImage == nullptr) break;
             mCurrentImage->pos.x = static_cast<float>(x + mOffsetX);
             mCurrentImage->pos.y = static_cast<float>(y + mOffsetY);
             break;
@@ -333,7 +329,7 @@ void BoardWidget::paintPointsSet(DrawnPointsSet* /*nullable*/ pointsSet) {
                 const auto width = static_cast<float>(pointsSet->width);
 
                 mRenderer->drawLine(startPos, endPos, width, color);
-                mRenderer->drawPoint(startPos, width * 0.7f, color); // TODO: remove <--
+                mRenderer->drawPoint(startPos, width * 0.7f, color);
                 mRenderer->drawHollowCircle(startPos, static_cast<int>(width / 2.0f), color);
             }
             j++;
