@@ -352,9 +352,9 @@ void BoardWidget::setPointWidth(int width) {
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma ide diagnostic ignored "bugprone-integer-division"
 
-void BoardWidget::addImage(const glm::vec2& size, const uchar* data) {
+void BoardWidget::addImage(const glm::vec2& size, const uchar* data, bool alpha) {
     const QSize frameSize = this->size();
-    auto* texture = new Texture(*this, static_cast<int>(size.x), static_cast<int>(size.y), data);
+    auto* texture = new Texture(*this, static_cast<int>(size.x), static_cast<int>(size.y), data, alpha ? GL_RGBA : GL_RGB);
 
     mImages.push_back(new DrawnImage(
         glm::vec2(static_cast<float>(frameSize.width() / 2 - static_cast<int>(size.x) / 2 + mOffsetX), static_cast<float>(frameSize.height() / 2 - static_cast<int>(size.y) / 2 + mOffsetY)),
