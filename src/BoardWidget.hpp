@@ -78,7 +78,7 @@ public slots:
     void setTheme(Theme theme);
     void setColor(const QColor& color);
     void setPointWidth(int width);
-    void addImage(const glm::vec2& size, const uchar* data, bool alpha);
+    void addImage(const glm::vec2& size, const uchar* data);
 public:
     Mode mode() const;
     Theme theme() const;
