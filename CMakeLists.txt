@@ -1,5 +1,6 @@
 
 cmake_minimum_required(VERSION 3.26)
+set(CMAKE_C_COMPILER /usr/bin/clang++)
 project(Jaoned LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
