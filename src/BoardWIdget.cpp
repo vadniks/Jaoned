@@ -320,8 +320,14 @@ void BoardWidget::paintTexts() {
 }
 
 void BoardWidget::paintImages() {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
+
     for (auto i : mImages)
         mRenderer->drawTexture(*(i->texture), i->pos, i->size, 0.0f, makeGlColor(mColor));
+
+    glBlendFunc(GL_SRC_COLOR, GL_ZERO);
+    glDisable(GL_BLEND);
 }
 
 void BoardWidget::setMode(Mode mode) {
@@ -342,11 +348,22 @@ void BoardWidget::setPointWidth(int width) {
     mPointWidth = width;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma ide diagnostic ignored "bugprone-integer-division"
+
 void BoardWidget::addImage(const glm::vec2& size, const uchar* data) {
     const QSize frameSize = this->size();
     auto* texture = new Texture(*this, static_cast<int>(size.x), static_cast<int>(size.y), data);
-    mImages.push_back(new DrawnImage(glm::vec2(frameSize.width() / 2 + mOffsetX, frameSize.height() / 2 + mOffsetY), size, texture));
+
+    mImages.push_back(new DrawnImage(
+        glm::vec2(static_cast<float>(frameSize.width() / 2 - static_cast<int>(size.x) / 2 + mOffsetX), static_cast<float>(frameSize.height() / 2 - static_cast<int>(size.y) / 2 + mOffsetY)),
+        size,
+        texture
+    ));
 }
+
+#pragma clang diagnostic pop
 
 Mode BoardWidget::mode() const {
     return mMode;
