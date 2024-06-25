@@ -25,6 +25,11 @@
 class DrawnElement { // abstract
 protected:
     DrawnElement() {}
+public:
+    virtual ~DrawnElement() = default;
+
+    DISABLE_COPY(DrawnElement)
+    DISABLE_MOVE(DrawnElement)
 };
 
 class DrawnPointsSet final : public DrawnElement {
@@ -34,6 +39,7 @@ public:
     QVector<glm::vec2> points;
 
     DrawnPointsSet(int width, const QColor& color) : width(width), color(color), points() {}
+    ~DrawnPointsSet() override = default;
 
     DISABLE_COPY(DrawnPointsSet)
     DISABLE_MOVE(DrawnPointsSet)
@@ -47,6 +53,7 @@ public:
     QColor color;
 
     DrawnLine(const glm::vec2& start, const glm::vec2 end, int width, const QColor& color) : start(start), end(end), width(width), color(color) {}
+    ~DrawnLine() override = default;
 
     DISABLE_COPY(DrawnLine)
     DISABLE_MOVE(DrawnLine)
@@ -60,6 +67,7 @@ public:
     QColor color;
 
     DrawnText(const QString& text, const glm::vec2& pos, int size, const QColor& color) : text(text), pos(pos), size(size), color(color) {}
+    ~DrawnText() override = default;
 
     DISABLE_COPY(DrawnText)
     DISABLE_MOVE(DrawnText)
@@ -73,7 +81,7 @@ public:
 
     DrawnImage(const glm::vec2& pos, const glm::vec2& size, Texture* texture) : pos(pos), size(size), texture(texture) {}
 
-    ~DrawnImage() {
+    ~DrawnImage() override {
         delete texture;
     }
 
@@ -90,13 +98,10 @@ BoardWidget::BoardWidget(const std::function<void ()>& parentWidgetModeUpdater) 
     mRenderer(nullptr),
     mOffsetX(0),
     mOffsetY(0),
-    mPointsSets(),
+    mElements(),
     mCurrentPointsSet(nullptr),
-    mLines(),
     mCurrentLine(nullptr),
-    mTexts(),
     mCurrentText(nullptr),
-    mImages(),
     mCurrentImage(nullptr),
     mDrawCurrentImage(false),
     mParentWidgetModeUpdater(parentWidgetModeUpdater)
@@ -105,16 +110,7 @@ BoardWidget::BoardWidget(const std::function<void ()>& parentWidgetModeUpdater) 
 }
 
 BoardWidget::~BoardWidget() {
-    for (auto i : mPointsSets)
-        delete i;
-
-    for (auto i : mLines)
-        delete i;
-
-    for (auto i : mTexts)
-        delete i;
-
-    for (auto i : mImages)
+    for (auto i : mElements)
         delete i;
 
     delete mRenderer;
@@ -142,10 +138,31 @@ void BoardWidget::paintGL() {
 
     glClear(GL_COLOR_BUFFER_BIT);
 
-    paintImages();
-    paintTexts();
-    paintLines();
-    paintDrawn();
+    for (auto element : mElements) {
+        if (dynamic_cast<DrawnPointsSet*>(element) != nullptr)
+            paintPointsSet(dynamic_cast<DrawnPointsSet*>(element));
+        else if (dynamic_cast<DrawnLine*>(element) != nullptr)
+            paintLine(dynamic_cast<DrawnLine*>(element));
+        else if (dynamic_cast<DrawnText*>(element) != nullptr)
+            paintText(dynamic_cast<DrawnText*>(element));
+        else if (dynamic_cast<DrawnImage*>(element) != nullptr)
+            paintImage(dynamic_cast<DrawnImage*>(element));
+    }
+
+    switch (mMode) {
+        case DRAW:
+            paintPointsSet(nullptr);
+            break;
+        case LINE:
+            paintLine(nullptr);
+            break;
+        case TEXT:
+            paintText(nullptr);
+            break;
+        case IMAGE:
+            paintImage(nullptr);
+            break;
+    }
 }
 
 void BoardWidget::resizeGL(int w, int h) {
@@ -241,16 +258,16 @@ void BoardWidget::mousePressEvent(QMouseEvent* event) {
 void BoardWidget::mouseReleaseEvent(QMouseEvent*) {
     switch (mMode) {
         case Mode::DRAW:
-            mPointsSets.push_back(mCurrentPointsSet);
+            mElements.push_back(mCurrentPointsSet);
             mCurrentPointsSet = nullptr;
             break;
         case Mode::LINE:
-            mLines.push_back(mCurrentLine);
+            mElements.push_back(mCurrentLine);
             mCurrentLine = nullptr;
             break;
         case Mode::TEXT:
             if (!mCurrentText->text.isEmpty()) {
-                mTexts.push_back(mCurrentText);
+                mElements.push_back(mCurrentText);
                 mCurrentText = nullptr;
             } else {
                 delete mCurrentText;
@@ -260,7 +277,7 @@ void BoardWidget::mouseReleaseEvent(QMouseEvent*) {
         case Mode::IMAGE:
             mDrawCurrentImage = false;
 
-            mImages.push_back(mCurrentImage);
+            mElements.push_back(mCurrentImage);
             mCurrentImage = nullptr;
 
             mMode = Mode::DRAW;
@@ -295,49 +312,6 @@ static glm::vec4 makeGlColor(const QColor& color) {
     };
 }
 
-void BoardWidget::paintDrawn() {
-    for (auto pointsSet : mPointsSets) {
-        int j = 0;
-        for (const auto& i : pointsSet->points) {
-            if (j < pointsSet->points.size() - 1) {
-                const auto startPos = glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y));
-                const auto endPos = glm::vec2(static_cast<float>(pointsSet->points.operator[](j + 1).x), static_cast<float>(pointsSet->points.operator[](j + 1).y));
-                const auto color = makeGlColor(pointsSet->color);
-                const auto width = static_cast<float>(pointsSet->width);
-
-                mRenderer->drawLine(startPos, endPos, width, color);
-                mRenderer->drawPoint(startPos, width * 0.7f, color);
-                mRenderer->drawHollowCircle(startPos, static_cast<int>(width / 2.0f), color);
-            }
-            j++;
-        }
-    }
-
-    if (mCurrentPointsSet != nullptr) {
-        for (const auto& i : mCurrentPointsSet->points) {
-            const auto pos = glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y));
-            const auto color = makeGlColor(mCurrentPointsSet->color);
-
-            mRenderer->drawPoint(pos, static_cast<float>(mCurrentPointsSet->width) * 0.7f, color);
-            mRenderer->drawHollowCircle(pos, static_cast<int>(static_cast<float>(mCurrentPointsSet->width) / 2.0f), color);
-        }
-    }
-}
-
-void BoardWidget::paintLines() {
-    for (auto i : mLines) {
-        const auto startPos = glm::vec2(static_cast<float>(i->start.x), static_cast<float>(i->start.y));
-        const auto endPos = glm::vec2(static_cast<float>(i->end.x), static_cast<float>(i->end.y));
-        mRenderer->drawLine(startPos, endPos, static_cast<float>(i->width), makeGlColor(i->color));
-    }
-
-    if (mCurrentLine != nullptr) {
-        const auto startPos = glm::vec2(static_cast<float>(mCurrentLine->start.x), static_cast<float>(mCurrentLine->start.y));
-        const auto endPos = glm::vec2(static_cast<float>(mCurrentLine->end.x), static_cast<float>(mCurrentLine->end.y));
-        mRenderer->drawLine(startPos, endPos, static_cast<float>(mCurrentLine->width), makeGlColor(mCurrentLine->color));
-    }
-}
-
 static void blending(bool enable) {
     if (enable) {
         glEnable(GL_BLEND);
@@ -348,13 +322,51 @@ static void blending(bool enable) {
     }
 }
 
-void BoardWidget::paintTexts() {
+void BoardWidget::paintPointsSet(DrawnPointsSet* /*nullable*/ pointsSet) {
+    if (pointsSet != nullptr) {
+        int j = 0;
+        for (const auto& i : pointsSet->points) {
+            if (j < pointsSet->points.size() - 1) {
+                const auto startPos = glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y));
+                const auto endPos = glm::vec2(static_cast<float>(pointsSet->points.operator[](j + 1).x), static_cast<float>(pointsSet->points.operator[](j + 1).y));
+                const auto color = makeGlColor(pointsSet->color);
+                const auto width = static_cast<float>(pointsSet->width);
+
+                mRenderer->drawLine(startPos, endPos, width, color);
+                mRenderer->drawPoint(startPos, width * 0.7f, color); // TODO: remove <--
+                mRenderer->drawHollowCircle(startPos, static_cast<int>(width / 2.0f), color);
+            }
+            j++;
+        }
+    } else {
+        if (mCurrentPointsSet == nullptr) return;
+        for (const auto& i : mCurrentPointsSet->points) {
+            const auto pos = glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y));
+            const auto color = makeGlColor(mCurrentPointsSet->color);
+
+            mRenderer->drawPoint(pos, static_cast<float>(mCurrentPointsSet->width) * 0.7f, color);
+            mRenderer->drawHollowCircle(pos, static_cast<int>(static_cast<float>(mCurrentPointsSet->width) / 2.0f), color);
+        }
+    }
+}
+
+void BoardWidget::paintLine(DrawnLine* /*nullable*/ line) {
+    if (line == nullptr)
+        line = mCurrentLine;
+    if (line == nullptr)
+        return;
+
+    const auto startPos = glm::vec2(static_cast<float>(line->start.x), static_cast<float>(line->start.y));
+    const auto endPos = glm::vec2(static_cast<float>(line->end.x), static_cast<float>(line->end.y));
+    mRenderer->drawLine(startPos, endPos, static_cast<float>(line->width), makeGlColor(line->color));
+}
+
+void BoardWidget::paintText(DrawnText* /*nullable*/ text) {
     blending(true);
 
-    for (auto i : mTexts)
-        mRenderer->drawText(i->text, i->size, i->pos, makeGlColor(i->color));
-
-    if (mCurrentText != nullptr) {
+    if (text != nullptr)
+        mRenderer->drawText(text->text, text->size, text->pos, makeGlColor(text->color));
+    else if (mCurrentText != nullptr) {
         mRenderer->drawLine(mCurrentText->pos, mCurrentText->pos + glm::vec2(0.0f, static_cast<float>(mCurrentText->size)), 1.0f, makeGlColor(mCurrentText->color));
         mRenderer->drawText(mCurrentText->text, mCurrentText->size, mCurrentText->pos, makeGlColor(mCurrentText->color));
     }
@@ -362,16 +374,15 @@ void BoardWidget::paintTexts() {
     blending(false);
 }
 
-void BoardWidget::paintImages() {
+void BoardWidget::paintImage(DrawnImage* /*nullable*/ image) {
     blending(true);
 
-    const auto color = glm::vec4(1.0f);
-
-    for (auto i : mImages)
-        mRenderer->drawTexture(*(i->texture), i->pos, i->size, 0.0f, color);
-
-    if (mDrawCurrentImage)
-        mRenderer->drawTexture(*(mCurrentImage->texture), mCurrentImage->pos, mCurrentImage->size, 0.0f, color);
+    if (image != nullptr || mDrawCurrentImage) {
+        if (mDrawCurrentImage)
+            image = mCurrentImage;
+        assert(image != nullptr);
+        mRenderer->drawTexture(*(image->texture), image->pos, image->size, 0.0f, glm::vec4(1.0f));
+    }
 
     blending(false);
 }

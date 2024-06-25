@@ -43,13 +43,10 @@ private:
     glm::mat4 mProjection;
     Renderer* mRenderer;
     int mOffsetX, mOffsetY;
-    QVector<DrawnPointsSet*> mPointsSets;
+    QVector<DrawnElement*> mElements;
     DrawnPointsSet* mCurrentPointsSet; // nullable
-    QVector<DrawnLine*> mLines;
     DrawnLine* mCurrentLine; // nullable
-    QVector<DrawnText*> mTexts;
     DrawnText* mCurrentText; // nullable
-    QVector<DrawnImage*> mImages;
     DrawnImage* mCurrentImage; // nullable
     bool mDrawCurrentImage;
     std::function<void ()> mParentWidgetModeUpdater;
@@ -73,10 +70,10 @@ protected:
     void mouseReleaseEvent(QMouseEvent* event) override;
 private:
     void updateProjection();
-    void paintDrawn();
-    void paintLines();
-    void paintTexts();
-    void paintImages();
+    void paintPointsSet(DrawnPointsSet* /*nullable*/ pointsSet);
+    void paintLine(DrawnLine* /*nullable*/ line);
+    void paintText(DrawnText* /*nullable*/ text);
+    void paintImage(DrawnImage* /*nullable*/ image);
 public slots:
     void setMode(Mode mode);
     void setTheme(Theme theme);
