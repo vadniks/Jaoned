@@ -70,7 +70,7 @@ public:
     DISABLE_MOVE(DrawnImage)
 };
 
-BoardWidget::BoardWidget() :
+BoardWidget::BoardWidget(const std::function<void ()>& parentWidgetModeUpdater) :
     mMode(Mode::DRAW),
     mTheme(Theme::Dark),
     mColor(0xff, 0xff, 0xff),
@@ -87,7 +87,8 @@ BoardWidget::BoardWidget() :
     mCurrentText(nullptr),
     mImages(),
     mCurrentImage(nullptr),
-    mDrawCurrentImage(false)
+    mDrawCurrentImage(false),
+    mParentWidgetModeUpdater(parentWidgetModeUpdater)
 {
     setFocusPolicy(Qt::FocusPolicy::ClickFocus);
 }
@@ -247,8 +248,12 @@ void BoardWidget::mouseReleaseEvent(QMouseEvent*) {
             break;
         case Mode::IMAGE:
             mDrawCurrentImage = false;
+
             mImages.push_back(mCurrentImage);
             mCurrentImage = nullptr;
+
+            mMode = Mode::DRAW;
+            mParentWidgetModeUpdater();
             break;
     }
 

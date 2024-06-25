@@ -19,7 +19,7 @@
 #include "MainWidget.hpp"
 #include <QResizeEvent>
 
-MainWidget::MainWidget() : mLayout(this), mBoardWidget(new BoardWidget()), mControlsWidget(mBoardWidget) {
+MainWidget::MainWidget() : mLayout(this), mBoardWidget(new BoardWidget([this](){ mControlsWidget.updateMode(); })), mControlsWidget(mBoardWidget) {
     connect(&mControlsWidget, &ControlsWidget::updated, this, &MainWidget::controlsWidgetUpdated);
 
     mLayout.addWidget(&mControlsWidget, 0, Qt::AlignTop);

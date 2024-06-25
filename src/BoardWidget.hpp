@@ -22,6 +22,7 @@
 #include "Mode.hpp"
 #include "Theme.hpp"
 #include "Renderer.hpp"
+#include <functional>
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions_3_3_Core>
 #include <glm/glm.hpp>
@@ -51,10 +52,11 @@ private:
     QVector<DrawnImage*> mImages;
     DrawnImage* mCurrentImage; // nullable
     bool mDrawCurrentImage;
+    std::function<void ()> mParentWidgetModeUpdater;
 public:
     static inline int MAX_POINT_WIDTH = 100;
 public:
-    BoardWidget();
+    explicit BoardWidget(const std::function<void ()>& parentWidgetModeUpdater);
     ~BoardWidget() override;
 
     QSize minimumSizeHint() const override;

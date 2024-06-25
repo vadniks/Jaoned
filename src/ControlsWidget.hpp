@@ -44,6 +44,7 @@ private:
     QLabel mModeLabel;
 public:
     explicit ControlsWidget(BoardWidget* boardWidget);
+    void updateMode();
 private slots:
     void themeSwitchClicked();
     void colorChangeClicked();

@@ -96,6 +96,10 @@ ControlsWidget::ControlsWidget(BoardWidget* boardWidget) :
     emit updated();
 }
 
+void ControlsWidget::updateMode() {
+    modeSelected(mBoardWidget->mode());
+}
+
 void ControlsWidget::themeSwitchClicked() {
     mBoardWidget->setTheme(mBoardWidget->theme() == Theme::Dark ? Theme::Light : Theme::Dark);
     emit updated();
