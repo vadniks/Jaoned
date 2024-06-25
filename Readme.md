@@ -1,7 +1,7 @@
 
 # Jaoned - an OpenGL & QT based drawing board
 
-## Project is under active development yet
+(OpenGL: v330Core, QT6)
 
 ## Screenshot
 
