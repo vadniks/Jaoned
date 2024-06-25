@@ -3,7 +3,7 @@
 
 (OpenGL: v330Core, QT6)
 
-## Screenshot
+## Screenshots
 
 ![](screenshots/a.png)
 ![](screenshots/b.png)
