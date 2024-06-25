@@ -5,4 +5,5 @@
 
 ## Screenshot
 
-![](screenshot.png)
+![](screenshots/a.png)
+![](screenshots/b.png)
