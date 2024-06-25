@@ -306,7 +306,7 @@ void BoardWidget::paintLines() {
 static void blending(bool enable) {
     if (enable) {
         glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
+        glBlendFunc(GL_SRC_COLOR, GL_ONE_MINUS_SRC_ALPHA);
     } else {
         glBlendFunc(GL_SRC_COLOR, GL_ZERO);
         glDisable(GL_BLEND);
@@ -331,7 +331,7 @@ void BoardWidget::paintImages() {
     blending(true);
 
     for (auto i : mImages)
-        mRenderer->drawTexture(*(i->texture), i->pos, i->size, 0.0f, makeGlColor(mColor));
+        mRenderer->drawTexture(*(i->texture), i->pos, i->size, 0.0f, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
     blending(false);
 }
