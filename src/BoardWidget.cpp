@@ -373,11 +373,11 @@ void BoardWidget::paintText(DrawnText* /*nullable*/ text) {
 void BoardWidget::paintImage(DrawnImage* /*nullable*/ image) {
     blending(true);
 
-    if (image != nullptr || mDrawCurrentImage) {
-        if (mDrawCurrentImage)
-            image = mCurrentImage;
-        assert(image != nullptr);
+    if (image != nullptr)
         mRenderer->drawTexture(*(image->texture), image->pos, image->size, 0.0f, glm::vec4(1.0f));
+    else if (mDrawCurrentImage) {
+        assert(mCurrentImage != nullptr);
+        mRenderer->drawTexture(*(mCurrentImage->texture), mCurrentImage->pos, mCurrentImage->size, 0.0f, glm::vec4(1.0f));
     }
 
     blending(false);
