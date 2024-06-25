@@ -18,6 +18,8 @@
 
 #include "ControlsWidget.hpp"
 #include <QColorDialog>
+#include <QFileDialog>
+#include <QMessageBox>
 
 static QString makeModeString(Mode mode) {
     const QString prefix = "Currently: ";
@@ -83,7 +85,7 @@ ControlsWidget::ControlsWidget(BoardWidget* boardWidget) :
     mLayout.addWidget(&mTextButton);
 
     mImageButton.setText("Image");
-    connect(&mImageButton, &QPushButton::clicked, this, [this](){ modeSelected(Mode::IMAGE); });
+    connect(&mImageButton, &QPushButton::clicked, this, &ControlsWidget::imageSelectClicked);
     mLayout.addWidget(&mImageButton);
 
     mModeLabel.setText(makeModeString(mBoardWidget->mode()));
@@ -104,8 +106,6 @@ void ControlsWidget::colorChangeClicked() {
     dialog.setModal(true);
     connect(&dialog, &QColorDialog::colorSelected, this, &ControlsWidget::colorSelected);
     dialog.exec();
-
-    emit updated();
 }
 
 void ControlsWidget::colorSelected(QColor color) {
@@ -128,6 +128,31 @@ void ControlsWidget::modeSelected(Mode mode) {
         mPointWidthSlider.setValue(24);
         mBoardWidget->setPointWidth(24);
     }
+
+    emit updated();
+}
+
+void ControlsWidget::imageSelectClicked() {
+    QFileDialog dialog(this);
+    dialog.setModal(true);
+    dialog.setFileMode(QFileDialog::FileMode::ExistingFile);
+    connect(&dialog, &QFileDialog::fileSelected, this, &ControlsWidget::imageSelected);
+    dialog.exec();
+}
+
+void ControlsWidget::imageSelected(const QString& path) {
+    QPixmap image(path);
+
+    if (image.isNull() || image.size().isNull()) {
+        QMessageBox messageBox(this);
+        messageBox.setModal(true);
+        messageBox.setText("File is not an image");
+        messageBox.exec();
+        return;
+    }
+
+    modeSelected(Mode::IMAGE);
+    mBoardWidget->addImage(glm::vec2(image.width(), image.height()), image.toImage().constBits());
 
     emit updated();
 }

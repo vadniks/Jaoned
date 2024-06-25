@@ -50,6 +50,8 @@ private slots:
     void colorSelected(QColor color);
     void pointWidthChanged(int width);
     void modeSelected(Mode mode);
+    void imageSelectClicked();
+    void imageSelected(const QString& path);
 signals:
     void updated();
 };

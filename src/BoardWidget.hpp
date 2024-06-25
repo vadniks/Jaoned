@@ -30,6 +30,7 @@ class DrawnElement;
 class DrawnPoint;
 class DrawnLine;
 class DrawnText;
+class DrawnImage;
 
 class BoardWidget final : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core {
     Q_OBJECT
@@ -41,12 +42,13 @@ private:
     glm::mat4 mProjection;
     Renderer* mRenderer;
     int mOffsetX, mOffsetY;
-    QVector<QVector<DrawnPoint>*> mMouseDrawnPoints;
+    QVector<QVector<DrawnPoint>*> mMouseDrawnPoints; // TODO: rename
     QVector<DrawnPoint>* mCurrentMouseDrawnPoints; // nullable
     QVector<DrawnLine*> mLines;
     DrawnLine* mCurrentLine; // nullable
     QVector<DrawnText*> mTexts;
     DrawnText* mCurrentText; // nullable
+    QVector<DrawnImage*> mImages;
 public:
     static inline int MAX_POINT_WIDTH = 100;
 public:
@@ -70,11 +72,13 @@ private:
     void paintDrawn();
     void paintLines();
     void paintTexts();
+    void paintImages();
 public slots:
     void setMode(Mode mode);
     void setTheme(Theme theme);
     void setColor(const QColor& color);
     void setPointWidth(int width);
+    void addImage(const glm::vec2& size, const uchar* data);
 public:
     Mode mode() const;
     Theme theme() const;

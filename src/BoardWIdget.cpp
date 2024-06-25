@@ -54,6 +54,19 @@ public:
     DrawnText(const QString& text, const glm::vec2& pos, int size, const QColor& color) : DrawnElement(color), text(text), pos(pos), size(size) {}
 };
 
+class DrawnImage final : DrawnElement {
+public:
+    glm::vec2 pos;
+    glm::vec2 size;
+    Texture* texture;
+
+    DrawnImage(const glm::vec2& pos, const glm::vec2& size, Texture* texture) : DrawnElement(QColor(0, 0, 0, 0)), pos(pos), size(size), texture(texture) {}
+
+    ~DrawnImage() {
+        delete texture;
+    }
+};
+
 BoardWidget::BoardWidget() :
     mMode(Mode::DRAW),
     mTheme(Theme::Dark),
@@ -83,6 +96,9 @@ BoardWidget::~BoardWidget() {
     for (auto i : mTexts)
         delete i;
 
+    for (auto i : mImages)
+        delete i;
+
     delete mRenderer;
 }
 
@@ -108,9 +124,10 @@ void BoardWidget::paintGL() {
 
     glClear(GL_COLOR_BUFFER_BIT);
 
-    paintDrawn();
-    paintLines();
+    paintImages();
     paintTexts();
+    paintLines();
+    paintDrawn();
 }
 
 void BoardWidget::resizeGL(int w, int h) {
@@ -302,6 +319,11 @@ void BoardWidget::paintTexts() {
     glDisable(GL_BLEND);
 }
 
+void BoardWidget::paintImages() {
+    for (auto i : mImages)
+        mRenderer->drawTexture(*(i->texture), i->pos, i->size, 0.0f, makeGlColor(mColor));
+}
+
 void BoardWidget::setMode(Mode mode) {
     mMode = mode;
 }
@@ -318,6 +340,12 @@ void BoardWidget::setColor(const QColor& color) {
 void BoardWidget::setPointWidth(int width) {
     assert(width > 0 && width <= MAX_POINT_WIDTH);
     mPointWidth = width;
+}
+
+void BoardWidget::addImage(const glm::vec2& size, const uchar* data) {
+    const QSize frameSize = this->size();
+    auto* texture = new Texture(*this, static_cast<int>(size.x), static_cast<int>(size.y), data);
+    mImages.push_back(new DrawnImage(glm::vec2(frameSize.width() / 2 + mOffsetX, frameSize.height() / 2 + mOffsetY), size, texture));
 }
 
 Mode BoardWidget::mode() const {
