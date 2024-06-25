@@ -22,7 +22,10 @@
 
 // TODO: add clear button
 
-class DrawnElement {};
+class DrawnElement { // abstract
+protected:
+    DrawnElement() {}
+};
 
 class DrawnPointsSet final : public DrawnElement {
 public:
