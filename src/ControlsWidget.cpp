@@ -188,9 +188,16 @@ void ControlsWidget::exportClicked() {
 
 void ControlsWidget::outputFileSelected(const QString& path) {
     const auto size = mBoardWidget->size();
-    const auto bytes = mBoardWidget->pixels();
+    auto pixels = mBoardWidget->pixels();
 
-    QImage image(reinterpret_cast<const uchar*>(bytes.data()), size.width(), size.height(), QImage::Format::Format_RGBA8888);
+    for(int line = 0; line != size.height()/2; ++line)
+        std::swap_ranges(
+            pixels.begin() + 4 * size.width() * line,
+            pixels.begin() + 4 * size.width() * (line + 1),
+            pixels.begin() + 4 * size.width() * (size.height() - line - 1)
+        );
+
+    QImage image(reinterpret_cast<const uchar*>(pixels.data()), size.width(), size.height(), QImage::Format::Format_RGBA8888);
 
     QFile file(path);
     file.open(QIODevice::WriteOnly);

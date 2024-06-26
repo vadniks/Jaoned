@@ -86,5 +86,5 @@ public:
     Theme theme() const;
     QColor color() const;
     int pointWidth() const;
-    QByteArray pixels();
+    std::vector<uchar> pixels();
 };

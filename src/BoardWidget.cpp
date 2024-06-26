@@ -447,9 +447,9 @@ int BoardWidget::pointWidth() const {
     return mPointWidth;
 }
 
-QByteArray BoardWidget::pixels() {
+std::vector<uchar> BoardWidget::pixels() {
     const auto size = this->size();
-    QByteArray bytes(4 * size.width() * size.height(), 0);
+    std::vector<uchar> bytes(4 * size.width() * size.height(), 0);
     glReadPixels(0, 0, size.width(), size.height(), GL_RGBA, GL_UNSIGNED_BYTE, bytes.data());
     return bytes;
 }
