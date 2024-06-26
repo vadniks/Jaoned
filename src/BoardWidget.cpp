@@ -20,8 +20,6 @@
 #include <QKeyEvent>
 #include <glm/ext/matrix_clip_space.hpp>
 
-// TODO: add clear button
-
 class DrawnElement { // abstract
 protected:
     DrawnElement() {}
@@ -363,8 +361,26 @@ void BoardWidget::paintText(DrawnText* /*nullable*/ text) {
     if (text != nullptr)
         mRenderer->drawText(text->text, text->size, text->pos, makeGlColor(text->color));
     else if (mCurrentText != nullptr) {
-        mRenderer->drawLine(mCurrentText->pos, mCurrentText->pos + glm::vec2(0.0f, static_cast<float>(mCurrentText->size)), 1.0f, makeGlColor(mCurrentText->color));
-        mRenderer->drawText(mCurrentText->text, mCurrentText->size, mCurrentText->pos, makeGlColor(mCurrentText->color));
+        const auto textSize = mRenderer->textMetrics(mCurrentText->text, mCurrentText->size);
+        const auto textHeight = textSize.height() > mCurrentText->size ? textSize.height() : mCurrentText->size;
+        const auto textWidth = textSize.width() > 20 ? textSize.width() : 20;
+
+        const auto color = makeGlColor(mCurrentText->color);
+
+        mRenderer->drawLine(
+            mCurrentText->pos,
+            mCurrentText->pos + glm::vec2(0.0f, static_cast<float>(textHeight)),
+            1.0f,
+            color
+        );
+        mRenderer->drawLine(
+            mCurrentText->pos + glm::vec2(0.0f, static_cast<float>(textHeight)),
+            mCurrentText->pos + glm::vec2(static_cast<float>(textWidth), static_cast<float>(textHeight)),
+            1.0f,
+            color
+        );
+
+        mRenderer->drawText(mCurrentText->text, mCurrentText->size, mCurrentText->pos, color);
     }
 
     blending(false);

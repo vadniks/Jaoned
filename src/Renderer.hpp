@@ -49,4 +49,5 @@ public:
     void drawHollowCircle(const glm::vec2& positionCenter, int radius, const glm::vec4& color);
     void drawTexture(Texture& texture, const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color, bool isMono = false);
     void drawText(const QString& text, int size, const glm::vec2& position, const glm::vec4& color);
+    QSize textMetrics(const QString& text, int size);
 };

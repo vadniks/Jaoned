@@ -17,6 +17,7 @@
  */
 
 #include "Renderer.hpp"
+#include <QSize>
 #include <glm/ext/matrix_transform.hpp>
 
 static const char* const gShapeVertexShader = R"(
@@ -299,4 +300,21 @@ void Renderer::drawText(const QString& text, int size, const glm::vec2& position
 
         offset += advance >> 6;
     }
+}
+
+QSize Renderer::textMetrics(const QString& text, int size) {
+    assert(FT_Set_Pixel_Sizes(mFtFace, 0, size) == 0);
+
+    int width = 0, height = 0;
+
+    for (auto i : text) {
+        assert(FT_Load_Char(mFtFace, i.unicode(), FT_LOAD_RENDER) == 0);
+        width += static_cast<int>(mFtFace->glyph->advance.x) >> 6;
+
+        const auto xHeight = static_cast<int>(mFtFace->glyph->bitmap.rows);
+        if (height < xHeight)
+            height = xHeight;
+    }
+
+    return {width, height};
 }
