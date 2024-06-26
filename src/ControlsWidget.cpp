@@ -99,6 +99,12 @@ ControlsWidget::ControlsWidget(BoardWidget* boardWidget) :
 
     mLayout.addStretch();
 
+    mExportButton.setText("Export");
+    connect(&mExportButton, &QPushButton::clicked, this, &ControlsWidget::exportClicked);
+    mLayout.addWidget(&mExportButton);
+
+    mLayout.addStretch();
+
     emit updated();
 }
 
@@ -170,4 +176,24 @@ void ControlsWidget::imageSelected(const QString& path) {
 void ControlsWidget::clearClicked() {
     mBoardWidget->clear();
     emit updated();
+}
+
+void ControlsWidget::exportClicked() {
+    QFileDialog dialog(this);
+    dialog.setModal(true);
+    dialog.setFileMode(QFileDialog::FileMode::AnyFile);
+    connect(&dialog, &QFileDialog::fileSelected, this, &ControlsWidget::outputFileSelected);
+    dialog.exec();
+}
+
+void ControlsWidget::outputFileSelected(const QString& path) {
+    const auto size = mBoardWidget->size();
+    const auto bytes = mBoardWidget->pixels();
+
+    QImage image(reinterpret_cast<const uchar*>(bytes.data()), size.width(), size.height(), QImage::Format::Format_RGBA8888);
+
+    QFile file(path);
+    file.open(QIODevice::WriteOnly);
+    image.save(&file, "PNG");
+    file.close();
 }
