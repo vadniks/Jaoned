@@ -186,8 +186,12 @@ void BoardWidget::keyPressEvent(QKeyEvent* event) {
             break;
     }
 
-    if (mCurrentText != nullptr)
-        mCurrentText->text = mCurrentText->text + event->text();
+    if (mCurrentText != nullptr) {
+        if (event->key() != Qt::Key::Key_Backspace)
+            mCurrentText->text = mCurrentText->text + event->text();
+        else
+            mCurrentText->text = mCurrentText->text.mid(0, mCurrentText->text.size() - 1);
+    }
 
     updateProjection();
     update();
@@ -453,5 +457,3 @@ std::vector<uchar> BoardWidget::pixels() {
     glReadPixels(0, 0, size.width(), size.height(), GL_RGBA, GL_UNSIGNED_BYTE, bytes.data());
     return bytes;
 }
-
-// TODO: Backspace
