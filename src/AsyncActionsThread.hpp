@@ -32,13 +32,17 @@ private:
     QAtomicInt mRunning;
     QMutex mActionsMutex;
     QQueue<Func> mActions;
+    static inline AsyncActionsThread* cInstance = nullptr;
 public:
     AsyncActionsThread();
+    ~AsyncActionsThread() override;
     void stop();
     void schedule(const Func& action);
 
     DISABLE_COPY(AsyncActionsThread)
     DISABLE_MOVE(AsyncActionsThread)
+
+    static AsyncActionsThread* instance();
 protected:
     void run() override;
 };

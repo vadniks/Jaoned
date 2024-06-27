@@ -19,7 +19,13 @@
 #include "AsyncActionsThread.hpp"
 
 AsyncActionsThread::AsyncActionsThread() {
+    cInstance = this;
+
     mRunning.storeRelaxed(true);
+}
+
+AsyncActionsThread::~AsyncActionsThread() {
+    cInstance = nullptr;
 }
 
 void AsyncActionsThread::stop() {
@@ -30,6 +36,11 @@ void AsyncActionsThread::schedule(const AsyncActionsThread::Func& action) {
     mActionsMutex.lock();
     mActions.enqueue(action);
     mActionsMutex.unlock();
+}
+
+AsyncActionsThread* AsyncActionsThread::instance() {
+    assert(cInstance != nullptr);
+    return cInstance;
 }
 
 void AsyncActionsThread::run() {

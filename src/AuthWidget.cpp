@@ -17,6 +17,7 @@
  */
 
 #include "AuthWidget.hpp"
+#include "AsyncActionsThread.hpp"
 #include <QMessageBox>
 
 AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButtonsLayout(&mButtonsWidget) {
@@ -70,7 +71,7 @@ QSize AuthWidget::minimumSizeHint() const {
 
 void AuthWidget::logInClicked() {
     mProgressBar.setVisible(true);
-    Network::instance()->connectToHost();
+    AsyncActionsThread::instance()->schedule([](){ Network::instance()->connectToHost(); });
 }
 
 void AuthWidget::registerClicked() {
@@ -88,5 +89,5 @@ void AuthWidget::networkEventOccurred(Network::Event event) {
         return;
     }
 
-//    Network::instance()->logIn(mUsernameField.text(), mPasswordField.text());
+    Network::instance()->logIn(mUsernameField.text(), mPasswordField.text());
 }

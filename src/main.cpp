@@ -35,6 +35,8 @@ int main(int argc, char** argv) {
     QSurfaceFormat::setDefaultFormat(format);
 
     AsyncActionsThread asyncActionsThread;
+    asyncActionsThread.start();
+
     Network network;
 
     MainWindow window;

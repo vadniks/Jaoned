@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <QApplication>
 #include "Network.hpp"
 
 Network::SocketListener::SocketListener() {
@@ -54,19 +55,22 @@ Network::~Network() {
 }
 
 void Network::connectToHost() {
+    assertNotMainThread();
     mSocket.connectToHost("127.0.0.1", 8080);
 }
 
 void Network::logIn(const QString& username, const QString& password) {
+    assertNotMainThread();
     emit logInTried(false);
 }
 
 void Network::xRegister(const QString& username, const QString& password) {
+    assertNotMainThread();
     emit registerTried(false);
 }
 
 void Network::logOut() {
-
+    assertNotMainThread();
 }
 
 Network* Network::instance() {
@@ -85,4 +89,8 @@ void Network::disconnected() {
 void Network::errorOccurred(QAbstractSocket::SocketError error) {
     emit eventOccurred(Event::ERROR_OCCURRED);
     mSocket.disconnectFromHost();
+}
+
+void Network::assertNotMainThread() {
+    assert(thread() != QApplication::instance()->thread());
 }
