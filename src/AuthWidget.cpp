@@ -71,7 +71,7 @@ QSize AuthWidget::minimumSizeHint() const {
 
 void AuthWidget::logInClicked() {
     mProgressBar.setVisible(true);
-    LooperThread::instance()->schedule([](){ Network::instance()->connectToHost(); });
+    Network::instance()->connectToHost();
 }
 
 void AuthWidget::registerClicked() {

@@ -37,9 +37,9 @@ void Network::SocketListener::run() {
 Network::Network() {
     cInstance = this;
 
-//    connect(&mSocket, &QTcpSocket::connected, this, &Network::connected);
-//    connect(&mSocket, &QTcpSocket::disconnected, this, &Network::disconnected);
-//    connect(&mSocket, &QTcpSocket::errorOccurred, this, &Network::errorOccurred);
+    connect(&mSocket, &QTcpSocket::connected, this, &Network::connected);
+    connect(&mSocket, &QTcpSocket::disconnected, this, &Network::disconnected);
+    connect(&mSocket, &QTcpSocket::errorOccurred, this, &Network::errorOccurred);
 
     mSocketListener.start();
 }
@@ -54,22 +54,19 @@ Network::~Network() {
 }
 
 void Network::connectToHost() {
-    assertNotMainThread();
     mSocket.connectToHost("127.0.0.1", 8080);
 }
 
 void Network::logIn(const QString& username, const QString& password) {
-    assertNotMainThread();
     emit logInTried(false);
 }
 
 void Network::xRegister(const QString& username, const QString& password) {
-    assertNotMainThread();
     emit registerTried(false);
 }
 
 void Network::logOut() {
-    assertNotMainThread();
+
 }
 
 Network* Network::instance() {
@@ -88,8 +85,4 @@ void Network::disconnected() {
 void Network::errorOccurred(QAbstractSocket::SocketError error) {
     emit eventOccurred(Event::ERROR_OCCURRED);
     mSocket.disconnectFromHost();
-}
-
-void Network::assertNotMainThread() {
-    assert(QThread::currentThread() != QApplication::instance()->thread());
 }

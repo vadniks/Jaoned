@@ -65,8 +65,6 @@ private slots:
     void connected();
     void disconnected();
     void errorOccurred(QAbstractSocket::SocketError error);
-private:
-    void assertNotMainThread();
 signals: // those are implemented elsewhere
     void eventOccurred(Network::Event event);
     void logInTried(bool successful);
