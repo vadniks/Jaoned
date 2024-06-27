@@ -57,6 +57,7 @@ AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButton
     mLayout.addWidget(&mProgressBar);
 
     connect(Network::instance(), &Network::eventOccurred, this, &AuthWidget::networkEventOccurred);
+//    connect(Network::instance(), &Network::logInTried)
 }
 
 AuthWidget::~AuthWidget() {
@@ -77,7 +78,6 @@ void AuthWidget::registerClicked() {
 }
 
 void AuthWidget::networkEventOccurred(Network::Event event) {
-    qDebug() << "event " << event;
     mProgressBar.setVisible(false);
 
     if (event != Network::Event::CONNECTED) {
@@ -87,4 +87,6 @@ void AuthWidget::networkEventOccurred(Network::Event event) {
         box.exec();
         return;
     }
+
+//    Network::instance()->logIn(mUsernameField.text(), mPasswordField.text());
 }

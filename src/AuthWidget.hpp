@@ -55,4 +55,8 @@ public slots:
     void logInClicked();
     void registerClicked();
     void networkEventOccurred(Network::Event event);
+signals: // those are implemented elsewhere
+    void loggedIn();
+    void registered();
+    void erroOccurred();
 };

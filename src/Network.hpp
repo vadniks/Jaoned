@@ -21,6 +21,8 @@
 #include "defs.hpp"
 #include <QObject>
 #include <QTcpSocket>
+#include <QThread>
+#include <QAtomicInt>
 
 class Network final : public QObject {
     Q_OBJECT
@@ -30,9 +32,29 @@ public:
         ERROR_OCCURRED,
         DISCONNECTED
     };
+    class SocketListener final : public QThread {
+    private:
+        QAtomicInt mRunning;
+    public:
+        SocketListener() {
+            mRunning.storeRelaxed(1);
+        }
+
+        void run() override {
+            while (mRunning.loadRelaxed() == true) {
+                qDebug() << "a";
+                sleep(1);
+            }
+        }
+
+        void stop() {
+            mRunning.storeRelaxed(false);
+        }
+    };
 private:
-    QTcpSocket mSocket;
     static inline Network* cInstance = nullptr;
+    QTcpSocket mSocket;
+    SocketListener mSocketListener;
 public:
     Network();
     ~Network() override;
@@ -50,6 +72,8 @@ private slots:
     void connected();
     void disconnected();
     void errorOccurred(QAbstractSocket::SocketError error);
-signals:
-    void eventOccurred(Network::Event event); // implemented elsewhere
+signals: // those are implemented elsewhere
+    void eventOccurred(Network::Event event);
+    void logInTried(bool successful);
+    void registerTried(bool successful);
 };

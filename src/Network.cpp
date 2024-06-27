@@ -24,10 +24,18 @@ Network::Network() {
     connect(&mSocket, &QTcpSocket::connected, this, &Network::connected);
     connect(&mSocket, &QTcpSocket::disconnected, this, &Network::disconnected);
     connect(&mSocket, &QTcpSocket::errorOccurred, this, &Network::errorOccurred);
+
+    connect(&mSocketListener, &QThread::finished, this, [](){ qDebug() << "b"; });
+    mSocketListener.start();
 }
 
 Network::~Network() {
+    mSocketListener.stop();
+    mSocketListener.quit();
+    mSocketListener.wait();
+
     mSocket.close();
+
     cInstance = nullptr;
 }
 
@@ -36,11 +44,11 @@ void Network::connectToHost() {
 }
 
 void Network::logIn(const QString& username, const QString& password) {
-
+    emit logInTried(false);
 }
 
 void Network::xRegister(const QString& username, const QString& password) {
-
+    emit registerTried(false);
 }
 
 void Network::logOut() {
