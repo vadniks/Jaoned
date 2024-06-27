@@ -19,35 +19,35 @@
 #pragma once
 
 #include "defs.hpp"
-#include "BoardWidget.hpp"
-#include "ControlsWidget.hpp"
-#include "AuthWidget.hpp"
 #include <QWidget>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
 
-class MainWidget final : public QWidget {
+class AuthWidget : public QWidget {
     Q_OBJECT
-public:
-    enum State {
-        UNAUTHENTICATED,
-        AUTHENTICATED
-    };
 private:
-    State mState;
+    static inline int MAX_CREDENTIAL_SIZE = 16;
     QVBoxLayout mLayout;
-    BoardWidget* mBoardWidget;
-    ControlsWidget mControlsWidget;
-    AuthWidget mAuthWidget;
+    QLabel mAppNameLabel;
+    QWidget mFieldsWidget;
+    QVBoxLayout mFieldsLayout;
+    QLineEdit mUsernameField;
+    QLineEdit mPasswordField;
+    QWidget mButtonsWidget;
+    QHBoxLayout mButtonsLayout;
+    QPushButton mLogInButton;
+    QPushButton mRegisterButton;
 public:
-    MainWidget();
-    ~MainWidget() override;
+    AuthWidget();
 
-    DISABLE_COPY(MainWidget)
-    DISABLE_MOVE(MainWidget)
+    QSize minimumSizeHint() const override;
 
-    void resizeEvent(QResizeEvent* event) override;
-private:
-    void resizeBoardWidget();
-private slots:
-    void controlsWidgetUpdated();
+    DISABLE_COPY(AuthWidget)
+    DISABLE_MOVE(AuthWidget)
+public slots:
+    void logInCLicked();
+    void registerClicked();
 };
