@@ -41,7 +41,6 @@ Network::Network() {
     connect(&mSocket, &QTcpSocket::disconnected, this, &Network::disconnected);
     connect(&mSocket, &QTcpSocket::errorOccurred, this, &Network::errorOccurred);
 
-    connect(&mSocketListener, &QThread::finished, this, [](){ qDebug() << "b"; });
     mSocketListener.start();
 }
 
