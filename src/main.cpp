@@ -17,7 +17,7 @@
  */
 
 #include "MainWindow.hpp"
-#include "AsyncActionsThread.hpp"
+#include "LooperThread.hpp"
 #include "Network.hpp"
 #include <QApplication>
 #include <QSurfaceFormat>
@@ -34,8 +34,8 @@ int main(int argc, char** argv) {
     format.setSwapBehavior(QSurfaceFormat::SwapBehavior::DoubleBuffer);
     QSurfaceFormat::setDefaultFormat(format);
 
-    AsyncActionsThread asyncActionsThread;
-    asyncActionsThread.start();
+    LooperThread looperThread;
+    looperThread.start();
 
     Network network;
 
@@ -44,8 +44,8 @@ int main(int argc, char** argv) {
 
     const int result = QApplication::exec();
 
-    asyncActionsThread.stop();
-    asyncActionsThread.wait();
+    looperThread.stop();
+    looperThread.wait();
 
     return result;
 }

@@ -37,9 +37,9 @@ void Network::SocketListener::run() {
 Network::Network() {
     cInstance = this;
 
-    connect(&mSocket, &QTcpSocket::connected, this, &Network::connected);
-    connect(&mSocket, &QTcpSocket::disconnected, this, &Network::disconnected);
-    connect(&mSocket, &QTcpSocket::errorOccurred, this, &Network::errorOccurred);
+//    connect(&mSocket, &QTcpSocket::connected, this, &Network::connected);
+//    connect(&mSocket, &QTcpSocket::disconnected, this, &Network::disconnected);
+//    connect(&mSocket, &QTcpSocket::errorOccurred, this, &Network::errorOccurred);
 
     mSocketListener.start();
 }

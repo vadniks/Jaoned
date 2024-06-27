@@ -16,33 +16,40 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include "LooperThread.hpp"
 
-#include "defs.hpp"
-#include <functional>
-#include <QThread>
-#include <QAtomicInt>
-#include <QMutex>
-#include <QQueue>
+LooperThread::LooperThread() {
+    cInstance = this;
 
-class AsyncActionsThread final : public QThread {
-public:
-    using Func = std::function<void ()>;
-private:
-    QAtomicInt mRunning;
-    QMutex mActionsMutex;
-    QQueue<Func> mActions;
-    static inline AsyncActionsThread* cInstance = nullptr;
-public:
-    AsyncActionsThread();
-    ~AsyncActionsThread() override;
-    void stop();
-    void schedule(const Func& action);
+    mRunning.storeRelaxed(true);
+}
 
-    DISABLE_COPY(AsyncActionsThread)
-    DISABLE_MOVE(AsyncActionsThread)
+LooperThread::~LooperThread() {
+    cInstance = nullptr;
+}
 
-    static AsyncActionsThread* instance();
-protected:
-    void run() override;
-};
+void LooperThread::stop() {
+    mRunning.storeRelaxed(false);
+}
+
+void LooperThread::schedule(const LooperThread::Func& action) {
+    mActionsMutex.lock();
+    mActions.enqueue(action);
+    mActionsMutex.unlock();
+}
+
+LooperThread* LooperThread::instance() {
+    assert(cInstance != nullptr);
+    return cInstance;
+}
+
+void LooperThread::run() {
+    while (mRunning.loadRelaxed() == true) {
+        mActionsMutex.lock();
+
+        if (!mActions.isEmpty())
+            mActions.dequeue()();
+
+        mActionsMutex.unlock();
+    }
+}

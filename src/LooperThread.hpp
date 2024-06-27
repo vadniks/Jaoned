@@ -16,40 +16,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "AsyncActionsThread.hpp"
+#pragma once
 
-AsyncActionsThread::AsyncActionsThread() {
-    cInstance = this;
+#include "defs.hpp"
+#include <functional>
+#include <QThread>
+#include <QAtomicInt>
+#include <QMutex>
+#include <QQueue>
 
-    mRunning.storeRelaxed(true);
-}
+class LooperThread : public QThread {
+public:
+    using Func = std::function<void ()>;
+protected:
+    QAtomicInt mRunning;
+    QMutex mActionsMutex;
+    QQueue<Func> mActions;
+    static inline LooperThread* cInstance = nullptr;
+public:
+    LooperThread();
+    ~LooperThread() override;
+    void stop();
+    void schedule(const Func& action);
 
-AsyncActionsThread::~AsyncActionsThread() {
-    cInstance = nullptr;
-}
+    DISABLE_COPY(LooperThread)
+    DISABLE_MOVE(LooperThread)
 
-void AsyncActionsThread::stop() {
-    mRunning.storeRelaxed(false);
-}
-
-void AsyncActionsThread::schedule(const AsyncActionsThread::Func& action) {
-    mActionsMutex.lock();
-    mActions.enqueue(action);
-    mActionsMutex.unlock();
-}
-
-AsyncActionsThread* AsyncActionsThread::instance() {
-    assert(cInstance != nullptr);
-    return cInstance;
-}
-
-void AsyncActionsThread::run() {
-    while (mRunning.loadRelaxed() == true) {
-        mActionsMutex.lock();
-
-        if (!mActions.isEmpty())
-            mActions.dequeue()();
-
-        mActionsMutex.unlock();
-    }
-}
+    static LooperThread* instance();
+protected:
+    void run() override;
+};

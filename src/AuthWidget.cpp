@@ -17,7 +17,7 @@
  */
 
 #include "AuthWidget.hpp"
-#include "AsyncActionsThread.hpp"
+#include "LooperThread.hpp"
 #include <QMessageBox>
 
 AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButtonsLayout(&mButtonsWidget) {
@@ -71,7 +71,7 @@ QSize AuthWidget::minimumSizeHint() const {
 
 void AuthWidget::logInClicked() {
     mProgressBar.setVisible(true);
-    AsyncActionsThread::instance()->schedule([](){ Network::instance()->connectToHost(); });
+    LooperThread::instance()->schedule([](){ Network::instance()->connectToHost(); });
 }
 
 void AuthWidget::registerClicked() {
