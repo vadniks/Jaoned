@@ -36,6 +36,9 @@ public:
     AsyncActionsThread();
     void stop();
     void schedule(const Func& action);
+
+    DISABLE_COPY(AsyncActionsThread)
+    DISABLE_MOVE(AsyncActionsThread)
 protected:
     void run() override;
 };
