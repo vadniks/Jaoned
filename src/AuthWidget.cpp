@@ -17,6 +17,7 @@
  */
 
 #include "AuthWidget.hpp"
+#include <QMessageBox>
 
 AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButtonsLayout(&mButtonsWidget) {
     mLayout.setAlignment(Qt::AlignCenter);
@@ -39,7 +40,7 @@ AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButton
     mLayout.addWidget(&mFieldsWidget);
 
     mLogInButton.setText("Log In");
-    connect(&mLogInButton, &QPushButton::clicked, this, &AuthWidget::logInCLicked);
+    connect(&mLogInButton, &QPushButton::clicked, this, &AuthWidget::logInClicked);
     mButtonsLayout.addWidget(&mLogInButton);
 
     mRegisterButton.setText("Register");
@@ -54,16 +55,36 @@ AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButton
     mProgressBar.setFixedSize(16 * 20, 9 * 5);
     mProgressBar.setVisible(false);
     mLayout.addWidget(&mProgressBar);
+
+    connect(Network::instance(), &Network::eventOccurred, this, &AuthWidget::networkEventOccurred);
+}
+
+AuthWidget::~AuthWidget() {
+    disconnect(Network::instance(), &Network::eventOccurred, this, &AuthWidget::networkEventOccurred);
 }
 
 QSize AuthWidget::minimumSizeHint() const {
     return {Consts::MIN_WINDOW_WIDTH, Consts::MIN_WINDOW_HEIGHT};
 }
 
-void AuthWidget::logInCLicked() {
+void AuthWidget::logInClicked() {
     mProgressBar.setVisible(true);
+    Network::instance()->connectToHost();
 }
 
 void AuthWidget::registerClicked() {
     mProgressBar.setVisible(true);
+}
+
+void AuthWidget::networkEventOccurred(Network::Event event) {
+    qDebug() << "event " << event;
+    mProgressBar.setVisible(false);
+
+    if (event != Network::Event::CONNECTED) {
+        QMessageBox box(this);
+        box.setModal(true);
+        box.setText(event == Network::Event::ERROR_OCCURRED ? "Error occurred" : "Disconnected");
+        box.exec();
+        return;
+    }
 }

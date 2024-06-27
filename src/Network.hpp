@@ -24,8 +24,15 @@
 
 class Network final : public QObject {
     Q_OBJECT
+public:
+    enum Event {
+        CONNECTED,
+        ERROR_OCCURRED,
+        DISCONNECTED
+    };
 private:
     QTcpSocket mSocket;
+    static inline Network* cInstance = nullptr;
 public:
     Network();
     ~Network() override;
@@ -37,8 +44,12 @@ public:
 
     DISABLE_COPY(Network)
     DISABLE_MOVE(Network)
+
+    static Network* instance();
 private slots:
     void connected();
     void disconnected();
     void errorOccurred(QAbstractSocket::SocketError error);
+signals:
+    void eventOccurred(Network::Event event); // implemented elsewhere
 };

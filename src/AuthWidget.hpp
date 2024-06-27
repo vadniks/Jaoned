@@ -19,6 +19,7 @@
 #pragma once
 
 #include "defs.hpp"
+#include "Network.hpp"
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -44,12 +45,14 @@ private:
     QProgressBar mProgressBar;
 public:
     AuthWidget();
+    ~AuthWidget() override;
 
     QSize minimumSizeHint() const override;
 
     DISABLE_COPY(AuthWidget)
     DISABLE_MOVE(AuthWidget)
 public slots:
-    void logInCLicked();
+    void logInClicked();
     void registerClicked();
+    void networkEventOccurred(Network::Event event);
 };

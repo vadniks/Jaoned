@@ -19,13 +19,16 @@
 #include "Network.hpp"
 
 Network::Network() {
+    cInstance = this;
+
     connect(&mSocket, &QTcpSocket::connected, this, &Network::connected);
     connect(&mSocket, &QTcpSocket::disconnected, this, &Network::disconnected);
     connect(&mSocket, &QTcpSocket::errorOccurred, this, &Network::errorOccurred);
 }
 
 Network::~Network() {
-
+    mSocket.close();
+    cInstance = nullptr;
 }
 
 void Network::connectToHost() {
@@ -44,14 +47,20 @@ void Network::logOut() {
 
 }
 
-void Network::connected() {
+Network* Network::instance() {
+    assert(cInstance != nullptr);
+    return cInstance;
+}
 
+void Network::connected() {
+    emit eventOccurred(Event::CONNECTED);
 }
 
 void Network::disconnected() {
-
+    emit eventOccurred(Event::DISCONNECTED);
 }
 
 void Network::errorOccurred(QAbstractSocket::SocketError error) {
-
+    emit eventOccurred(Event::ERROR_OCCURRED);
+    mSocket.disconnectFromHost();
 }
