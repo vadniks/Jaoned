@@ -25,3 +25,11 @@
 #define DISABLE_MOVE(x) \
     x(x&&) = delete; \
     x& operator =(x&&) = delete;
+
+class Consts final {
+public:
+    Consts() = delete;
+public:
+    static inline int MIN_WINDOW_WIDTH = 16 * 75;
+    static inline int MIN_WINDOW_HEIGHT = 9 * 75;
+};

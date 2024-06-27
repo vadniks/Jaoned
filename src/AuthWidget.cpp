@@ -52,17 +52,18 @@ AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButton
     mProgressBar.setMinimum(0);
     mProgressBar.setValue(0);
     mProgressBar.setFixedSize(16 * 20, 9 * 5);
+    mProgressBar.setVisible(false);
     mLayout.addWidget(&mProgressBar);
 }
 
 QSize AuthWidget::minimumSizeHint() const {
-    return {16 * 75, 9 * 75};
+    return {Consts::MIN_WINDOW_WIDTH, Consts::MIN_WINDOW_HEIGHT};
 }
 
 void AuthWidget::logInCLicked() {
-
+    mProgressBar.setVisible(true);
 }
 
 void AuthWidget::registerClicked() {
-
+    mProgressBar.setVisible(true);
 }

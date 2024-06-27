@@ -115,7 +115,7 @@ BoardWidget::~BoardWidget() {
 }
 
 QSize BoardWidget::minimumSizeHint() const {
-    return {16 * 75, 9 * 75};
+    return {Consts::MIN_WINDOW_WIDTH, Consts::MIN_WINDOW_HEIGHT};
 }
 
 void BoardWidget::initializeGL() {
