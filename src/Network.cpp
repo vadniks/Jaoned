@@ -46,7 +46,6 @@ Network::Network() {
 
 Network::~Network() {
     mSocketListener.stop();
-    mSocketListener.quit();
     mSocketListener.wait();
 
     mSocket.close();
