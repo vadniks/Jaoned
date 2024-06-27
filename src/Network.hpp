@@ -37,10 +37,12 @@ public:
         QAtomicInt mRunning;
     public:
         SocketListener();
+        void stop();
+
+        DISABLE_COPY(SocketListener)
+        DISABLE_MOVE(SocketListener)
     protected:
         void run() override;
-    public:
-        void stop();
     };
 private:
     static inline Network* cInstance = nullptr;

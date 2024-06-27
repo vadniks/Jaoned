@@ -19,7 +19,11 @@
 #include "Network.hpp"
 
 Network::SocketListener::SocketListener() {
-    mRunning.storeRelaxed(1);
+    mRunning.storeRelaxed(true);
+}
+
+void Network::SocketListener::stop() {
+    mRunning.storeRelaxed(false);
 }
 
 void Network::SocketListener::run() {
@@ -27,10 +31,6 @@ void Network::SocketListener::run() {
         qDebug() << "listen";
         sleep(1);
     }
-}
-
-void Network::SocketListener::stop() {
-    mRunning.storeRelaxed(false);
 }
 
 Network::Network() {

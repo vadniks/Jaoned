@@ -16,34 +16,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "MainWindow.hpp"
 #include "AsyncActionsThread.hpp"
-#include "Network.hpp"
-#include <QApplication>
-#include <QSurfaceFormat>
 
-int main(int argc, char** argv) {
-    QApplication a(argc, argv);
+AsyncActionsThread::AsyncActionsThread() {
+    mRunning.storeRelaxed(true);
+}
 
-    QSurfaceFormat format;
-    format.setDepthBufferSize(24);
-    format.setSamples(4);
-    format.setVersion(3, 3);
-    format.setProfile(QSurfaceFormat::OpenGLContextProfile::CoreProfile);
-    format.setSwapInterval(1);
-    format.setSwapBehavior(QSurfaceFormat::SwapBehavior::DoubleBuffer);
-    QSurfaceFormat::setDefaultFormat(format);
+void AsyncActionsThread::stop() {
+    mRunning.storeRelaxed(false);
+}
 
-    AsyncActionsThread asyncActionsThread;
-    Network network;
+void AsyncActionsThread::schedule(const AsyncActionsThread::Func& action) {
+    mActionsMutex.lock();
+    mActions.enqueue(action);
+    mActionsMutex.unlock();
+}
 
-    MainWindow window;
-    window.show();
+void AsyncActionsThread::run() {
+    while (mRunning.loadRelaxed() == true) {
+        mActionsMutex.lock();
 
-    const int result = QApplication::exec();
+        if (!mActions.isEmpty())
+            mActions.dequeue()();
 
-    asyncActionsThread.stop();
-    asyncActionsThread.wait();
-
-    return result;
+        mActionsMutex.unlock();
+    }
 }
