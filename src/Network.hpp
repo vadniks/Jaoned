@@ -36,20 +36,11 @@ public:
     private:
         QAtomicInt mRunning;
     public:
-        SocketListener() {
-            mRunning.storeRelaxed(1);
-        }
-
-        void run() override {
-            while (mRunning.loadRelaxed() == true) {
-                qDebug() << "a";
-                sleep(1);
-            }
-        }
-
-        void stop() {
-            mRunning.storeRelaxed(false);
-        }
+        SocketListener();
+    protected:
+        void run() override;
+    public:
+        void stop();
     };
 private:
     static inline Network* cInstance = nullptr;

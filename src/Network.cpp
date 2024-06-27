@@ -18,6 +18,21 @@
 
 #include "Network.hpp"
 
+Network::SocketListener::SocketListener() {
+    mRunning.storeRelaxed(1);
+}
+
+void Network::SocketListener::run() {
+    while (mRunning.loadRelaxed() == true) {
+        qDebug() << "listen";
+        sleep(1);
+    }
+}
+
+void Network::SocketListener::stop() {
+    mRunning.storeRelaxed(false);
+}
+
 Network::Network() {
     cInstance = this;
 
