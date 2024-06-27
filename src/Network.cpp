@@ -29,7 +29,7 @@ void Network::SocketListener::stop() {
 
 void Network::SocketListener::run() {
     while (mRunning.loadRelaxed() == true) {
-        qDebug() << "listen";
+//        qDebug() << "listen";
         sleep(1);
     }
 }
@@ -92,5 +92,5 @@ void Network::errorOccurred(QAbstractSocket::SocketError error) {
 }
 
 void Network::assertNotMainThread() {
-    assert(thread() != QApplication::instance()->thread());
+    assert(QThread::currentThread() != QApplication::instance()->thread());
 }
