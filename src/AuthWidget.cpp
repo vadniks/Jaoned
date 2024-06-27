@@ -47,6 +47,12 @@ AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButton
     mButtonsLayout.addWidget(&mRegisterButton);
 
     mLayout.addWidget(&mButtonsWidget);
+
+    mProgressBar.setMaximum(0);
+    mProgressBar.setMinimum(0);
+    mProgressBar.setValue(0);
+    mProgressBar.setFixedSize(16 * 20, 9 * 5);
+    mLayout.addWidget(&mProgressBar);
 }
 
 QSize AuthWidget::minimumSizeHint() const {

@@ -25,6 +25,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QProgressBar>
 
 class AuthWidget : public QWidget {
     Q_OBJECT
@@ -40,6 +41,7 @@ private:
     QHBoxLayout mButtonsLayout;
     QPushButton mLogInButton;
     QPushButton mRegisterButton;
+    QProgressBar mProgressBar;
 public:
     AuthWidget();
 
