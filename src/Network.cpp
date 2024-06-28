@@ -64,9 +64,10 @@ void Network::errorOccurred(QAbstractSocket::SocketError error) {
 }
 
 void Network::readyRead() {
-    if (mSocket.bytesAvailable() < 5)
+    qDebug() << mSocket.bytesAvailable();
+    if (mSocket.bytesAvailable() < 1000000)
         return;
 
-    qDebug() << QString(mSocket.read(5));
+    qDebug() << mSocket.read(5);
     mSocket.write("World");
 }
