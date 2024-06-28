@@ -19,13 +19,7 @@
 #include "LooperThread.hpp"
 
 LooperThread::LooperThread() {
-    cInstance = this;
-
     mRunning.storeRelaxed(true);
-}
-
-LooperThread::~LooperThread() {
-    cInstance = nullptr;
 }
 
 void LooperThread::stop() {
@@ -36,11 +30,6 @@ void LooperThread::schedule(const LooperThread::Func& action) {
     mActionsMutex.lock();
     mActions.enqueue(action);
     mActionsMutex.unlock();
-}
-
-LooperThread* LooperThread::instance() {
-    assert(cInstance != nullptr);
-    return cInstance;
 }
 
 void LooperThread::run() {

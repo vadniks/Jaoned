@@ -32,17 +32,13 @@ protected:
     QAtomicInt mRunning;
     QMutex mActionsMutex;
     QQueue<Func> mActions;
-    static inline LooperThread* cInstance = nullptr;
 public:
     LooperThread();
-    ~LooperThread() override;
     void stop();
     void schedule(const Func& action);
 
     DISABLE_COPY(LooperThread)
     DISABLE_MOVE(LooperThread)
-
-    static LooperThread* instance();
 protected:
     void run() override;
 };
