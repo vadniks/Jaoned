@@ -19,37 +19,16 @@
 #include <QApplication>
 #include "Network.hpp"
 
-Network::SocketListener::SocketListener() {
-    mRunning.storeRelaxed(true);
-}
-
-void Network::SocketListener::stop() {
-    mRunning.storeRelaxed(false);
-}
-
-void Network::SocketListener::run() {
-    while (mRunning.loadRelaxed() == true) {
-//        qDebug() << "listen";
-        sleep(1);
-    }
-}
-
-Network::Network() {
+Network::Network() : mSocket(nullptr) {
     cInstance = this;
 
     connect(&mSocket, &QTcpSocket::connected, this, &Network::connected);
     connect(&mSocket, &QTcpSocket::disconnected, this, &Network::disconnected);
     connect(&mSocket, &QTcpSocket::errorOccurred, this, &Network::errorOccurred);
-
-    mSocketListener.start();
+    connect(&mSocket, &QTcpSocket::readyRead, this, &Network::readyRead);
 }
 
 Network::~Network() {
-    mSocketListener.stop();
-    mSocketListener.wait();
-
-    mSocket.close();
-
     cInstance = nullptr;
 }
 
@@ -63,10 +42,6 @@ void Network::logIn(const QString& username, const QString& password) {
 
 void Network::xRegister(const QString& username, const QString& password) {
     emit registerTried(false);
-}
-
-void Network::logOut() {
-
 }
 
 Network* Network::instance() {
@@ -83,6 +58,15 @@ void Network::disconnected() {
 }
 
 void Network::errorOccurred(QAbstractSocket::SocketError error) {
-    emit eventOccurred(Event::ERROR_OCCURRED);
+    if (error != QAbstractSocket::SocketError::RemoteHostClosedError)
+        emit eventOccurred(Event::ERROR_OCCURRED);
     mSocket.disconnectFromHost();
+}
+
+void Network::readyRead() {
+    if (mSocket.bytesAvailable() < 5)
+        return;
+
+    qDebug() << QString(mSocket.read(5));
+    mSocket.write("World");
 }

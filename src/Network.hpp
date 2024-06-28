@@ -19,6 +19,7 @@
 #pragma once
 
 #include "defs.hpp"
+#include "LooperThread.hpp"
 #include <QObject>
 #include <QTcpSocket>
 #include <QThread>
@@ -32,22 +33,9 @@ public:
         ERROR_OCCURRED,
         DISCONNECTED
     };
-    class SocketListener final : public QThread {
-    private:
-        QAtomicInt mRunning;
-    public:
-        SocketListener();
-        void stop();
-
-        DISABLE_COPY(SocketListener)
-        DISABLE_MOVE(SocketListener)
-    protected:
-        void run() override;
-    };
 private:
     static inline Network* cInstance = nullptr;
     QTcpSocket mSocket;
-    SocketListener mSocketListener;
 public:
     Network();
     ~Network() override;
@@ -55,7 +43,6 @@ public:
     void connectToHost();
     void logIn(const QString& username, const QString& password);
     void xRegister(const QString& username, const QString& password);
-    void logOut();
 
     DISABLE_COPY(Network)
     DISABLE_MOVE(Network)
@@ -65,6 +52,7 @@ private slots:
     void connected();
     void disconnected();
     void errorOccurred(QAbstractSocket::SocketError error);
+    void readyRead();
 signals: // those are implemented elsewhere
     void eventOccurred(Network::Event event);
     void logInTried(bool successful);
