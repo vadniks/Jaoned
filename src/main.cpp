@@ -17,7 +17,6 @@
  */
 
 #include "MainWindow.hpp"
-#include "LooperThread.hpp"
 #include "Network.hpp"
 #include <QApplication>
 #include <QSurfaceFormat>
@@ -34,18 +33,10 @@ int main(int argc, char** argv) {
     format.setSwapBehavior(QSurfaceFormat::SwapBehavior::DoubleBuffer);
     QSurfaceFormat::setDefaultFormat(format);
 
-    LooperThread looperThread;
-    looperThread.start();
-
     Network network;
 
     MainWindow window;
     window.show();
 
-    const int result = QApplication::exec();
-
-    looperThread.stop();
-    looperThread.wait();
-
-    return result;
+    return QApplication::exec();
 }

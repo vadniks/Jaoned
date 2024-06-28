@@ -17,7 +17,6 @@
  */
 
 #include "AuthWidget.hpp"
-#include "LooperThread.hpp"
 #include <QMessageBox>
 
 AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButtonsLayout(&mButtonsWidget) {

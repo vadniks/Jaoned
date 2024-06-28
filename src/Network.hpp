@@ -19,7 +19,6 @@
 #pragma once
 
 #include "defs.hpp"
-#include "LooperThread.hpp"
 #include <QObject>
 #include <QTcpSocket>
 #include <QThread>
