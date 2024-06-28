@@ -52,6 +52,7 @@ private slots:
     void disconnected();
     void errorOccurred(QAbstractSocket::SocketError error);
     void readyRead();
+    void bytesWritten(long bytes);
 signals: // those are implemented elsewhere
     void eventOccurred(Network::Event event);
     void logInTried(bool successful);

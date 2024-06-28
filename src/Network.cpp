@@ -26,7 +26,7 @@ Network::Network() : mSocket(nullptr) {
     connect(&mSocket, &QTcpSocket::disconnected, this, &Network::disconnected);
     connect(&mSocket, &QTcpSocket::errorOccurred, this, &Network::errorOccurred);
     connect(&mSocket, &QTcpSocket::readyRead, this, &Network::readyRead);
-    connect(&mSocket, &QTcpSocket::bytesWritten, this, [](long written){ qDebug() << "written " << written; });
+    connect(&mSocket, &QTcpSocket::bytesWritten, this, &Network::bytesWritten);
 }
 
 Network::~Network() {
@@ -71,4 +71,8 @@ void Network::readyRead() {
 
     qDebug() << mSocket.read(5);
     mSocket.write(QByteArray(1000000, 1));
+}
+
+void Network::bytesWritten(long bytes) {
+
 }
