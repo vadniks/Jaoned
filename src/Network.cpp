@@ -102,7 +102,8 @@ void Network::logIn(const QString& username, const QString& password) {
     memcpy(message.body.data(), (uchar[8]) {'a', 'd', 'm', 'i', 'n', 0, 0, 0}, 8);
     memcpy(message.body.data() + 8, (uchar[8]) {'p', 'a', 's', 's', 0, 0, 0, 0}, 8);
 
-    mSocket.write(reinterpret_cast<const char*>(packMessage(message).data()));
+    qDebug() << "logIn";
+    mSocket.write(reinterpret_cast<const char*>(packMessage(message).data()), MESSAGE_HEAD_SIZE + message.size);
 }
 
 void Network::xRegister(const QString& username, const QString& password) {
@@ -149,6 +150,7 @@ void Network::readyRead() {
     } else
         message.body = QVector<uchar>(0);
 
+    qDebug() << "readyRead";
     processMessage(message);
 }
 
