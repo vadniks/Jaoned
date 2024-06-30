@@ -161,7 +161,7 @@ void Network::bytesWritten(long bytes) {
 void Network::processMessage(const Message& message) {
     switch (message.flag) {
         case LOG_IN:
-            qDebug() << (message.size > 0 ? *reinterpret_cast<const int*>(message.body.data()) : -1);
+            qDebug() << "pm " << (message.size > 0 ? *reinterpret_cast<const int*>(message.body.data()) : -1);
             emit logInTried(message.size > 0);
             break;
         case REGISTER:
