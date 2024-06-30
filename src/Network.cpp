@@ -28,51 +28,50 @@ enum ActionFlag : int {
     SHUTDOWN = 5
 };
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-pragmas"
+#pragma ide diagnostic ignored "cppcoreguidelines-pro-type-member-init"
 struct Message {
     int size;
     ActionFlag flag;
     int from;
-    uchar* body;
+    QVector<uchar> body;
 };
+#pragma clang diagnostic pop
 
 static const int MESSAGE_HEAD_SIZE = 12;
 static const int MAX_MESSAGE_BODY_SIZE = 116;
 static const int MAX_MESSAGE_SIZE = 128;
 
-static uchar* packMessage(const Message* message) {
-    assert(message->body != nullptr && message->size > 0 || message->body == nullptr && message->size == 0);
+static QVector<uchar> packMessage(const Message& message) {
+    assert(!message.body.isEmpty() && message.size > 0 || message.body.isEmpty() && message.size == 0);
 
-    auto* bytes = new uchar[MESSAGE_HEAD_SIZE + message->size];
+    auto bytes = QVector<uchar>(MESSAGE_HEAD_SIZE + message.size);
 
-    memcpy(&(bytes[0]), &(message->size), 4);
-    memcpy(&(bytes[4]), &(message->flag), 4);
-    memcpy(&(bytes[8]), &(message->from), 4);
+    memcpy(&(bytes.data()[0]), &(message.size), 4);
+    memcpy(&(bytes.data()[4]), &(message.flag), 4);
+    memcpy(&(bytes.data()[8]), &(message.from), 4);
 
-    if (message->body != nullptr)
-        memcpy(&(bytes[12]), &(message->body[0]), message->size);
+    if (!message.body.isEmpty())
+        memcpy(&(bytes.data()[12]), message.body.data(), message.size);
 
     return bytes;
 }
 
-static Message* unpackMessage(const uchar* bytes) {
-    auto* message = new Message();
+static Message unpackMessage(const QVector<uchar>& bytes) {
+    Message message;
 
-    memcpy(&(message->size), &(bytes[0]), 4);
-    memcpy(&(message->flag), &(bytes[4]), 4);
-    memcpy(&(message->body), &(bytes[8]), 4);
+    memcpy(&(message.size), &(bytes.data()[0]), 4);
+    memcpy(&(message.flag), &(bytes.data()[4]), 4);
+    memcpy(&(message.from), &(bytes.data()[8]), 4);
 
-    if (message->size > 0) {
-        message->body = new uchar[message->size];
-        memcpy(message->body, &(bytes[12]), message->size);
+    if (message.size > 0) {
+        message.body = QVector<uchar>(message.size);
+        memcpy(message.body.data(), &(bytes.data()[12]), message.size);
     } else
-        message->body = nullptr;
+        message.body = QVector<uchar>(0);
 
     return message;
-}
-
-static void freeMessage(Message* message) {
-    delete[] message->body;
-    delete message;
 }
 
 Network::Network() : mSocket(nullptr) {
