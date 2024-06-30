@@ -58,21 +58,21 @@ static QVector<uchar> packMessage(const Message& message) {
     return bytes;
 }
 
-static Message unpackMessage(const QVector<uchar>& bytes) {
-    Message message;
-
-    memcpy(&(message.size), &(bytes.data()[0]), 4);
-    memcpy(&(message.flag), &(bytes.data()[4]), 4);
-    memcpy(&(message.from), &(bytes.data()[8]), 4);
-
-    if (message.size > 0) {
-        message.body = QVector<uchar>(message.size);
-        memcpy(message.body.data(), &(bytes.data()[12]), message.size);
-    } else
-        message.body = QVector<uchar>(0);
-
-    return message;
-}
+//static Message unpackMessage(const QVector<uchar>& bytes) {
+//    Message message;
+//
+//    memcpy(&(message.size), &(bytes.data()[0]), 4);
+//    memcpy(&(message.flag), &(bytes.data()[4]), 4);
+//    memcpy(&(message.from), &(bytes.data()[8]), 4);
+//
+//    if (message.size > 0) {
+//        message.body = QVector<uchar>(message.size);
+//        memcpy(message.body.data(), &(bytes.data()[12]), message.size);
+//    } else
+//        message.body = QVector<uchar>(0);
+//
+//    return message;
+//}
 
 Network::Network() : mSocket(nullptr) {
     cInstance = this;
@@ -93,7 +93,16 @@ void Network::connectToHost() {
 }
 
 void Network::logIn(const QString& username, const QString& password) {
-    emit logInTried(false);
+    Message message;
+    message.size = 0;
+    message.flag = ActionFlag::LOG_IN;
+    message.from = -1;
+
+    message.body = QVector<uchar>(MAX_CREDENTIAL_SIZE * 2);
+    memcpy(message.body.data(), (uchar[8]) {'a', 'd', 'm', 'i', 'n', 0, 0, 0}, 8);
+    memcpy(message.body.data() + 8, (uchar[8]) {'p', 'a', 's', 's', 0, 0, 0, 0}, 8);
+
+    mSocket.write(reinterpret_cast<const char*>(packMessage(message).data()));
 }
 
 void Network::xRegister(const QString& username, const QString& password) {
@@ -120,14 +129,48 @@ void Network::errorOccurred(QAbstractSocket::SocketError error) {
 }
 
 void Network::readyRead() {
-    qDebug() << mSocket.bytesAvailable();
-    if (mSocket.bytesAvailable() < 1000000)
-        return;
+    assert(mSocket.bytesAvailable() >= MESSAGE_HEAD_SIZE);
 
-    qDebug() << mSocket.read(5);
-    mSocket.write(QByteArray(1000000, 1));
+    QVector<uchar> buffer(MAX_MESSAGE_SIZE);
+    mSocket.read(reinterpret_cast<char*>(buffer.data()), MESSAGE_HEAD_SIZE);
+
+    Message message;
+
+    memcpy(&(message.size), &(buffer.data()[0]), 4);
+    memcpy(&(message.flag), &(buffer.data()[4]), 4);
+    memcpy(&(message.from), &(buffer.data()[8]), 4);
+
+    assert(message.size <= mSocket.bytesAvailable());
+    if (message.size > 0) {
+        mSocket.read(&(reinterpret_cast<char*>(buffer.data())[12]), message.size);
+
+        message.body = QVector<uchar>(message.size);
+        memcpy(message.body.data(), &(buffer.data()[12]), message.size);
+    } else
+        message.body = QVector<uchar>(0);
+
+    processMessage(message);
 }
 
 void Network::bytesWritten(long bytes) {
 
+}
+
+void Network::processMessage(const Message& message) {
+    switch (message.flag) {
+        case LOG_IN:
+            qDebug() << (message.size > 0 ? *reinterpret_cast<const int*>(message.body.data()) : -1);
+            emit logInTried(message.size > 0);
+            break;
+        case REGISTER:
+            break;
+        case FINISH:
+            break;
+        case ERROR:
+            break;
+        case SUCCESS:
+            break;
+        case SHUTDOWN:
+            break;
+    }
 }

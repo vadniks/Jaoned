@@ -31,7 +31,6 @@
 class AuthWidget : public QWidget {
     Q_OBJECT
 private:
-    static inline int MAX_CREDENTIAL_SIZE = 8;
     QVBoxLayout mLayout;
     QLabel mAppNameLabel;
     QWidget mFieldsWidget;

@@ -24,6 +24,8 @@
 #include <QThread>
 #include <QAtomicInt>
 
+struct Message;
+
 class Network final : public QObject {
     Q_OBJECT
 public:
@@ -35,6 +37,8 @@ public:
 private:
     static inline Network* cInstance = nullptr;
     QTcpSocket mSocket;
+public:
+    static inline int MAX_CREDENTIAL_SIZE = 8;
 public:
     Network();
     ~Network() override;
@@ -53,6 +57,8 @@ private slots:
     void errorOccurred(QAbstractSocket::SocketError error);
     void readyRead();
     void bytesWritten(long bytes);
+private:
+    void processMessage(const Message& message);
 signals: // those are implemented elsewhere
     void eventOccurred(Network::Event event);
     void logInTried(bool successful);

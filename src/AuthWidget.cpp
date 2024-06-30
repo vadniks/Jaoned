@@ -28,11 +28,11 @@ AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButton
     mLayout.addWidget(&mAppNameLabel);
 
     mUsernameField.setPlaceholderText("Username");
-    mUsernameField.setMaxLength(MAX_CREDENTIAL_SIZE);
+    mUsernameField.setMaxLength(Network::MAX_CREDENTIAL_SIZE);
     mFieldsLayout.addWidget(&mUsernameField);
 
     mPasswordField.setPlaceholderText("Password");
-    mPasswordField.setMaxLength(MAX_CREDENTIAL_SIZE);
+    mPasswordField.setMaxLength(Network::MAX_CREDENTIAL_SIZE);
     mPasswordField.setEchoMode(QLineEdit::EchoMode::Password);
     mFieldsLayout.addWidget(&mPasswordField);
 
