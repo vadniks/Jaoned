@@ -19,6 +19,62 @@
 #include <QApplication>
 #include "Network.hpp"
 
+enum ActionFlag : int {
+    LOG_IN = 0,
+    REGISTER = 1,
+    FINISH = 2,
+    ERROR = 3,
+    SUCCESS = 4,
+    SHUTDOWN = 5
+};
+
+struct Message {
+    int size;
+    ActionFlag flag;
+    int from;
+    uchar* body;
+};
+
+static const int MESSAGE_HEAD_SIZE = 12;
+static const int MAX_MESSAGE_BODY_SIZE = 116;
+static const int MAX_MESSAGE_SIZE = 128;
+
+static uchar* packMessage(const Message* message) {
+    assert(message->body != nullptr && message->size > 0 || message->body == nullptr && message->size == 0);
+
+    auto* bytes = new uchar[MESSAGE_HEAD_SIZE + message->size];
+
+    memcpy(&(bytes[0]), &(message->size), 4);
+    memcpy(&(bytes[4]), &(message->flag), 4);
+    memcpy(&(bytes[8]), &(message->from), 4);
+
+    if (message->body != nullptr)
+        memcpy(&(bytes[12]), &(message->body[0]), message->size);
+
+    return bytes;
+}
+
+static Message* unpackMessage(const uchar* bytes) {
+    auto* message = new Message();
+
+    memcpy(&(message->size), &(bytes[0]), 4);
+    memcpy(&(message->flag), &(bytes[4]), 4);
+    memcpy(&(message->body), &(bytes[8]), 4);
+
+    if (message->size > 0) {
+        message->body = new uchar[message->size];
+        memcpy(message->body, &(bytes[12]), message->size);
+    } else
+        message->body = nullptr;
+
+    return message;
+}
+
+static void freeMessage(Message* message) {
+    delete[] message->body;
+    delete message;
+}
+
 Network::Network() : mSocket(nullptr) {
     cInstance = this;
 
