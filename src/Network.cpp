@@ -58,22 +58,6 @@ static QVector<uchar> packMessage(const Message& message) {
     return bytes;
 }
 
-//static Message unpackMessage(const QVector<uchar>& bytes) {
-//    Message message;
-//
-//    memcpy(&(message.size), &(bytes.data()[0]), 4);
-//    memcpy(&(message.flag), &(bytes.data()[4]), 4);
-//    memcpy(&(message.from), &(bytes.data()[8]), 4);
-//
-//    if (message.size > 0) {
-//        message.body = QVector<uchar>(message.size);
-//        memcpy(message.body.data(), &(bytes.data()[12]), message.size);
-//    } else
-//        message.body = QVector<uchar>(0);
-//
-//    return message;
-//}
-
 Network::Network() : mSocket(nullptr) {
     cInstance = this;
 
@@ -102,7 +86,6 @@ void Network::logIn(const QString& username, const QString& password) {
     memcpy(message.body.data(), (uchar[8]) {'a', 'd', 'm', 'i', 'n', 0, 0, 0}, 8);
     memcpy(message.body.data() + 8, (uchar[8]) {'p', 'a', 's', 's', 0, 0, 0, 0}, 8);
 
-    qDebug() << "logIn";
     mSocket.write(reinterpret_cast<const char*>(packMessage(message).data()), MESSAGE_HEAD_SIZE + message.size);
 }
 
@@ -150,7 +133,6 @@ void Network::readyRead() {
     } else
         message.body = QVector<uchar>(0);
 
-    qDebug() << "readyRead";
     processMessage(message);
 }
 
