@@ -94,7 +94,7 @@ void Network::connectToHost() {
 
 void Network::logIn(const QString& username, const QString& password) {
     Message message;
-    message.size = 0;
+    message.size = MAX_CREDENTIAL_SIZE * 2;
     message.flag = ActionFlag::LOG_IN;
     message.from = -1;
 
