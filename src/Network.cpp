@@ -34,17 +34,13 @@ enum ActionFlag : int {
 struct Message {
     int size;
     ActionFlag flag;
-    int from;
     QVector<uchar> body;
 };
 #pragma clang diagnostic pop
 
-static const int MESSAGE_HEAD_SIZE = 12;
-static const int MAX_MESSAGE_BODY_SIZE = 116;
+static const int MESSAGE_HEAD_SIZE = 8;
+static const int MAX_MESSAGE_BODY_SIZE = 120;
 static const int MAX_MESSAGE_SIZE = 128;
-
-static const int FROM_SERVER = -1;
-static const int FROM_ANONYMOUS = -2;
 
 static QVector<uchar> packMessage(const Message& message) {
     assert(!message.body.isEmpty() && message.size > 0 || message.body.isEmpty() && message.size == 0);
@@ -53,10 +49,9 @@ static QVector<uchar> packMessage(const Message& message) {
 
     memcpy(&(bytes.data()[0]), &(message.size), 4);
     memcpy(&(bytes.data()[4]), &(message.flag), 4);
-    memcpy(&(bytes.data()[8]), &(message.from), 4);
 
     if (!message.body.isEmpty())
-        memcpy(&(bytes.data()[12]), message.body.data(), message.size);
+        memcpy(&(bytes.data()[8]), message.body.data(), message.size);
 
     return bytes;
 }
@@ -83,7 +78,6 @@ void Network::logIn(const QString& username, const QString& password) {
     Message message;
     message.size = MAX_CREDENTIAL_SIZE * 2;
     message.flag = ActionFlag::LOG_IN;
-    message.from = FROM_ANONYMOUS;
 
     message.body = QVector<uchar>(MAX_CREDENTIAL_SIZE * 2);
     memcpy(message.body.data(), (uchar[8]) {'a', 'd', 'm', 'i', 'n', 0, 0, 0}, 8);
@@ -96,7 +90,6 @@ void Network::xRegister(const QString& username, const QString& password) {
     Message message;
     message.size = MAX_CREDENTIAL_SIZE * 2;
     message.flag = ActionFlag::REGISTER;
-    message.from = FROM_ANONYMOUS;
 
     message.body = QVector<uchar>(MAX_CREDENTIAL_SIZE * 2);
     memcpy(message.body.data(), (uchar[8]) {'t', 'e', 's', 't', 0, 0, 0, 0}, 8);
@@ -134,11 +127,10 @@ void Network::readyRead() {
 
     memcpy(&(message.size), &(buffer.data()[0]), 4);
     memcpy(&(message.flag), &(buffer.data()[4]), 4);
-    memcpy(&(message.from), &(buffer.data()[8]), 4);
 
     assert(message.size <= mSocket.bytesAvailable());
     if (message.size > 0) {
-        mSocket.read(&(reinterpret_cast<char*>(buffer.data())[12]), message.size);
+        mSocket.read(&(reinterpret_cast<char*>(buffer.data())[8]), message.size);
 
         message.body = QVector<uchar>(message.size);
         memcpy(message.body.data(), &(buffer.data()[12]), message.size);
@@ -156,7 +148,7 @@ void Network::processMessage(const Message& message) {
     qDebug() << message.flag;
     switch (message.flag) {
         case LOG_IN:
-            qDebug() << "pm logIn " << (message.size > 0 ? *reinterpret_cast<const int*>(message.body.data()) : -1); // TODO: don't send clients their ids, on server make ma of connections as keys
+            qDebug() << "pm logIn " << (message.size > 0 ? "true" : "false"); // TODO: don't send clients their ids, on server make ma of connections as keys
             emit logInTried(message.size > 0);
             break;
         case REGISTER:
