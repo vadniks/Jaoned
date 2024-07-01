@@ -46,6 +46,7 @@ public:
     void connectToHost();
     void logIn(const QString& username, const QString& password);
     void xRegister(const QString& username, const QString& password);
+    void shutdown();
 
     DISABLE_COPY(Network)
     DISABLE_MOVE(Network)
@@ -58,6 +59,7 @@ private slots:
     void readyRead();
     void bytesWritten(long bytes);
 private:
+    void sendMessage(const Message& message);
     void processMessage(const Message& message);
 signals: // those are implemented elsewhere
     void eventOccurred(Network::Event event);

@@ -28,15 +28,15 @@ enum ActionFlag : int {
     SHUTDOWN = 5
 };
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-pragmas"
-#pragma ide diagnostic ignored "cppcoreguidelines-pro-type-member-init"
 struct Message {
     int size;
     ActionFlag flag;
     QVector<uchar> body;
+
+    Message(int size, ActionFlag flag, const QVector<uchar>& body) : size(size), flag(flag), body(body) {}
+    explicit Message(ActionFlag flag) : size(0), flag(flag), body(0) {}
+    Message() : size(0), flag(ActionFlag::LOG_IN), body(0) {}
 };
-#pragma clang diagnostic pop
 
 static const int MESSAGE_HEAD_SIZE = 8;
 static const int MAX_MESSAGE_BODY_SIZE = 120;
@@ -75,27 +75,29 @@ void Network::connectToHost() {
 }
 
 void Network::logIn(const QString& username, const QString& password) {
-    Message message;
+    Message message(ActionFlag::LOG_IN);
     message.size = MAX_CREDENTIAL_SIZE * 2;
-    message.flag = ActionFlag::LOG_IN;
 
     message.body = QVector<uchar>(MAX_CREDENTIAL_SIZE * 2);
     memcpy(message.body.data(), (uchar[8]) {'a', 'd', 'm', 'i', 'n', 0, 0, 0}, 8);
     memcpy(message.body.data() + 8, (uchar[8]) {'p', 'a', 's', 's', 0, 0, 0, 0}, 8);
 
-    mSocket.write(reinterpret_cast<const char*>(packMessage(message).data()), MESSAGE_HEAD_SIZE + message.size);
+    sendMessage(message);
 }
 
 void Network::xRegister(const QString& username, const QString& password) {
-    Message message;
+    Message message(ActionFlag::REGISTER);
     message.size = MAX_CREDENTIAL_SIZE * 2;
-    message.flag = ActionFlag::REGISTER;
 
     message.body = QVector<uchar>(MAX_CREDENTIAL_SIZE * 2);
     memcpy(message.body.data(), (uchar[8]) {'t', 'e', 's', 't', 0, 0, 0, 0}, 8);
     memcpy(message.body.data() + 8, (uchar[8]) {'p', 'a', 's', 's', 0, 0, 0, 0}, 8);
 
-    mSocket.write(reinterpret_cast<const char*>(packMessage(message).data()), MESSAGE_HEAD_SIZE + message.size);
+    sendMessage(message);
+}
+
+void Network::shutdown() {
+    sendMessage(Message(0, ActionFlag::SHUTDOWN, QVector<uchar>(0)));
 }
 
 Network* Network::instance() {
@@ -142,6 +144,10 @@ void Network::readyRead() {
 
 void Network::bytesWritten(long bytes) {
 
+}
+
+void Network::sendMessage(const Message& message) {
+    mSocket.write(reinterpret_cast<const char*>(packMessage(message).data()), MESSAGE_HEAD_SIZE + message.size);
 }
 
 void Network::processMessage(const Message& message) {
