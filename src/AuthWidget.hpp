@@ -28,7 +28,7 @@
 #include <QPushButton>
 #include <QProgressBar>
 
-class AuthWidget : public QWidget {
+class AuthWidget final : public QWidget {
     Q_OBJECT
 private:
     QVBoxLayout mLayout;
