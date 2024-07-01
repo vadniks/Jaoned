@@ -57,6 +57,7 @@ static QVector<uchar> packMessage(const Message& message) {
 }
 
 Network::Network() : mSocket(nullptr) {
+    assert(cInstance == nullptr);
     cInstance = this;
 
     connect(&mSocket, &QTcpSocket::connected, this, &Network::connected);
