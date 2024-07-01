@@ -74,6 +74,10 @@ void Network::connectToHost() {
     mSocket.connectToHost("127.0.0.1", 8080);
 }
 
+void Network::disconnectFromHost() {
+    mSocket.disconnectFromHost();
+}
+
 void Network::logIn(const QString& username, const QString& password) {
     Message message(ActionFlag::LOG_IN);
     message.size = MAX_CREDENTIAL_SIZE * 2;
@@ -165,6 +169,7 @@ void Network::processMessage(const Message& message) {
             break;
         case ERROR:
             qDebug() << "error";
+            emit eventOccurred(Event::ERROR_OCCURRED);
             break;
         case SUCCESS:
             break;

@@ -44,6 +44,7 @@ public:
     ~Network() override;
 
     void connectToHost();
+    void disconnectFromHost();
     void logIn(const QString& username, const QString& password);
     void xRegister(const QString& username, const QString& password);
     void shutdown();

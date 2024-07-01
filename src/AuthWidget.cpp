@@ -122,7 +122,7 @@ void AuthWidget::logInTried(bool successful) {
 }
 
 void AuthWidget::registerTried(bool successful) {
-    loading(false);
+    Network::instance()->disconnectFromHost();
 
     QMessageBox box(this);
     box.setModal(true);
