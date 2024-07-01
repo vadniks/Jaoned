@@ -63,6 +63,8 @@ AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButton
 
 AuthWidget::~AuthWidget() {
     disconnect(Network::instance(), &Network::eventOccurred, this, &AuthWidget::networkEventOccurred);
+    disconnect(Network::instance(), &Network::logInTried, this, &AuthWidget::logInTried);
+    disconnect(Network::instance(), &Network::registerTried, this, &AuthWidget::registerTried);
 }
 
 QSize AuthWidget::minimumSizeHint() const {
