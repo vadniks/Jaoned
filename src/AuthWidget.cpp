@@ -69,26 +69,35 @@ QSize AuthWidget::minimumSizeHint() const {
     return {Consts::MIN_WINDOW_WIDTH, Consts::MIN_WINDOW_HEIGHT};
 }
 
+void AuthWidget::loading(bool enable) {
+    mProgressBar.setVisible(enable);
+    mUsernameField.setEnabled(!enable);
+    mPasswordField.setEnabled(!enable);
+    mLogInButton.setEnabled(!enable);
+    mRegisterButton.setEnabled(!enable);
+}
+
 void AuthWidget::logInClicked() {
     loggingIn = true;
-    mProgressBar.setVisible(true);
+    loading(true);
     Network::instance()->connectToHost();
 }
 
 void AuthWidget::registerClicked() {
     loggingIn = false;
-    mProgressBar.setVisible(true);
+    loading(true);
     Network::instance()->connectToHost();
 }
 
 void AuthWidget::networkEventOccurred(Network::Event event) {
-    mProgressBar.setVisible(false);
-
     if (event != Network::Event::CONNECTED) {
+        loading(false);
+
         QMessageBox box(this);
         box.setModal(true);
         box.setText(event == Network::Event::ERROR_OCCURRED ? "Error occurred" : "Disconnected");
         box.exec();
+
         return;
     }
 
@@ -99,6 +108,8 @@ void AuthWidget::networkEventOccurred(Network::Event event) {
 }
 
 void AuthWidget::logInTried(bool successful) {
+    loading(false);
+
     if (successful) {
         emit loggedIn();
         return;
@@ -111,6 +122,8 @@ void AuthWidget::logInTried(bool successful) {
 }
 
 void AuthWidget::registerTried(bool successful) {
+    loading(false);
+
     QMessageBox box(this);
     box.setModal(true);
     box.setText(successful ? "Registration succeeded" : "Registration failed");

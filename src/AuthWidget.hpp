@@ -51,6 +51,8 @@ public:
 
     DISABLE_COPY(AuthWidget)
     DISABLE_MOVE(AuthWidget)
+private:
+    void loading(bool enable);
 public slots:
     void logInClicked();
     void registerClicked();
