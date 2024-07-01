@@ -43,6 +43,9 @@ static const int MESSAGE_HEAD_SIZE = 12;
 static const int MAX_MESSAGE_BODY_SIZE = 116;
 static const int MAX_MESSAGE_SIZE = 128;
 
+static const int FROM_SERVER = -1;
+static const int FROM_ANONYMOUS = -2;
+
 static QVector<uchar> packMessage(const Message& message) {
     assert(!message.body.isEmpty() && message.size > 0 || message.body.isEmpty() && message.size == 0);
 
@@ -80,7 +83,7 @@ void Network::logIn(const QString& username, const QString& password) {
     Message message;
     message.size = MAX_CREDENTIAL_SIZE * 2;
     message.flag = ActionFlag::LOG_IN;
-    message.from = -1;
+    message.from = FROM_ANONYMOUS;
 
     message.body = QVector<uchar>(MAX_CREDENTIAL_SIZE * 2);
     memcpy(message.body.data(), (uchar[8]) {'a', 'd', 'm', 'i', 'n', 0, 0, 0}, 8);
@@ -90,7 +93,16 @@ void Network::logIn(const QString& username, const QString& password) {
 }
 
 void Network::xRegister(const QString& username, const QString& password) {
-    emit registerTried(false);
+    Message message;
+    message.size = MAX_CREDENTIAL_SIZE * 2;
+    message.flag = ActionFlag::REGISTER;
+    message.from = FROM_ANONYMOUS;
+
+    message.body = QVector<uchar>(MAX_CREDENTIAL_SIZE * 2);
+    memcpy(message.body.data(), (uchar[8]) {'t', 'e', 's', 't', 0, 0, 0, 0}, 8);
+    memcpy(message.body.data() + 8, (uchar[8]) {'p', 'a', 's', 's', 0, 0, 0, 0}, 8);
+
+    mSocket.write(reinterpret_cast<const char*>(packMessage(message).data()), MESSAGE_HEAD_SIZE + message.size);
 }
 
 Network* Network::instance() {
@@ -143,10 +155,12 @@ void Network::bytesWritten(long bytes) {
 void Network::processMessage(const Message& message) {
     switch (message.flag) {
         case LOG_IN:
-            qDebug() << "pm " << (message.size > 0 ? *reinterpret_cast<const int*>(message.body.data()) : -1);
+            qDebug() << "pm logIn " << (message.size > 0 ? *reinterpret_cast<const int*>(message.body.data()) : -1);
             emit logInTried(message.size > 0);
             break;
         case REGISTER:
+            qDebug() << "pm register " << (message.size > 0 ? "true" : "false");
+            emit registerTried(message.size > 0);
             break;
         case FINISH:
             break;

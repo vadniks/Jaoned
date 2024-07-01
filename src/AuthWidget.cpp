@@ -19,7 +19,7 @@
 #include "AuthWidget.hpp"
 #include <QMessageBox>
 
-AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButtonsLayout(&mButtonsWidget) {
+AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButtonsLayout(&mButtonsWidget), loggingIn(true) {
     mLayout.setAlignment(Qt::AlignCenter);
 
     mAppNameLabel.setText("Jaoned");
@@ -69,11 +69,13 @@ QSize AuthWidget::minimumSizeHint() const {
 }
 
 void AuthWidget::logInClicked() {
+    loggingIn = true;
     mProgressBar.setVisible(true);
     Network::instance()->connectToHost();
 }
 
 void AuthWidget::registerClicked() {
+    loggingIn = false;
     mProgressBar.setVisible(true);
 }
 
@@ -88,5 +90,8 @@ void AuthWidget::networkEventOccurred(Network::Event event) {
         return;
     }
 
-    Network::instance()->logIn(mUsernameField.text(), mPasswordField.text());
+    if (loggingIn)
+        Network::instance()->logIn(mUsernameField.text(), mPasswordField.text());
+    else
+        Network::instance()->xRegister(mUsernameField.text(), mPasswordField.text());
 }
