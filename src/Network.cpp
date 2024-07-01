@@ -153,6 +153,7 @@ void Network::bytesWritten(long bytes) {
 }
 
 void Network::processMessage(const Message& message) {
+    qDebug() << message.flag;
     switch (message.flag) {
         case LOG_IN:
             qDebug() << "pm logIn " << (message.size > 0 ? *reinterpret_cast<const int*>(message.body.data()) : -1);

@@ -77,6 +77,7 @@ void AuthWidget::logInClicked() {
 void AuthWidget::registerClicked() {
     loggingIn = false;
     mProgressBar.setVisible(true);
+    Network::instance()->connectToHost();
 }
 
 void AuthWidget::networkEventOccurred(Network::Event event) {
