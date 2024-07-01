@@ -156,7 +156,7 @@ void Network::processMessage(const Message& message) {
     qDebug() << message.flag;
     switch (message.flag) {
         case LOG_IN:
-            qDebug() << "pm logIn " << (message.size > 0 ? *reinterpret_cast<const int*>(message.body.data()) : -1);
+            qDebug() << "pm logIn " << (message.size > 0 ? *reinterpret_cast<const int*>(message.body.data()) : -1); // TODO: don't send clients their ids, on server make ma of connections as keys
             emit logInTried(message.size > 0);
             break;
         case REGISTER:

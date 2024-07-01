@@ -57,7 +57,8 @@ AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButton
     mLayout.addWidget(&mProgressBar);
 
     connect(Network::instance(), &Network::eventOccurred, this, &AuthWidget::networkEventOccurred);
-//    connect(Network::instance(), &Network::logInTried)
+    connect(Network::instance(), &Network::logInTried, this, &AuthWidget::logInTried);
+    connect(Network::instance(), &Network::registerTried, this, &AuthWidget::registerTried);
 }
 
 AuthWidget::~AuthWidget() {
@@ -95,4 +96,23 @@ void AuthWidget::networkEventOccurred(Network::Event event) {
         Network::instance()->logIn(mUsernameField.text(), mPasswordField.text());
     else
         Network::instance()->xRegister(mUsernameField.text(), mPasswordField.text());
+}
+
+void AuthWidget::logInTried(bool successful) {
+    if (successful) {
+        emit loggedIn();
+        return;
+    }
+
+    QMessageBox box(this);
+    box.setModal(true);
+    box.setText("Logging in failed");
+    box.exec();
+}
+
+void AuthWidget::registerTried(bool successful) {
+    QMessageBox box(this);
+    box.setModal(true);
+    box.setText(successful ? "Registration succeeded" : "Registration failed");
+    box.exec();
 }
