@@ -53,7 +53,7 @@ HomeWidget::HomeWidget() : mLayout(this) {
     mLayout.addWidget(&mBoardsListWidget);
 
     mNewBoardButton.setText("New");
-    mNewBoardButton.setFixedWidth(100);
+    connect(&mNewBoardButton, &QPushButton::clicked, this, &HomeWidget::newBoardClicked);
     mLayout.addWidget(&mNewBoardButton, 0, Qt::AlignCenter);
 
     // TODO: test only
@@ -95,4 +95,8 @@ void HomeWidget::clearBoardsList() {
 
 void HomeWidget::boardsListItemClicked(QListWidgetItem* item) {
     mBoardsListWidget.clearSelection();
+}
+
+void HomeWidget::newBoardClicked() {
+
 }

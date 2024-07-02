@@ -53,4 +53,5 @@ public:
     void clearBoardsList();
 private slots:
     void boardsListItemClicked(QListWidgetItem* item);
+    void newBoardClicked();
 };
