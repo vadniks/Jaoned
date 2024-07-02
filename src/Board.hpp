@@ -18,38 +18,16 @@
 
 #pragma once
 
-#include "defs.hpp"
-#include "BoardWidget.hpp"
-#include "ControlsWidget.hpp"
-#include "AuthWidget.hpp"
-#include "HomeWidget.hpp"
-#include <QWidget>
-#include <QVBoxLayout>
+#include <QString>
+#include <QColor>
 
-class MainWidget final : public QWidget {
-    Q_OBJECT
-public:
-    enum State {
-        UNAUTHENTICATED,
-        AUTHENTICATED
-    };
+class Board final {
 private:
-    State mState;
-    QVBoxLayout mLayout;
-    BoardWidget* mBoardWidget;
-    ControlsWidget mControlsWidget;
-    AuthWidget mAuthWidget;
-    HomeWidget mHomeWidget;
+    QString mTitle;
+    QColor mColor;
 public:
-    MainWidget();
-    ~MainWidget() override;
+    Board(const QString& title, const QColor& color) : mTitle(title), mColor(color) {}
 
-    DISABLE_COPY(MainWidget)
-    DISABLE_MOVE(MainWidget)
-
-    void resizeEvent(QResizeEvent* event) override;
-private:
-    void resizeBoardWidget();
-private slots:
-    void controlsWidgetUpdated();
+    QString title() const { return mTitle; }
+    QColor color() const { return mColor; }
 };

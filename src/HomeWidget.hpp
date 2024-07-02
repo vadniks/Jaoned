@@ -18,38 +18,35 @@
 
 #pragma once
 
-#include "defs.hpp"
-#include "BoardWidget.hpp"
-#include "ControlsWidget.hpp"
-#include "AuthWidget.hpp"
-#include "HomeWidget.hpp"
+#include "Board.hpp"
 #include <QWidget>
-#include <QVBoxLayout>
+#include <QLabel>
+#include <QListView>
+#include <QAbstractListModel>
 
-class MainWidget final : public QWidget {
+class HomeWidget final : public QWidget {
     Q_OBJECT
-public:
-    enum State {
-        UNAUTHENTICATED,
-        AUTHENTICATED
+private:
+    class BoardsListModel final : public QAbstractListModel {
+    public:
+        enum Roles {
+            Title = Qt::ItemDataRole::UserRole,
+            Color = Qt::ItemDataRole::UserRole + 1
+        };
+    private:
+        QList<Board> mBoards;
+        QHash<int, QByteArray> mRoles;
+    public:
+        BoardsListModel();
+        int rowCount(const QModelIndex& parent) const override;
+        int columnCount(const QModelIndex& parent) const override;
+        QVariant data(const QModelIndex& index, int role) const override;
+        QHash<int, QByteArray> roleNames() const override;
     };
 private:
-    State mState;
-    QVBoxLayout mLayout;
-    BoardWidget* mBoardWidget;
-    ControlsWidget mControlsWidget;
-    AuthWidget mAuthWidget;
-    HomeWidget mHomeWidget;
+    QLabel mBoardsLabel;
+    BoardsListModel mBoardsListModel;
+    QListView mBoardsListView;
 public:
-    MainWidget();
-    ~MainWidget() override;
-
-    DISABLE_COPY(MainWidget)
-    DISABLE_MOVE(MainWidget)
-
-    void resizeEvent(QResizeEvent* event) override;
-private:
-    void resizeBoardWidget();
-private slots:
-    void controlsWidgetUpdated();
+    HomeWidget();
 };
