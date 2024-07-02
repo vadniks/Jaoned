@@ -18,40 +18,63 @@
 
 #include "HomeWidget.hpp"
 
-HomeWidget::BoardsListModel::BoardsListModel() {
-    mRoles[Roles::Title] = "title";
-    mRoles[Roles::Color] = "color";
+HomeWidget::BoardListItem::BoardListItem(const Board& board) : mLayout(this) {
+    QPixmap pixmap(50, 50);
+    pixmap.fill(board.color());
+
+    mColorLabel.setPixmap(pixmap);
+    mLayout.addWidget(&mColorLabel);
+
+    mTitleLabel.setText(board.title());
+    mLayout.addWidget(&mTitleLabel);
 }
 
-int HomeWidget::BoardsListModel::rowCount(const QModelIndex&) const {
-    return static_cast<int>(mBoards.size());
+QListWidgetItem* HomeWidget::BoardListItem::listItem() {
+    return &mListItem;
 }
 
-int HomeWidget::BoardsListModel::columnCount(const QModelIndex&) const {
-    return 1;
+HomeWidget::HomeWidget() : mLayout(this) {
+    mBoardsLabel.setText("Boards");
+    mLayout.addWidget(&mBoardsLabel);
+
+    mBoardsListWidget.setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
+    connect(&mBoardsListWidget, &QListWidget::itemClicked, this, &HomeWidget::boardsListItemClicked);
+    mLayout.addWidget(&mBoardsListWidget);
+
+    // TODO: test only
+    addBoardToList(Board("Test 1", QColor(255, 255, 255)));
+    addBoardToList(Board("Test 2", QColor(170, 170, 170)));
+    addBoardToList(Board("Test 3", QColor(85, 85, 85)));
+
+    refillList();
 }
 
-QVariant HomeWidget::BoardsListModel::data(const QModelIndex& index, int role) const {
-    const int row = index.row();
+HomeWidget::~HomeWidget() {
+    for (auto i : mBoardListItems)
+        delete i;
+}
 
-    if (row < 0 || row >= mBoards.size()) return {};
+void HomeWidget::refillList() {
+    mBoardsListWidget.clear();
 
-    const auto board = mBoards[row];
-
-    switch (role) {
-        case Roles::Title:
-            return board.title();
-        case Roles::Color:
-            return board.color();
-        default:
-            return {};
+    for (auto boardListItem : mBoardListItems) {
+        const auto item = boardListItem->listItem();
+        mBoardsListWidget.addItem(item);
+        mBoardsListWidget.setItemWidget(item, boardListItem);
     }
 }
 
-QHash<int, QByteArray> HomeWidget::BoardsListModel::roleNames() const {
-    return mRoles;
+void HomeWidget::addBoardToList(const Board& board) {
+    mBoardListItems.push_back(new BoardListItem(board));
 }
 
-HomeWidget::HomeWidget() {
-    mBoardsListView.setModel(&mBoardsListModel);
+void HomeWidget::clearBoardsList() {
+    for (auto i : mBoardListItems)
+        delete i;
+
+    mBoardListItems.clear();
+}
+
+void HomeWidget::boardsListItemClicked(QListWidgetItem* item) {
+    mBoardsListWidget.clearSelection();
 }

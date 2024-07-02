@@ -21,32 +21,33 @@
 #include "Board.hpp"
 #include <QWidget>
 #include <QLabel>
-#include <QListView>
-#include <QAbstractListModel>
+#include <QListWidget>
+#include <QHBoxLayout>
 
 class HomeWidget final : public QWidget {
     Q_OBJECT
 private:
-    class BoardsListModel final : public QAbstractListModel {
-    public:
-        enum Roles {
-            Title = Qt::ItemDataRole::UserRole,
-            Color = Qt::ItemDataRole::UserRole + 1
-        };
+    class BoardListItem final : public QWidget {
     private:
-        QList<Board> mBoards;
-        QHash<int, QByteArray> mRoles;
+        QHBoxLayout mLayout;
+        QLabel mColorLabel;
+        QLabel mTitleLabel;
+        QListWidgetItem mListItem;
     public:
-        BoardsListModel();
-        int rowCount(const QModelIndex& parent) const override;
-        int columnCount(const QModelIndex& parent) const override;
-        QVariant data(const QModelIndex& index, int role) const override;
-        QHash<int, QByteArray> roleNames() const override;
+        explicit BoardListItem(const Board& board);
+        QListWidgetItem* listItem();
     };
 private:
+    QVBoxLayout mLayout;
     QLabel mBoardsLabel;
-    BoardsListModel mBoardsListModel;
-    QListView mBoardsListView;
+    QListWidget mBoardsListWidget;
+    QList<BoardListItem*> mBoardListItems;
 public:
     HomeWidget();
+    ~HomeWidget() override;
+    void refillList();
+    void addBoardToList(const Board& board);
+    void clearBoardsList();
+private slots:
+    void boardsListItemClicked(QListWidgetItem* item);
 };
