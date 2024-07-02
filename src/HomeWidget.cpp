@@ -18,6 +18,7 @@
 
 #include "HomeWidget.hpp"
 #include "defs.hpp"
+#include <QMessageBox>
 
 HomeWidget::BoardListItem::BoardListItem(const Board& board) : mLayout(this) {
     QPixmap pixmap(25, 25);
@@ -50,6 +51,7 @@ HomeWidget::HomeWidget() : mLayout(this) {
 
     mBoardsListWidget.setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
     connect(&mBoardsListWidget, &QListWidget::itemClicked, this, &HomeWidget::boardsListItemClicked);
+    connect(&mBoardsListWidget, &QListWidget::itemDoubleClicked, this, &HomeWidget::boardsListItemDoubleClicked);
     mLayout.addWidget(&mBoardsListWidget);
 
     mNewBoardButton.setText("New");
@@ -95,6 +97,22 @@ void HomeWidget::clearBoardsList() {
 
 void HomeWidget::boardsListItemClicked(QListWidgetItem* item) {
     mBoardsListWidget.clearSelection();
+}
+
+void HomeWidget::boardsListItemDoubleClicked(QListWidgetItem* item) {
+    QMessageBox box(this);
+    box.setModal(true);
+    box.setText("Delete this board?");
+    box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+
+    switch (box.exec()) {
+        case QMessageBox::Yes:
+            qDebug() << "y";
+            break;
+        case QMessageBox::No:
+            qDebug() << "n";
+            break;
+    }
 }
 
 void HomeWidget::newBoardClicked() {
