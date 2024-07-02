@@ -17,6 +17,7 @@
  */
 
 #include "HomeWidget.hpp"
+#include "defs.hpp"
 
 HomeWidget::BoardListItem::BoardListItem(const Board& board) : mLayout(this) {
     QPixmap pixmap(50, 50);
@@ -51,6 +52,10 @@ HomeWidget::HomeWidget() : mLayout(this) {
 HomeWidget::~HomeWidget() {
     for (auto i : mBoardListItems)
         delete i;
+}
+
+QSize HomeWidget::minimumSizeHint() const {
+    return {Consts::MIN_WINDOW_WIDTH, Consts::MIN_WINDOW_HEIGHT};
 }
 
 void HomeWidget::refillList() {

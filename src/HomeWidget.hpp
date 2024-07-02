@@ -45,6 +45,7 @@ private:
 public:
     HomeWidget();
     ~HomeWidget() override;
+    QSize minimumSizeHint() const override;
     void refillList();
     void addBoardToList(const Board& board);
     void clearBoardsList();
