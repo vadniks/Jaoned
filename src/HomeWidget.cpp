@@ -45,7 +45,6 @@ HomeWidget::HomeWidget() : mLayout(this) {
     addBoardToList(Board("Test 1", QColor(255, 255, 255)));
     addBoardToList(Board("Test 2", QColor(170, 170, 170)));
     addBoardToList(Board("Test 3", QColor(85, 85, 85)));
-
     refillList();
 }
 
