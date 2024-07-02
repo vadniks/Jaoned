@@ -23,6 +23,7 @@
 #include <QLabel>
 #include <QListWidget>
 #include <QHBoxLayout>
+#include <QPushButton>
 
 class HomeWidget final : public QWidget {
     Q_OBJECT
@@ -42,6 +43,7 @@ private:
     QLabel mBoardsLabel;
     QListWidget mBoardsListWidget;
     QList<BoardListItem*> mBoardListItems;
+    QPushButton mNewBoardButton;
 public:
     HomeWidget();
     ~HomeWidget() override;

@@ -46,12 +46,15 @@ HomeWidget::HomeWidget() : mLayout(this) {
 
     mBoardsLabel.setText("Boards");
     mBoardsLabel.setFont(font);
-    mBoardsLabel.setAlignment(Qt::AlignCenter);
-    mLayout.addWidget(&mBoardsLabel);
+    mLayout.addWidget(&mBoardsLabel, 0, Qt::AlignCenter);
 
     mBoardsListWidget.setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
     connect(&mBoardsListWidget, &QListWidget::itemClicked, this, &HomeWidget::boardsListItemClicked);
     mLayout.addWidget(&mBoardsListWidget);
+
+    mNewBoardButton.setText("New");
+    mNewBoardButton.setFixedWidth(100);
+    mLayout.addWidget(&mNewBoardButton, 0, Qt::AlignCenter);
 
     // TODO: test only
     addBoardToList(Board("Test 1", QColor(255, 255, 255)));
