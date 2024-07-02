@@ -22,16 +22,11 @@
 #include "Mode.hpp"
 #include "Theme.hpp"
 #include "Renderer.hpp"
+#include "drawns.hpp"
 #include <functional>
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions_3_3_Core>
 #include <glm/glm.hpp>
-
-class DrawnElement;
-class DrawnPointsSet;
-class DrawnLine;
-class DrawnText;
-class DrawnImage;
 
 class BoardWidget final : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core {
     Q_OBJECT
