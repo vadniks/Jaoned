@@ -124,7 +124,7 @@ void Network::errorOccurred(QAbstractSocket::SocketError error) {
     mSocket.disconnectFromHost();
 }
 
-void Network::readyRead() {
+void Network::readyRead() { // TODO: while (mSocket.bytesAvailable() >= MESSAGE_HEAD_SIZE) { read_head; read_body; processMessage(); }
     assert(mSocket.bytesAvailable() >= MESSAGE_HEAD_SIZE);
 
     QVector<uchar> buffer(MAX_MESSAGE_SIZE);
