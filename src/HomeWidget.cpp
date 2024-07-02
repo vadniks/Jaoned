@@ -20,14 +20,20 @@
 #include "defs.hpp"
 
 HomeWidget::BoardListItem::BoardListItem(const Board& board) : mLayout(this) {
-    QPixmap pixmap(50, 50);
+    QPixmap pixmap(25, 25);
     pixmap.fill(board.color());
 
     mColorLabel.setPixmap(pixmap);
     mLayout.addWidget(&mColorLabel);
 
+    QFont font(mTitleLabel.font());
+    font.setPointSize(14);
+
     mTitleLabel.setText(board.title());
+    mTitleLabel.setFont(font);
     mLayout.addWidget(&mTitleLabel);
+
+    mListItem.setSizeHint(QWidget::sizeHint());
 }
 
 QListWidgetItem* HomeWidget::BoardListItem::listItem() {
