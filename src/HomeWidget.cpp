@@ -41,7 +41,12 @@ QListWidgetItem* HomeWidget::BoardListItem::listItem() {
 }
 
 HomeWidget::HomeWidget() : mLayout(this) {
+    QFont font(mBoardsLabel.font());
+    font.setPointSize(14);
+
     mBoardsLabel.setText("Boards");
+    mBoardsLabel.setFont(font);
+    mBoardsLabel.setAlignment(Qt::AlignCenter);
     mLayout.addWidget(&mBoardsLabel);
 
     mBoardsListWidget.setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
