@@ -43,11 +43,7 @@ QColor Board::color() const {
 QVector<uchar> Board::pack() const {
     QVector<uchar> bytes(4 + 4 + 4 + mSize);
 
-    uint color = 0;
-    color |= (mColor.red() & 0xff) << 0;
-    color |= (mColor.green() & 0xff) << 8;
-    color |= (mColor.blue() & 0xff) << 16;
-    color |= (mColor.alpha() & 0xff) << 24;
+    const uint color = qColorToUint(mColor);
 
     memcpy(&(bytes.data()[0]), &mId, 4);
     memcpy(&(bytes.data()[4]), &color, 4);
@@ -67,12 +63,5 @@ Board Board::unpack(const QVector<uchar>& bytes) {
     QString title(size, '\0');
     memcpy(title.data(), &(bytes.data()[8]), size);
 
-    QColor qColor(
-        (color >> 0) & 0xff,
-        (color >> 8) & 0xff,
-        (color >> 16) & 0xff,
-        (color >> 24) & 0xff
-    );
-
-    return {id, qColor, title};
+    return {id, uintToQColor(static_cast<uint>(color)), title};
 }
