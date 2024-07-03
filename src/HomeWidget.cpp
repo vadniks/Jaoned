@@ -59,9 +59,9 @@ HomeWidget::HomeWidget() : mLayout(this) {
     mLayout.addWidget(&mNewBoardButton, 0, Qt::AlignCenter);
 
     // TODO: test only
-    addBoardToList(Board("Test 1", QColor(255, 255, 255)));
-    addBoardToList(Board("Test 2", QColor(170, 170, 170)));
-    addBoardToList(Board("Test 3", QColor(85, 85, 85)));
+    addBoardToList(Board(0, QColor(255, 255, 255), "Test 1"));
+    addBoardToList(Board(1, QColor(170, 170, 170), "Test 2"));
+    addBoardToList(Board(2, QColor(85, 85, 85), "Test 3"));
     refillList();
 }
 

@@ -38,7 +38,7 @@ private:
     static inline Network* cInstance = nullptr;
     QTcpSocket mSocket;
 public:
-    static inline int MAX_CREDENTIAL_SIZE = 8;
+    static inline const int MAX_CREDENTIAL_SIZE = 8;
 public:
     Network();
     ~Network() override;

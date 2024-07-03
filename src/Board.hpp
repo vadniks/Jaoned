@@ -18,16 +18,27 @@
 
 #pragma once
 
+#include "drawns.hpp"
 #include <QString>
 #include <QColor>
 
 class Board final {
 private:
-    QString mTitle;
+    int mId;
     QColor mColor;
+    int mSize;
+    QString mTitle;
 public:
-    Board(const QString& title, const QColor& color) : mTitle(title), mColor(color) {}
+    static inline const int MAX_TITLE_SIZE = 16;
+    static inline const int MAX_BOARD_SIZE = 4 + 4 + 4 + MAX_TITLE_SIZE; // 28
+public:
+    Board(int id, const QColor& color, const QString& title);
 
-    QString title() const { return mTitle; }
-    QColor color() const { return mColor; }
+    int id() const;
+    QColor color() const;
+    int size() const;
+    QString title() const;
+
+    QVector<uchar> pack() const;
+    static Board unpack(const QVector<uchar>& bytes);
 };
