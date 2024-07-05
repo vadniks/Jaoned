@@ -42,6 +42,9 @@ public:
     DrawnPointsSet(int width, const QColor& color) : width(width), color(color), points() {}
     ~DrawnPointsSet() override = default;
 
+    QVector<uchar> pack();
+    static DrawnPointsSet* unpack(const QVector<uchar>& bytes);
+
     DISABLE_COPY(DrawnPointsSet)
     DISABLE_MOVE(DrawnPointsSet)
 };
@@ -56,19 +59,25 @@ public:
     DrawnLine(const glm::vec2& start, const glm::vec2 end, int width, const QColor& color) : start(start), end(end), width(width), color(color) {}
     ~DrawnLine() override = default;
 
+    QVector<uchar> pack();
+    static DrawnLine* unpack(const QVector<uchar>& bytes);
+
     DISABLE_COPY(DrawnLine)
     DISABLE_MOVE(DrawnLine)
 };
 
 class DrawnText final : public DrawnElement {
 public:
-    QString text;
     glm::vec2 pos;
     int size;
     QColor color;
+    QString text;
 
-    DrawnText(const QString& text, const glm::vec2& pos, int size, const QColor& color) : text(text), pos(pos), size(size), color(color) {}
+    DrawnText(const glm::vec2& pos, int size, const QColor& color, const QString& text) : pos(pos), size(size), color(color), text(text) {}
     ~DrawnText() override = default;
+
+    QVector<uchar> pack();
+    static DrawnText* unpack(const QVector<uchar>& bytes);
 
     DISABLE_COPY(DrawnText)
     DISABLE_MOVE(DrawnText)

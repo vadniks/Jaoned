@@ -19,6 +19,7 @@
 #pragma once
 
 #include <QColor>
+#include <glm/glm.hpp>
 
 #define DISABLE_COPY(x) \
     x(const x&) = delete; \
@@ -36,19 +37,8 @@ public:
     static inline int MIN_WINDOW_HEIGHT = 9 * 75;
 };
 
-inline uint qColorToUint(const QColor& qColor) {
-    return
-        ((qColor.red() & 0xff) << 0) |
-        ((qColor.green() & 0xff) << 8) |
-        ((qColor.blue() & 0xff) << 16) |
-        ((qColor.alpha() & 0xff) << 24);
-}
+uint qColorToUint(const QColor& qColor);
+QColor uintToQColor(uint color);
 
-inline QColor uintToQColor(uint color) {
-    return {
-        static_cast<int>((color >> 0) & 0xff),
-        static_cast<int>((color >> 8) & 0xff),
-        static_cast<int>((color >> 16) & 0xff),
-        static_cast<int>((color >> 24) & 0xff)
-    };
-}
+QVector<uchar> packVec2(const glm::vec2& vec);
+glm::vec2 unpackVec2(const QVector<uchar>& bytes);
