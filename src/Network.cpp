@@ -17,6 +17,7 @@
  */
 
 #include "Network.hpp"
+#include <QDateTime>
 
 // int size - prefix
 struct Message {
@@ -69,8 +70,27 @@ void Network::shutdown() {
 
 }
 
-void Network::sendBytes(const QList<uchar>& bytes, ActionFlag flag) {
+static long currentTimestamp() {
+    return QDateTime::currentMSecsSinceEpoch();
+}
 
+void Network::sendBytes(const QList<uchar>& bytes, ActionFlag flag) {
+    int start = 0;
+    int index = 0;
+    const int count = static_cast<int>(ceilf(static_cast<float>(bytes.size()) / static_cast<float>(MAX_MESSAGE_BODY_SIZE)));
+    const long timestamp = currentTimestamp();
+
+    while (true) {
+        Message message;
+        message.flag = flag;
+        message.index = index++;
+        message.count = count;
+        message.timestamp = timestamp;
+        message.body = bytes.mid(start, MAX_MESSAGE_BODY_SIZE);
+
+        if (message.body.isEmpty()) break;
+        sendMessage(message);
+    }
 }
 
 Network* Network::instance() {
@@ -129,6 +149,8 @@ void Network::bytesWritten(long bytes) {
 }
 
 void Network::sendMessage(const Message& message) {
+    assert(message.timestamp > 0);
+
     const int size = static_cast<int>(message.body.size());
     auto head = QList<uchar>(MESSAGE_HEAD_SIZE);
 
