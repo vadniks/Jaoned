@@ -20,8 +20,8 @@
 
 // TODO: replace QVector with QList
 
-QVector<uchar> DrawnPointsSet::pack() {
-    QVector<uchar> bytes(4 + 4 + 8 * points.size());
+QList<uchar> DrawnPointsSet::pack() {
+    QList<uchar> bytes(4 + 4 + 8 * points.size());
 
     memcpy(&(bytes.data()[0]), &width, 4);
 
@@ -34,14 +34,14 @@ QVector<uchar> DrawnPointsSet::pack() {
     return bytes;
 }
 
-DrawnPointsSet* DrawnPointsSet::unpack(const QVector<uchar>& bytes) {
+DrawnPointsSet* DrawnPointsSet::unpack(const QList<uchar>& bytes) {
     int width;
     memcpy(&width, &(bytes.data()[0]), 4);
 
     uint color;
     memcpy(&color, &(bytes.data()[4]), 4);
 
-    QVector<glm::vec2> points;
+    QList<glm::vec2> points;
     for (int i = 8; i < bytes.size() - 8; i += 8)
         points.append(unpackVec2(bytes.mid(i, i + 8)));
 
@@ -50,8 +50,8 @@ DrawnPointsSet* DrawnPointsSet::unpack(const QVector<uchar>& bytes) {
     return pointsSet;
 }
 
-QVector<uchar> DrawnLine::pack() {
-    QVector<uchar> bytes(8 + 8 + 4 + 4);
+QList<uchar> DrawnLine::pack() {
+    QList<uchar> bytes(8 + 8 + 4 + 4);
 
     memcpy(&(bytes.data()[0]), packVec2(start).data(), 8);
     memcpy(&(bytes.data()[8]), packVec2(end).data(), 8);
@@ -63,7 +63,7 @@ QVector<uchar> DrawnLine::pack() {
     return bytes;
 }
 
-DrawnLine* DrawnLine::unpack(const QVector<uchar>& bytes) {
+DrawnLine* DrawnLine::unpack(const QList<uchar>& bytes) {
     const glm::vec2 start = unpackVec2(bytes.mid(0, 8));
     glm::vec2 end = unpackVec2(bytes.mid(8, 16));
 
@@ -76,8 +76,8 @@ DrawnLine* DrawnLine::unpack(const QVector<uchar>& bytes) {
     return new DrawnLine(start, end, width, uintToQColor(color));
 }
 
-QVector<uchar> DrawnText::pack() {
-    QVector<uchar> bytes(8 + 4 + 4 + text.size());
+QList<uchar> DrawnText::pack() {
+    QList<uchar> bytes(8 + 4 + 4 + text.size());
 
     memcpy(&(bytes.data()[0]), packVec2(pos).data(), 8);
     memcpy(&(bytes.data()[8]), &size, 4);
@@ -90,6 +90,6 @@ QVector<uchar> DrawnText::pack() {
     return bytes;
 }
 
-DrawnText* DrawnText::unpack(const QVector<uchar>& bytes) {
+DrawnText* DrawnText::unpack(const QList<uchar>& bytes) {
     return nullptr;
 }

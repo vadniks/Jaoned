@@ -36,13 +36,13 @@ public:
 struct DrawnPointsSet final : public DrawnElement {
     int width;
     QColor color;
-    QVector<glm::vec2> points;
+    QList<glm::vec2> points;
 
     DrawnPointsSet(int width, const QColor& color) : width(width), color(color), points() {}
     ~DrawnPointsSet() override = default;
 
-    QVector<uchar> pack();
-    static DrawnPointsSet* unpack(const QVector<uchar>& bytes);
+    QList<uchar> pack();
+    static DrawnPointsSet* unpack(const QList<uchar>& bytes);
 
     DISABLE_COPY(DrawnPointsSet)
     DISABLE_MOVE(DrawnPointsSet)
@@ -57,8 +57,8 @@ struct DrawnLine final : public DrawnElement {
     DrawnLine(const glm::vec2& start, const glm::vec2 end, int width, const QColor& color) : start(start), end(end), width(width), color(color) {}
     ~DrawnLine() override = default;
 
-    QVector<uchar> pack();
-    static DrawnLine* unpack(const QVector<uchar>& bytes);
+    QList<uchar> pack();
+    static DrawnLine* unpack(const QList<uchar>& bytes);
 
     DISABLE_COPY(DrawnLine)
     DISABLE_MOVE(DrawnLine)
@@ -73,8 +73,8 @@ struct DrawnText final : public DrawnElement {
     DrawnText(const glm::vec2& pos, int size, const QColor& color, const QString& text) : pos(pos), size(size), color(color), text(text) {}
     ~DrawnText() override = default;
 
-    QVector<uchar> pack();
-    static DrawnText* unpack(const QVector<uchar>& bytes);
+    QList<uchar> pack();
+    static DrawnText* unpack(const QList<uchar>& bytes);
 
     DISABLE_COPY(DrawnText)
     DISABLE_MOVE(DrawnText)
