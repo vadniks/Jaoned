@@ -23,7 +23,7 @@
 #include <QColor>
 #include <glm/glm.hpp>
 
-class DrawnElement { // abstract
+struct DrawnElement { // abstract
 protected:
     DrawnElement() {}
 public:
@@ -33,8 +33,7 @@ public:
     DISABLE_MOVE(DrawnElement)
 };
 
-class DrawnPointsSet final : public DrawnElement {
-public:
+struct DrawnPointsSet final : public DrawnElement {
     int width;
     QColor color;
     QVector<glm::vec2> points;
@@ -49,8 +48,7 @@ public:
     DISABLE_MOVE(DrawnPointsSet)
 };
 
-class DrawnLine final : public DrawnElement {
-public:
+struct DrawnLine final : public DrawnElement {
     glm::vec2 start;
     glm::vec2 end;
     int width;
@@ -66,8 +64,7 @@ public:
     DISABLE_MOVE(DrawnLine)
 };
 
-class DrawnText final : public DrawnElement {
-public:
+struct DrawnText final : public DrawnElement {
     glm::vec2 pos;
     int size;
     QColor color;
@@ -83,8 +80,7 @@ public:
     DISABLE_MOVE(DrawnText)
 };
 
-class DrawnImage final : public DrawnElement {
-public:
+struct DrawnImage final : public DrawnElement {
     glm::vec2 pos;
     glm::vec2 size;
     Texture* texture;

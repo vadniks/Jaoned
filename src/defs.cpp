@@ -35,14 +35,14 @@ QColor uintToQColor(uint color) {
     };
 }
 
-QVector<uchar> packVec2(const glm::vec2& vec) {
-    QVector<uchar> bytes(4 + 4);
+QList<uchar> packVec2(const glm::vec2& vec) {
+    QList<uchar> bytes(4 + 4);
     memcpy(&(bytes.data()[0]), &(vec.x), 4);
     memcpy(&(bytes.data()[4]), &(vec.y), 4);
     return bytes;
 }
 
-glm::vec2 unpackVec2(const QVector<uchar>& bytes) {
+glm::vec2 unpackVec2(const QList<uchar>& bytes) {
     glm::vec2 vec;
     memcpy(&(vec.x), &(bytes.data()[0]), 4);
     memcpy(&(vec.y), &(bytes.data()[4]), 4);

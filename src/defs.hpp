@@ -40,5 +40,5 @@ public:
 uint qColorToUint(const QColor& qColor);
 QColor uintToQColor(uint color);
 
-QVector<uchar> packVec2(const glm::vec2& vec);
-glm::vec2 unpackVec2(const QVector<uchar>& bytes);
+QList<uchar> packVec2(const glm::vec2& vec);
+glm::vec2 unpackVec2(const QList<uchar>& bytes);
