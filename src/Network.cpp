@@ -23,18 +23,15 @@ struct Message {
     Network::ActionFlag flag;
     int index;
     int count;
+    long timestamp;
     QList<uchar> body;
 
-    Message() : flag(Network::ActionFlag::ERROR), index(0), count(0), body() {}
-
-    Message(Network::ActionFlag flag, int index, int count, const QList<uchar>& body) :
-        flag(flag), index(index), count(count), body(body)
-    {}
+    Message() : flag(Network::ActionFlag::ERROR), index(0), count(0), timestamp(0), body() {}
 };
 
-static const int MESSAGE_HEAD_SIZE = 12;
-static const int MAX_MESSAGE_SIZE = 128;
-static const int MAX_MESSAGE_BODY_SIZE = MAX_MESSAGE_SIZE - MESSAGE_HEAD_SIZE; // 116
+static const int MESSAGE_HEAD_SIZE = 4 + 4 + 4 + 8; // 20
+static const int MAX_MESSAGE_SIZE = 124;
+static const int MAX_MESSAGE_BODY_SIZE = MAX_MESSAGE_SIZE - MESSAGE_HEAD_SIZE; // 104
 static const int MESSAGE_PREFIX_SIZE = 4;
 
 Network::Network() : mSocket(nullptr) {
@@ -72,6 +69,10 @@ void Network::shutdown() {
 
 }
 
+void Network::sendBytes(const QList<uchar>& bytes, ActionFlag flag) {
+
+}
+
 Network* Network::instance() {
     assert(cInstance != nullptr);
     return cInstance;
@@ -91,7 +92,7 @@ void Network::errorOccurred(QAbstractSocket::SocketError error) {
     mSocket.disconnectFromHost();
 }
 
-void Network::readyRead() {
+void Network::readyRead() { // TODO: add write lock to each client socket on server, so only one can write to it at a moment
     while (mSocket.bytesAvailable() >= MESSAGE_PREFIX_SIZE + MESSAGE_HEAD_SIZE) {
         int messageSize;
         if (mSocket.read(reinterpret_cast<char*>(&messageSize), MESSAGE_PREFIX_SIZE) < MESSAGE_PREFIX_SIZE)
@@ -108,6 +109,7 @@ void Network::readyRead() {
         memcpy(&(message.flag), &(head.data()[0]), 4);
         memcpy(&(message.index), &(head.data()[4]), 4);
         memcpy(&(message.count), &(head.data()[8]), 4);
+        memcpy(&(message.timestamp), &(head.data()[12]), 8);
 
         if (bodySize > 0) {
             QList<uchar> body(bodySize);
@@ -133,6 +135,7 @@ void Network::sendMessage(const Message& message) {
     memcpy(&(head.data()[0]), &(message.flag), 4);
     memcpy(&(head.data()[4]), &(message.index), 4);
     memcpy(&(head.data()[8]), &(message.count), 4);
+    memcpy(&(head.data()[12]), &(message.timestamp), 8);
 
     if (mSocket.write(reinterpret_cast<const char*>(&size), MESSAGE_PREFIX_SIZE) < MESSAGE_PREFIX_SIZE)
         return;
