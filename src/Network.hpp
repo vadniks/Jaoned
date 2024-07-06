@@ -34,6 +34,12 @@ public:
         ERROR_OCCURRED,
         DISCONNECTED
     };
+    enum ActionFlag : int {
+        ERROR = 0,
+        LOG_IN = 1,
+        REGISTER = 2,
+        SHUTDOWN = 3
+    };
 private:
     static inline Network* cInstance = nullptr;
     QTcpSocket mSocket;
@@ -48,6 +54,7 @@ public:
     void logIn(const QString& username, const QString& password);
     void xRegister(const QString& username, const QString& password);
     void shutdown();
+    void sendBytes(const QList<uchar>& bytes, ActionFlag flag);
 
     DISABLE_COPY(Network)
     DISABLE_MOVE(Network)
