@@ -91,6 +91,9 @@ struct DrawnImage final : public DrawnElement {
         delete texture;
     }
 
+    QList<uchar> pack();
+    static DrawnImage* unpack(const QList<uchar>& bytes);
+
     DISABLE_COPY(DrawnImage)
     DISABLE_MOVE(DrawnImage)
 };

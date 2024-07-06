@@ -91,5 +91,25 @@ QList<uchar> DrawnText::pack() {
 }
 
 DrawnText* DrawnText::unpack(const QList<uchar>& bytes) {
+    const glm::vec2 pos = unpackVec2(bytes.mid(0, 8));
+
+    int size;
+    memcpy(&size, &(bytes.data()[8]), 4);
+
+    uint color;
+    memcpy(&color, &(bytes.data()[12]), 4);
+
+    QList<uchar> text = bytes.mid(16);
+    QByteArray xText(text.size(), 0);
+    memcpy(xText.data(), text.data(), text.size());
+
+    return new DrawnText(pos, size, uintToQColor(color), QString(xText));
+}
+
+QList<uchar> DrawnImage::pack() {
+//    QList<uchar> bytes(8 + 8 + );
+}
+
+DrawnImage* DrawnImage::unpack(const QList<uchar>& bytes) {
     return nullptr;
 }
