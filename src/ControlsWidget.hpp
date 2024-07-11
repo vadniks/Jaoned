@@ -43,7 +43,7 @@ private:
     QPushButton mImageButton;
     QPushButton mEraseButton;
     QLabel mModeLabel;
-//    QPushButton mUndoButton;
+    QPushButton mUndoButton;
     QPushButton mClearButton;
     QPushButton mExportButton;
 public:
@@ -57,6 +57,7 @@ private slots:
     void modeSelected(Mode mode);
     void imageSelectClicked();
     void imageSelected(const QString& path);
+    void undoCLicked();
     void clearClicked();
     void exportClicked();
     void outputFileSelected(const QString& path);

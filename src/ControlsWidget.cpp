@@ -99,6 +99,10 @@ ControlsWidget::ControlsWidget(BoardWidget* boardWidget) :
 
     mLayout.addStretch();
 
+    mUndoButton.setText("Undo");
+    connect(&mUndoButton, &QPushButton::clicked, this, &ControlsWidget::undoCLicked);
+    mLayout.addWidget(&mUndoButton);
+
     mClearButton.setText("Clear");
     connect(&mClearButton, &QPushButton::clicked, this, &ControlsWidget::clearClicked);
     mLayout.addWidget(&mClearButton);
@@ -176,6 +180,11 @@ void ControlsWidget::imageSelected(const QString& path) {
     modeSelected(Mode::IMAGE);
     mBoardWidget->setCurrentTexture(glm::vec2(image.width(), image.height()), image.toImage().convertToFormat(QImage::Format::Format_RGBA8888).constBits());
 
+    emit updated();
+}
+
+void ControlsWidget::undoCLicked() {
+    mBoardWidget->undo();
     emit updated();
 }
 

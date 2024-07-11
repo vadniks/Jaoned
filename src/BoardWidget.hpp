@@ -25,6 +25,7 @@
 #include <functional>
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions_3_3_Core>
+#include <QStack>
 #include <glm/glm.hpp>
 
 struct DrawnElement;
@@ -43,7 +44,7 @@ private:
     glm::mat4 mProjection;
     Renderer* mRenderer;
     int mOffsetX, mOffsetY;
-    QVector<DrawnElement*> mElements;
+    QStack<DrawnElement*> mElements;
     DrawnPointsSet* mCurrentPointsSet; // nullable
     DrawnLine* mCurrentLine; // nullable
     DrawnText* mCurrentText; // nullable
@@ -81,6 +82,7 @@ public slots:
     void setColor(const QColor& color);
     void setPointWidth(int width);
     void setCurrentTexture(const glm::vec2& size, const uchar* data);
+    void undo();
     void clear();
 public:
     Mode mode() const;

@@ -261,16 +261,16 @@ void BoardWidget::mouseReleaseEvent(QMouseEvent*) {
         case Mode::ERASE:
             [[gnu::fallthrough]];
         case Mode::DRAW:
-            mElements.push_back(mCurrentPointsSet);
+            mElements.push(mCurrentPointsSet);
             mCurrentPointsSet = nullptr;
             break;
         case Mode::LINE:
-            mElements.push_back(mCurrentLine);
+            mElements.push(mCurrentLine);
             mCurrentLine = nullptr;
             break;
         case Mode::TEXT:
             if (!mCurrentText->text.isEmpty()) {
-                mElements.push_back(mCurrentText);
+                mElements.push(mCurrentText);
                 mCurrentText = nullptr;
             } else {
                 delete mCurrentText;
@@ -280,7 +280,7 @@ void BoardWidget::mouseReleaseEvent(QMouseEvent*) {
         case Mode::IMAGE:
             mDrawCurrentImage = false;
 
-            mElements.push_back(mCurrentImage);
+            mElements.push(mCurrentImage);
             mCurrentImage = nullptr;
 
             mMode = Mode::DRAW;
@@ -433,6 +433,13 @@ void BoardWidget::setPointWidth(int width) {
 void BoardWidget::setCurrentTexture(const glm::vec2& size, const uchar* data) {
     auto* texture = new Texture(*this, static_cast<int>(size.x), static_cast<int>(size.y), data);
     mCurrentImage = new DrawnImage(glm::vec2(0.0f), size, texture);
+}
+
+void BoardWidget::undo() {
+    if (mElements.isEmpty()) return;
+
+    delete mElements.pop();
+    update();
 }
 
 void BoardWidget::clear() {
