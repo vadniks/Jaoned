@@ -32,6 +32,8 @@ static QString makeModeString(Mode mode) {
             return prefix + "text";
         case Mode::IMAGE:
             return prefix + "image";
+        case Mode::ERASE:
+            return prefix + "erase";
     }
 }
 
@@ -87,6 +89,10 @@ ControlsWidget::ControlsWidget(BoardWidget* boardWidget) :
     mImageButton.setText("Image");
     connect(&mImageButton, &QPushButton::clicked, this, &ControlsWidget::imageSelectClicked);
     mLayout.addWidget(&mImageButton);
+
+    mEraseButton.setText("Erase");
+    connect(&mEraseButton, &QPushButton::clicked, this, [this](){ modeSelected(Mode::ERASE); });
+    mLayout.addWidget(&mEraseButton);
 
     mModeLabel.setText(makeModeString(mBoardWidget->mode()));
     mLayout.addWidget(&mModeLabel);

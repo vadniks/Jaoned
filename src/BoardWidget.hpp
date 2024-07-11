@@ -27,11 +27,11 @@
 #include <QOpenGLFunctions_3_3_Core>
 #include <glm/glm.hpp>
 
-class DrawnElement;
-class DrawnPointsSet;
-class DrawnLine;
-class DrawnText;
-class DrawnImage;
+struct DrawnElement;
+struct DrawnPointsSet;
+struct DrawnLine;
+struct DrawnText;
+struct DrawnImage;
 
 class BoardWidget final : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core {
     Q_OBJECT
@@ -70,6 +70,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent* event) override;
 private:
     void updateProjection();
+    QColor themeColor();
     void paintPointsSet(DrawnPointsSet* /*nullable*/ pointsSet);
     void paintLine(DrawnLine* /*nullable*/ line);
     void paintText(DrawnText* /*nullable*/ text);

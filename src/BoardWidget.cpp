@@ -20,7 +20,7 @@
 #include <QKeyEvent>
 #include <glm/ext/matrix_clip_space.hpp>
 
-class DrawnElement { // abstract
+struct DrawnElement { // abstract
 protected:
     DrawnElement() {}
 public:
@@ -30,21 +30,20 @@ public:
     DISABLE_MOVE(DrawnElement)
 };
 
-class DrawnPointsSet final : public DrawnElement {
-public:
+struct DrawnPointsSet final : public DrawnElement {
+    bool erase;
     int width;
     QColor color;
     QVector<glm::vec2> points;
 
-    DrawnPointsSet(int width, const QColor& color) : width(width), color(color), points() {}
+    DrawnPointsSet(bool erase, int width, const QColor& color) : erase(erase), width(width), color(color), points() {}
     ~DrawnPointsSet() override = default;
 
     DISABLE_COPY(DrawnPointsSet)
     DISABLE_MOVE(DrawnPointsSet)
 };
 
-class DrawnLine final : public DrawnElement {
-public:
+struct DrawnLine final : public DrawnElement {
     glm::vec2 start;
     glm::vec2 end;
     int width;
@@ -57,8 +56,7 @@ public:
     DISABLE_MOVE(DrawnLine)
 };
 
-class DrawnText final : public DrawnElement {
-public:
+struct DrawnText final : public DrawnElement {
     QString text;
     glm::vec2 pos;
     int size;
@@ -71,8 +69,7 @@ public:
     DISABLE_MOVE(DrawnText)
 };
 
-class DrawnImage final : public DrawnElement {
-public:
+struct DrawnImage final : public DrawnElement {
     glm::vec2 pos;
     glm::vec2 size;
     Texture* texture;
@@ -148,6 +145,8 @@ void BoardWidget::paintGL() {
     }
 
     switch (mMode) {
+        case Mode::ERASE:
+            [[gnu::fallthrough]];
         case DRAW:
             paintPointsSet(nullptr);
             break;
@@ -202,6 +201,8 @@ void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
     const int y = event->pos().y();
 
     switch (mMode) {
+        case Mode::ERASE:
+            [[gnu::fallthrough]];
         case Mode::DRAW:
             mCurrentPointsSet->points.push_back(glm::vec2(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY)));
             break;
@@ -227,8 +228,10 @@ void BoardWidget::mousePressEvent(QMouseEvent* event) {
     const int y = event->pos().y();
 
     switch (mMode) {
+        case Mode::ERASE:
+            [[gnu::fallthrough]];
         case Mode::DRAW:
-            mCurrentPointsSet = new DrawnPointsSet(mPointWidth, mColor);
+            mCurrentPointsSet = new DrawnPointsSet(mMode == Mode::ERASE, mPointWidth, mColor);
             mCurrentPointsSet->points.push_back(glm::vec2(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY)));
             break;
         case Mode::LINE:
@@ -255,6 +258,8 @@ void BoardWidget::mousePressEvent(QMouseEvent* event) {
 
 void BoardWidget::mouseReleaseEvent(QMouseEvent*) {
     switch (mMode) {
+        case Mode::ERASE:
+            [[gnu::fallthrough]];
         case Mode::DRAW:
             mElements.push_back(mCurrentPointsSet);
             mCurrentPointsSet = nullptr;
@@ -320,6 +325,10 @@ static void blending(bool enable) {
     }
 }
 
+QColor BoardWidget::themeColor() {
+    return mTheme == Theme::Dark ? QColor(0, 0, 0) : QColor(0xff, 0xff, 0xff);
+}
+
 void BoardWidget::paintPointsSet(DrawnPointsSet* /*nullable*/ pointsSet) {
     if (pointsSet != nullptr) {
         int j = 0;
@@ -327,7 +336,7 @@ void BoardWidget::paintPointsSet(DrawnPointsSet* /*nullable*/ pointsSet) {
             if (j < pointsSet->points.size() - 1) {
                 const auto startPos = glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y));
                 const auto endPos = glm::vec2(static_cast<float>(pointsSet->points.operator[](j + 1).x), static_cast<float>(pointsSet->points.operator[](j + 1).y));
-                const auto color = makeGlColor(pointsSet->color);
+                const auto color = makeGlColor(pointsSet->erase ? themeColor() : pointsSet->color);
                 const auto width = static_cast<float>(pointsSet->width);
 
                 mRenderer->drawLine(startPos, endPos, width, color);
@@ -340,7 +349,7 @@ void BoardWidget::paintPointsSet(DrawnPointsSet* /*nullable*/ pointsSet) {
         if (mCurrentPointsSet == nullptr) return;
         for (const auto& i : mCurrentPointsSet->points) {
             const auto pos = glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y));
-            const auto color = makeGlColor(mCurrentPointsSet->color);
+            const auto color = makeGlColor(mCurrentPointsSet->erase ? themeColor() : mCurrentPointsSet->color);
 
             mRenderer->drawPoint(pos, static_cast<float>(mCurrentPointsSet->width) * 0.7f, color);
             mRenderer->drawHollowCircle(pos, static_cast<int>(static_cast<float>(mCurrentPointsSet->width) / 2.0f), color);

@@ -41,7 +41,9 @@ private:
     QPushButton mLineButton;
     QPushButton mTextButton;
     QPushButton mImageButton;
+    QPushButton mEraseButton;
     QLabel mModeLabel;
+//    QPushButton mUndoButton;
     QPushButton mClearButton;
     QPushButton mExportButton;
 public:
