@@ -26,9 +26,9 @@ MainWidget::MainWidget() : mLayout(this), mBoardWidget(new BoardWidget([this](){
 //    mLayout.addWidget(mBoardWidget, 0, Qt::AlignVCenter);
 //    mLayout.addStretch();
 
-//    mLayout.addWidget(&mAuthWidget);
+    mLayout.addWidget(&mAuthWidget);
 
-    mLayout.addWidget(&mHomeWidget);
+//    mLayout.addWidget(&mHomeWidget);
 }
 
 MainWidget::~MainWidget() {
