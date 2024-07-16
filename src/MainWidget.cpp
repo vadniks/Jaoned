@@ -22,9 +22,13 @@
 MainWidget::MainWidget() : mLayout(this), mBoardWidget(new BoardWidget([this](){ mControlsWidget.updateMode(); })), mControlsWidget(mBoardWidget) {
     connect(&mControlsWidget, &ControlsWidget::updated, this, &MainWidget::controlsWidgetUpdated);
 
-    mLayout.addWidget(&mControlsWidget, 0, Qt::AlignTop);
-    mLayout.addWidget(mBoardWidget, 0, Qt::AlignVCenter);
-    mLayout.addStretch();
+//    mLayout.addWidget(&mControlsWidget, 0, Qt::AlignTop);
+//    mLayout.addWidget(mBoardWidget, 0, Qt::AlignVCenter);
+//    mLayout.addStretch();
+
+//    mLayout.addWidget(&mAuthWidget);
+
+    mLayout.addWidget(&mHomeWidget);
 }
 
 MainWidget::~MainWidget() {

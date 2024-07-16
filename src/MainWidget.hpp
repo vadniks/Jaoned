@@ -21,6 +21,8 @@
 #include "defs.hpp"
 #include "BoardWidget.hpp"
 #include "ControlsWidget.hpp"
+#include "AuthWidget.hpp"
+#include "HomeWidget.hpp"
 #include <QWidget>
 #include <QVBoxLayout>
 
@@ -30,6 +32,8 @@ private:
     QVBoxLayout mLayout;
     BoardWidget* mBoardWidget;
     ControlsWidget mControlsWidget;
+    AuthWidget mAuthWidget;
+    HomeWidget mHomeWidget;
 public:
     MainWidget();
     ~MainWidget() override;
