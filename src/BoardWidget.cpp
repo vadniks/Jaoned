@@ -147,16 +147,16 @@ void BoardWidget::paintGL() {
     switch (mMode) {
         case Mode::ERASE:
             [[gnu::fallthrough]];
-        case DRAW:
+        case Mode::DRAW:
             paintPointsSet(nullptr);
             break;
-        case LINE:
+        case Mode::LINE:
             paintLine(nullptr);
             break;
-        case TEXT:
+        case Mode::TEXT:
             paintText(nullptr);
             break;
-        case IMAGE:
+        case Mode::IMAGE:
             paintImage(nullptr);
             break;
     }
