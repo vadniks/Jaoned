@@ -20,6 +20,70 @@
 #include <QKeyEvent>
 #include <glm/ext/matrix_clip_space.hpp>
 
+struct DrawnElement { // abstract
+protected:
+    DrawnElement() {}
+public:
+    virtual ~DrawnElement() = default;
+
+    DISABLE_COPY(DrawnElement)
+    DISABLE_MOVE(DrawnElement)
+};
+
+struct DrawnPointsSet final : public DrawnElement {
+    bool erase;
+    int width;
+    QColor color;
+    QVector<glm::vec2> points;
+
+    DrawnPointsSet(bool erase, int width, const QColor& color) : erase(erase), width(width), color(color), points() {}
+    ~DrawnPointsSet() override = default;
+
+    DISABLE_COPY(DrawnPointsSet)
+    DISABLE_MOVE(DrawnPointsSet)
+};
+
+struct DrawnLine final : public DrawnElement {
+    glm::vec2 start;
+    glm::vec2 end;
+    int width;
+    QColor color;
+
+    DrawnLine(const glm::vec2& start, const glm::vec2 end, int width, const QColor& color) : start(start), end(end), width(width), color(color) {}
+    ~DrawnLine() override = default;
+
+    DISABLE_COPY(DrawnLine)
+    DISABLE_MOVE(DrawnLine)
+};
+
+struct DrawnText final : public DrawnElement {
+    QString text;
+    glm::vec2 pos;
+    int size;
+    QColor color;
+
+    DrawnText(const QString& text, const glm::vec2& pos, int size, const QColor& color) : text(text), pos(pos), size(size), color(color) {}
+    ~DrawnText() override = default;
+
+    DISABLE_COPY(DrawnText)
+    DISABLE_MOVE(DrawnText)
+};
+
+struct DrawnImage final : public DrawnElement {
+    glm::vec2 pos;
+    glm::vec2 size;
+    Texture* texture;
+
+    DrawnImage(const glm::vec2& pos, const glm::vec2& size, Texture* texture) : pos(pos), size(size), texture(texture) {}
+
+    ~DrawnImage() override {
+        delete texture;
+    }
+
+    DISABLE_COPY(DrawnImage)
+    DISABLE_MOVE(DrawnImage)
+};
+
 BoardWidget::BoardWidget(const std::function<void ()>& parentWidgetModeUpdater) :
     mMode(Mode::DRAW),
     mTheme(Theme::Dark),
@@ -48,7 +112,7 @@ BoardWidget::~BoardWidget() {
 }
 
 QSize BoardWidget::minimumSizeHint() const {
-    return {Consts::MIN_WINDOW_WIDTH, Consts::MIN_WINDOW_HEIGHT};
+    return {16 * 75, 9 * 75};
 }
 
 void BoardWidget::initializeGL() {
@@ -81,16 +145,18 @@ void BoardWidget::paintGL() {
     }
 
     switch (mMode) {
-        case DRAW:
+        case Mode::ERASE:
+            [[gnu::fallthrough]];
+        case Mode::DRAW:
             paintPointsSet(nullptr);
             break;
-        case LINE:
+        case Mode::LINE:
             paintLine(nullptr);
             break;
-        case TEXT:
+        case Mode::TEXT:
             paintText(nullptr);
             break;
-        case IMAGE:
+        case Mode::IMAGE:
             paintImage(nullptr);
             break;
     }
@@ -135,6 +201,8 @@ void BoardWidget::mouseMoveEvent(QMouseEvent* event) {
     const int y = event->pos().y();
 
     switch (mMode) {
+        case Mode::ERASE:
+            [[gnu::fallthrough]];
         case Mode::DRAW:
             mCurrentPointsSet->points.push_back(glm::vec2(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY)));
             break;
@@ -160,8 +228,10 @@ void BoardWidget::mousePressEvent(QMouseEvent* event) {
     const int y = event->pos().y();
 
     switch (mMode) {
+        case Mode::ERASE:
+            [[gnu::fallthrough]];
         case Mode::DRAW:
-            mCurrentPointsSet = new DrawnPointsSet(mPointWidth, mColor);
+            mCurrentPointsSet = new DrawnPointsSet(mMode == Mode::ERASE, mPointWidth, mColor);
             mCurrentPointsSet->points.push_back(glm::vec2(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY)));
             break;
         case Mode::LINE:
@@ -173,7 +243,7 @@ void BoardWidget::mousePressEvent(QMouseEvent* event) {
         case Mode::TEXT:
             {
                 glm::vec2 pos(static_cast<float>(x + mOffsetX), static_cast<float>(y + mOffsetY));
-                mCurrentText = new DrawnText(pos, mPointWidth, mColor, "");
+                mCurrentText = new DrawnText("", pos, mPointWidth, mColor);
             }
             break;
         case Mode::IMAGE:
@@ -188,17 +258,19 @@ void BoardWidget::mousePressEvent(QMouseEvent* event) {
 
 void BoardWidget::mouseReleaseEvent(QMouseEvent*) {
     switch (mMode) {
+        case Mode::ERASE:
+            [[gnu::fallthrough]];
         case Mode::DRAW:
-            mElements.push_back(mCurrentPointsSet);
+            mElements.push(mCurrentPointsSet);
             mCurrentPointsSet = nullptr;
             break;
         case Mode::LINE:
-            mElements.push_back(mCurrentLine);
+            mElements.push(mCurrentLine);
             mCurrentLine = nullptr;
             break;
         case Mode::TEXT:
             if (!mCurrentText->text.isEmpty()) {
-                mElements.push_back(mCurrentText);
+                mElements.push(mCurrentText);
                 mCurrentText = nullptr;
             } else {
                 delete mCurrentText;
@@ -208,7 +280,7 @@ void BoardWidget::mouseReleaseEvent(QMouseEvent*) {
         case Mode::IMAGE:
             mDrawCurrentImage = false;
 
-            mElements.push_back(mCurrentImage);
+            mElements.push(mCurrentImage);
             mCurrentImage = nullptr;
 
             mMode = Mode::DRAW;
@@ -253,6 +325,10 @@ static void blending(bool enable) {
     }
 }
 
+QColor BoardWidget::themeColor() {
+    return mTheme == Theme::Dark ? QColor(0, 0, 0) : QColor(0xff, 0xff, 0xff);
+}
+
 void BoardWidget::paintPointsSet(DrawnPointsSet* /*nullable*/ pointsSet) {
     if (pointsSet != nullptr) {
         int j = 0;
@@ -260,7 +336,7 @@ void BoardWidget::paintPointsSet(DrawnPointsSet* /*nullable*/ pointsSet) {
             if (j < pointsSet->points.size() - 1) {
                 const auto startPos = glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y));
                 const auto endPos = glm::vec2(static_cast<float>(pointsSet->points.operator[](j + 1).x), static_cast<float>(pointsSet->points.operator[](j + 1).y));
-                const auto color = makeGlColor(pointsSet->color);
+                const auto color = makeGlColor(pointsSet->erase ? themeColor() : pointsSet->color);
                 const auto width = static_cast<float>(pointsSet->width);
 
                 mRenderer->drawLine(startPos, endPos, width, color);
@@ -273,7 +349,7 @@ void BoardWidget::paintPointsSet(DrawnPointsSet* /*nullable*/ pointsSet) {
         if (mCurrentPointsSet == nullptr) return;
         for (const auto& i : mCurrentPointsSet->points) {
             const auto pos = glm::vec2(static_cast<float>(i.x), static_cast<float>(i.y));
-            const auto color = makeGlColor(mCurrentPointsSet->color);
+            const auto color = makeGlColor(mCurrentPointsSet->erase ? themeColor() : mCurrentPointsSet->color);
 
             mRenderer->drawPoint(pos, static_cast<float>(mCurrentPointsSet->width) * 0.7f, color);
             mRenderer->drawHollowCircle(pos, static_cast<int>(static_cast<float>(mCurrentPointsSet->width) / 2.0f), color);
@@ -357,6 +433,13 @@ void BoardWidget::setPointWidth(int width) {
 void BoardWidget::setCurrentTexture(const glm::vec2& size, const uchar* data) {
     auto* texture = new Texture(*this, static_cast<int>(size.x), static_cast<int>(size.y), data);
     mCurrentImage = new DrawnImage(glm::vec2(0.0f), size, texture);
+}
+
+void BoardWidget::undo() {
+    if (mElements.isEmpty()) return;
+
+    delete mElements.pop();
+    update();
 }
 
 void BoardWidget::clear() {

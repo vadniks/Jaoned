@@ -17,7 +17,6 @@
  */
 
 #include "MainWindow.hpp"
-#include "Network.hpp"
 #include <QApplication>
 #include <QSurfaceFormat>
 
@@ -32,8 +31,6 @@ int main(int argc, char** argv) {
     format.setSwapInterval(1);
     format.setSwapBehavior(QSurfaceFormat::SwapBehavior::DoubleBuffer);
     QSurfaceFormat::setDefaultFormat(format);
-
-    Network network;
 
     MainWindow window;
     window.show();

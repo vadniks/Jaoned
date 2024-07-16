@@ -18,9 +18,6 @@
 
 #pragma once
 
-#include <QColor>
-#include <glm/glm.hpp>
-
 #define DISABLE_COPY(x) \
     x(const x&) = delete; \
     x& operator =(const x&) = delete;
@@ -28,17 +25,3 @@
 #define DISABLE_MOVE(x) \
     x(x&&) = delete; \
     x& operator =(x&&) = delete;
-
-class Consts final {
-public:
-    Consts() = delete;
-public:
-    static inline int MIN_WINDOW_WIDTH = 16 * 75;
-    static inline int MIN_WINDOW_HEIGHT = 9 * 75;
-};
-
-uint qColorToUint(const QColor& qColor);
-QColor uintToQColor(uint color);
-
-QList<uchar> packVec2(const glm::vec2& vec);
-glm::vec2 unpackVec2(const QList<uchar>& bytes);

@@ -19,5 +19,5 @@
 #pragma once
 
 enum Mode {
-    DRAW, LINE, TEXT, IMAGE
+    DRAW, LINE, TEXT, IMAGE, ERASE
 };

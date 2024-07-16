@@ -32,6 +32,8 @@ static QString makeModeString(Mode mode) {
             return prefix + "text";
         case Mode::IMAGE:
             return prefix + "image";
+        case Mode::ERASE:
+            return prefix + "erase";
     }
 }
 
@@ -88,10 +90,18 @@ ControlsWidget::ControlsWidget(BoardWidget* boardWidget) :
     connect(&mImageButton, &QPushButton::clicked, this, &ControlsWidget::imageSelectClicked);
     mLayout.addWidget(&mImageButton);
 
+    mEraseButton.setText("Erase");
+    connect(&mEraseButton, &QPushButton::clicked, this, [this](){ modeSelected(Mode::ERASE); });
+    mLayout.addWidget(&mEraseButton);
+
     mModeLabel.setText(makeModeString(mBoardWidget->mode()));
     mLayout.addWidget(&mModeLabel);
 
     mLayout.addStretch();
+
+    mUndoButton.setText("Undo");
+    connect(&mUndoButton, &QPushButton::clicked, this, &ControlsWidget::undoCLicked);
+    mLayout.addWidget(&mUndoButton);
 
     mClearButton.setText("Clear");
     connect(&mClearButton, &QPushButton::clicked, this, &ControlsWidget::clearClicked);
@@ -170,6 +180,11 @@ void ControlsWidget::imageSelected(const QString& path) {
     modeSelected(Mode::IMAGE);
     mBoardWidget->setCurrentTexture(glm::vec2(image.width(), image.height()), image.toImage().convertToFormat(QImage::Format::Format_RGBA8888).constBits());
 
+    emit updated();
+}
+
+void ControlsWidget::undoCLicked() {
+    mBoardWidget->undo();
     emit updated();
 }
 

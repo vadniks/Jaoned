@@ -21,25 +21,15 @@
 #include "defs.hpp"
 #include "BoardWidget.hpp"
 #include "ControlsWidget.hpp"
-#include "AuthWidget.hpp"
-#include "HomeWidget.hpp"
 #include <QWidget>
 #include <QVBoxLayout>
 
 class MainWidget final : public QWidget {
     Q_OBJECT
-public:
-    enum State {
-        UNAUTHENTICATED,
-        AUTHENTICATED
-    };
 private:
-    State mState;
     QVBoxLayout mLayout;
     BoardWidget* mBoardWidget;
     ControlsWidget mControlsWidget;
-    AuthWidget mAuthWidget;
-    HomeWidget mHomeWidget;
 public:
     MainWidget();
     ~MainWidget() override;
