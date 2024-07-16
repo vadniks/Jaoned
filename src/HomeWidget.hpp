@@ -33,10 +33,14 @@ private:
         QHBoxLayout mLayout;
         QLabel mColorLabel;
         QLabel mTitleLabel;
+        QPushButton mDeleteButton;
         QListWidgetItem mListItem;
+        int mId;
     public:
         explicit BoardListItem(const Board& board);
         QListWidgetItem* listItem();
+    private:
+        void deleteClicked();
     };
 private:
     QVBoxLayout mLayout;
@@ -53,6 +57,5 @@ public:
     void clearBoardsList();
 private slots:
     void boardsListItemClicked(QListWidgetItem* item);
-    void boardsListItemDoubleClicked(QListWidgetItem* item);
     void newBoardClicked();
 };

@@ -20,7 +20,7 @@
 #include "Consts.hpp"
 #include <QMessageBox>
 
-HomeWidget::BoardListItem::BoardListItem(const Board& board) : mLayout(this) {
+HomeWidget::BoardListItem::BoardListItem(const Board& board) : mLayout(this), mId(board.id()) {
     QPixmap pixmap(25, 25);
     pixmap.fill(board.color());
 
@@ -34,11 +34,32 @@ HomeWidget::BoardListItem::BoardListItem(const Board& board) : mLayout(this) {
     mTitleLabel.setFont(font);
     mLayout.addWidget(&mTitleLabel);
 
+    mDeleteButton.setText("Delete");
+    mDeleteButton.setFixedWidth(static_cast<int>(static_cast<float>(Consts::MIN_WINDOW_WIDTH) * 0.1f));
+    connect(&mDeleteButton, &QPushButton::clicked, this, &HomeWidget::BoardListItem::deleteClicked);
+    mLayout.addWidget(&mDeleteButton);
+
     mListItem.setSizeHint(QWidget::sizeHint());
 }
 
 QListWidgetItem* HomeWidget::BoardListItem::listItem() {
     return &mListItem;
+}
+
+void HomeWidget::BoardListItem::deleteClicked() {
+    QMessageBox box(this);
+    box.setModal(true);
+    box.setText("Delete this board?");
+    box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+
+    switch (box.exec()) {
+        case QMessageBox::Yes:
+            qDebug() << "y";
+            break;
+        case QMessageBox::No:
+            qDebug() << "n";
+            break;
+    }
 }
 
 HomeWidget::HomeWidget() : mLayout(this) {
@@ -51,7 +72,6 @@ HomeWidget::HomeWidget() : mLayout(this) {
 
     mBoardsListWidget.setSelectionMode(QAbstractItemView::SelectionMode::SingleSelection);
     connect(&mBoardsListWidget, &QListWidget::itemClicked, this, &HomeWidget::boardsListItemClicked);
-    connect(&mBoardsListWidget, &QListWidget::itemDoubleClicked, this, &HomeWidget::boardsListItemDoubleClicked);
     mLayout.addWidget(&mBoardsListWidget);
 
     mNewBoardButton.setText("New");
@@ -97,22 +117,6 @@ void HomeWidget::clearBoardsList() {
 
 void HomeWidget::boardsListItemClicked(QListWidgetItem* item) {
     mBoardsListWidget.clearSelection();
-}
-
-void HomeWidget::boardsListItemDoubleClicked(QListWidgetItem* item) {
-    QMessageBox box(this);
-    box.setModal(true);
-    box.setText("Delete this board?");
-    box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-
-    switch (box.exec()) {
-        case QMessageBox::Yes:
-            qDebug() << "y";
-            break;
-        case QMessageBox::No:
-            qDebug() << "n";
-            break;
-    }
 }
 
 void HomeWidget::newBoardClicked() {
