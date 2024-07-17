@@ -157,5 +157,19 @@ void Network::sendMessage(const Message& message) {
 }
 
 void Network::processMessage(const Message& message) {
-
+    qDebug() << message.flag;
+    switch (message.flag) {
+        case LOG_IN:
+            qDebug() << (static_cast<int>(message.body.size()) > 0);
+            break;
+        case REGISTER:
+            qDebug() << (static_cast<int>(message.body.size()) > 0);
+            break;
+        case ERROR:
+            qDebug() << "error";
+            emit eventOccurred(Event::ERROR_OCCURRED);
+            break;
+        case SHUTDOWN:
+            break;
+    }
 }
