@@ -20,28 +20,41 @@
 
 #include "defs.hpp"
 #include <QObject>
+#include <QTcpSocket>
 
 class Network final : public QObject {
     Q_OBJECT
-public:
-    enum ActionFlag : int {
-        ERROR = 0,
-        LOG_IN = 1,
-        REGISTER = 2,
-        SHUTDOWN = 3
-    };
+private:
+    enum Event : int;
+    enum Flag : int;
+    struct Message;
 private:
     static inline Network* cInstance = nullptr;
+    QTcpSocket mSocket;
+public:
+    static inline const int MAX_CREDENTIAL_SIZE = 8;
 public:
     Network();
     ~Network() override;
+
+    void connectToHost();
+    void disconnectFromHost();
+    void logIn(const QString& username, const QString& password);
+    void registerUser(const QString& username, const QString& password);
 
     DISABLE_COPY(Network)
     DISABLE_MOVE(Network)
 
     static Network* instance();
-//private slots:
-//
-//signals: // those are implemented elsewhere
-
+private slots:
+    void connected();
+    void disconnected();
+    void errorOccurred(QAbstractSocket::SocketError error);
+    void readyRead();
+private:
+    void sendBytes(const QList<char>& bytes, Flag flag);
+    void sendMessage(const Message& message);
+    void processMessage(const Message& message);
+signals: // those are implemented elsewhere
+    void eventOccurred(Network::Event event);
 };
