@@ -122,11 +122,38 @@ static long currentTimestamp() {
 }
 
 void Network::sendBytes(const QList<char>& bytes, Flag flag) {
+    int start = 0;
+    int index = 0;
+    const int count = static_cast<int>(ceilf(static_cast<float>(bytes.size()) / static_cast<float>(MAX_MESSAGE_BODY_SIZE)));
+    const long timestamp = currentTimestamp();
 
+    while (true) {
+        Message message;
+        message.flag = flag;
+        message.index = index++;
+        message.count = count;
+        message.timestamp = timestamp;
+        message.body = bytes.mid(start, MAX_MESSAGE_BODY_SIZE);
+
+        if (message.body.isEmpty()) break;
+        sendMessage(message);
+    }
 }
 
 void Network::sendMessage(const Message& message) {
+    assert(message.timestamp > 0);
 
+    const int size = static_cast<int>(message.body.size());
+    auto head = QList<char>(MESSAGE_HEAD_SIZE);
+
+    memcpy(&(head.data()[0]), &(message.flag), 4);
+    memcpy(&(head.data()[4]), &(message.index), 4);
+    memcpy(&(head.data()[8]), &(message.count), 4);
+    memcpy(&(head.data()[12]), &(message.timestamp), 8);
+    memcpy(&(head.data()[20]), &size, 4);
+
+    if (mSocket.write(head.data(), MESSAGE_HEAD_SIZE) < MESSAGE_HEAD_SIZE) return;
+    if (size > 0) mSocket.write(message.body.data(), size);
 }
 
 void Network::processMessage(const Message& message) {
