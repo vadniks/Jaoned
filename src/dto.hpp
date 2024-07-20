@@ -90,3 +90,22 @@ public:
     QList<char> pack() const;
     static Text unpack(const QList<char>& bytes);
 };
+
+class Image final {
+private:
+    Point mPos;
+    int mWidth;
+    int mHeight;
+    // int mSize;
+    QList<char> mTexture;
+public:
+    Image(Point pos, int width, int height, const QList<char>& texture);
+
+    Point pos() const;
+    int width() const;
+    int height() const;
+    const QList<char>& texture() const;
+
+    QList<char> pack() const;
+    static Image unpack(const QList<char>& bytes);
+};

@@ -177,3 +177,49 @@ Text Text::unpack(const QList<char>& bytes) {
 
     return {pos, fontSize, color, text};
 }
+
+Image::Image(Point pos, int width, int height, const QList<char>& texture)
+    : mPos(pos), mWidth(width), mHeight(height), mTexture(texture)
+{}
+
+Point Image::pos() const {
+    return mPos;
+}
+
+int Image::width() const {
+    return mWidth;
+}
+
+int Image::height() const {
+    return mHeight;
+}
+
+const QList<char>& Image::texture() const {
+    return mTexture;
+}
+
+QList<char> Image::pack() const {
+    const auto size = static_cast<int>(mTexture.size());
+
+    QList<char> bytes(8 + 4 + 4 + 4 + size);
+    memcpy(bytes.data() + 0, mPos.pack().data(), 8);
+    memcpy(bytes.data() + 8, &mWidth, 4);
+    memcpy(bytes.data() + 12, &mHeight, 4);
+    memcpy(bytes.data() + 16, &size, 4);
+    memcpy(bytes.data() + 20, mTexture.data(), size);
+    return bytes;
+}
+
+Image Image::unpack(const QList<char>& bytes) {
+    const auto pos = Point::unpack(bytes.mid(0, 8));
+    int width, height, size;
+
+    memcpy(&width, bytes.data() + 8, 4);
+    memcpy(&height, bytes.data() + 12, 4);
+    memcpy(&size, bytes.data() + 16, 4);
+
+    QList<char> texture(size);
+    memcpy(texture.data(), bytes.data() + 20, size);
+
+    return {pos, width, height, texture};
+}
