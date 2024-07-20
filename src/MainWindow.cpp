@@ -19,7 +19,7 @@
 #include "MainWindow.hpp"
 #include <QMessageBox>
 
-MainWindow::MainWindow() : mMainWidget() {
+MainWindow::MainWindow() : mCurrentWidget(Widget::AUTH), mMainWidget() {
     setCentralWidget(&mAuthWidget);
     connect(Network::instance(), &Network::eventOccurred, this, &MainWindow::eventOccurred);
 }
