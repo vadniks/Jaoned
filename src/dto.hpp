@@ -18,20 +18,32 @@
 
 #pragma once
 
-static_assert(
-    sizeof(char) == 1 &
-    sizeof(short) == 2 &
-    sizeof(int) == 4 &
-    sizeof(float) == 4 &
-    sizeof(long) == 8 &
-    sizeof(double) == 8 &
-    sizeof(void*) == 8
-);
+#include <QList>
 
-#define DISABLE_COPY(x) \
-    x(const x&) = delete; \
-    x& operator =(const x&) = delete;
+class Point final {
+private:
+    int mX, mY;
+public:
+    Point(int x, int y);
 
-#define DISABLE_MOVE(x) \
-    x(x&&) = delete; \
-    x& operator =(x&&) = delete;
+    int x() const;
+    int y() const;
+
+    QList<char> pack();
+    static Point unpack(const QList<char>& bytes);
+};
+
+class PointsSet final {
+private:
+    bool mErase;
+    int mWidth;
+    int mColor;
+    QList<const Point> mPoints;
+public:
+    PointsSet(bool erase, int width, int color, const QList<const Point>& points);
+
+    bool erase() const;
+    int width() const;
+    int color() const;
+    const QList<const Point>& points() const;
+};

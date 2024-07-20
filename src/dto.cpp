@@ -16,22 +16,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include "dto.hpp"
 
-static_assert(
-    sizeof(char) == 1 &
-    sizeof(short) == 2 &
-    sizeof(int) == 4 &
-    sizeof(float) == 4 &
-    sizeof(long) == 8 &
-    sizeof(double) == 8 &
-    sizeof(void*) == 8
-);
+Point::Point(int x, int y) : mX(x), mY(y) {}
 
-#define DISABLE_COPY(x) \
-    x(const x&) = delete; \
-    x& operator =(const x&) = delete;
+int Point::x() const {
+    return mX;
+}
 
-#define DISABLE_MOVE(x) \
-    x(x&&) = delete; \
-    x& operator =(x&&) = delete;
+int Point::y() const {
+    return mY;
+}
+
+QList<char> Point::pack() {
+    QList<char> bytes(4 + 4);
+    memcpy(bytes.data() + 0, &mX, 4);
+    memcpy(bytes.data() + 4, &mY, 4);
+    return bytes;
+}
+
+Point Point::unpack(const QList<char>& bytes) {
+    int x, y;
+    memcpy(&x, bytes.data() + 0, 4);
+    memcpy(&y, bytes.data() + 4, 4);
+    return {x, y};
+}

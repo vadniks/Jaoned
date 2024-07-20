@@ -34,7 +34,7 @@ struct DrawnPointsSet final : public DrawnElement {
     bool erase;
     int width;
     QColor color;
-    QVector<glm::vec2> points;
+    QList<glm::vec2> points;
 
     DrawnPointsSet(bool erase, int width, const QColor& color) : erase(erase), width(width), color(color), points() {}
     ~DrawnPointsSet() override = default;
