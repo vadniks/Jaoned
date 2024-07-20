@@ -24,8 +24,13 @@
 
 class Network final : public QObject {
     Q_OBJECT
+public:
+    enum Event {
+        CONNECTED,
+        ERROR_OCCURRED,
+        DISCONNECTED
+    };
 private:
-    enum Event : int;
     enum Flag : int;
     struct Message;
 private:

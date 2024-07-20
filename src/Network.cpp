@@ -19,12 +19,6 @@
 #include "Network.hpp"
 #include <QDateTime>
 
-enum Network::Event : int {
-    CONNECTED,
-    ERROR_OCCURRED,
-    DISCONNECTED
-};
-
 enum Network::Flag : int {
     ERROR = 0,
     LOG_IN = 1,

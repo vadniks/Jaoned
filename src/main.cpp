@@ -17,11 +17,14 @@
  */
 
 #include "MainWindow.hpp"
+#include "Network.hpp"
 #include <QApplication>
 #include <QSurfaceFormat>
 
 int main(int argc, char** argv) {
     QApplication a(argc, argv);
+
+    Network network;
 
     QSurfaceFormat format;
     format.setDepthBufferSize(24);

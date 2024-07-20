@@ -18,17 +18,33 @@
 
 #pragma once
 
+#include "AuthWidget.hpp"
+#include "HomeWidget.hpp"
 #include "MainWidget.hpp"
 #include "defs.hpp"
+#include "Network.hpp"
 #include <QMainWindow>
 
 class MainWindow final : public QMainWindow {
     Q_OBJECT
+public:
+    enum Widget {
+        AUTH,
+        HOME,
+        MAIN
+    };
 private:
+    Widget mCurrentWidget;
+    AuthWidget mAuthWidget;
+    HomeWidget mHomeWidget;
     MainWidget mMainWidget;
 public:
     MainWindow();
 
     DISABLE_COPY(MainWindow)
     DISABLE_MOVE(MainWindow)
+
+    void setCurrentWidget(Widget widget);
+private slots:
+    void eventOccurred(Network::Event event);
 };

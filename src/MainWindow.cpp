@@ -17,7 +17,35 @@
  */
 
 #include "MainWindow.hpp"
+#include <QMessageBox>
 
 MainWindow::MainWindow() : mMainWidget() {
-    setCentralWidget(&mMainWidget);
+    setCentralWidget(&mAuthWidget);
+    connect(Network::instance(), &Network::eventOccurred, this, &MainWindow::eventOccurred);
+}
+
+void MainWindow::setCurrentWidget(Widget widget) {
+    switch ((mCurrentWidget = widget)) {
+        case AUTH:
+            setCentralWidget(&mAuthWidget);
+            break;
+        case HOME:
+            setCentralWidget(&mHomeWidget);
+            break;
+        case MAIN:
+            setCentralWidget(&mMainWidget);
+            break;
+    }
+}
+
+void MainWindow::eventOccurred(Network::Event event) {
+    if (event == Network::Event::CONNECTED) return;
+
+    if (event == Network::Event::DISCONNECTED)
+        setCurrentWidget(Widget::AUTH);
+
+    QMessageBox box(this);
+    box.setModal(true);
+    box.setText(event == Network::Event::ERROR_OCCURRED ? "Error occurred" : "Disconnected");
+    box.exec();
 }
