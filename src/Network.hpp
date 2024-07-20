@@ -19,6 +19,7 @@
 #pragma once
 
 #include "defs.hpp"
+#include "dto.hpp"
 #include <QObject>
 #include <QTcpSocket>
 
@@ -47,8 +48,14 @@ public:
 
     void connectToHost();
     void disconnectFromHost();
+
     void logIn(const QString& username, const QString& password);
     void registerUser(const QString& username, const QString& password);
+
+    void sendPointsSet(PointsSetDto pointsSetDto);
+    void sendLine(LineDto lineDto);
+    void sendText(TextDto textDto);
+    void sendImage(ImageDto imageDto);
 
     DISABLE_COPY(Network)
     DISABLE_MOVE(Network)

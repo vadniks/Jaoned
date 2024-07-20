@@ -20,8 +20,6 @@
 
 #include <QList>
 
-// TODO: append Dto to all class names
-
 class PointDto final {
 private:
     int mX, mY;
@@ -35,7 +33,14 @@ public:
     static PointDto unpack(const QList<char>& bytes);
 };
 
-class PointsSetDto final {
+class ElementDto {
+protected:
+    ElementDto() {}
+public:
+    virtual ~ElementDto() = default;
+};
+
+class PointsSetDto final : public ElementDto {
 private:
     bool mErase;
     int mWidth;
@@ -44,6 +49,7 @@ private:
     QList<PointDto> mPoints;
 public:
     PointsSetDto(bool erase, int width, int color, const QList<PointDto>& points);
+    ~PointsSetDto() override = default;
 
     bool erase() const;
     int width() const;
@@ -54,7 +60,7 @@ public:
     static PointsSetDto unpack(const QList<char>& bytes);
 };
 
-class LineDto final {
+class LineDto final : public ElementDto {
 private:
     PointDto mStart;
     PointDto mEnd;
@@ -62,6 +68,7 @@ private:
     int mColor;
 public:
     LineDto(PointDto start, PointDto end, int width, int color);
+    ~LineDto() override = default;
 
     PointDto start() const;
     PointDto end() const;
@@ -72,7 +79,7 @@ public:
     static LineDto unpack(const QList<char>& bytes);
 };
 
-class TextDto final {
+class TextDto final : public ElementDto {
 private:
     PointDto mPos;
     int mFontSize;
@@ -81,6 +88,7 @@ private:
     QList<char> mText;
 public:
     TextDto(PointDto pos, int fontSize, int color, const QList<char>& text);
+    ~TextDto() override = default;
 
     PointDto pos() const;
     int fontSize() const;
@@ -91,7 +99,7 @@ public:
     static TextDto unpack(const QList<char>& bytes);
 };
 
-class ImageDto final {
+class ImageDto final : public ElementDto {
 private:
     PointDto mPos;
     int mWidth;
@@ -100,6 +108,7 @@ private:
     QList<char> mTexture;
 public:
     ImageDto(PointDto pos, int width, int height, const QList<char>& texture);
+    ~ImageDto() override = default;
 
     PointDto pos() const;
     int width() const;
