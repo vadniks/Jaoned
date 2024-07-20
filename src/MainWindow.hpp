@@ -38,11 +38,16 @@ private:
     AuthWidget mAuthWidget;
     HomeWidget mHomeWidget;
     MainWidget mMainWidget;
+
+    static inline MainWindow* cInstance = nullptr;
 public:
     MainWindow();
+    ~MainWindow() override;
 
     DISABLE_COPY(MainWindow)
     DISABLE_MOVE(MainWindow)
+
+    static MainWindow* instance();
 
     void setCurrentWidget(Widget widget);
 private slots:

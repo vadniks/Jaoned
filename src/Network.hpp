@@ -83,6 +83,9 @@ private:
 signals: // those are implemented elsewhere
     void eventOccurred(Network::Event event);
 
+    void logInTried(bool successful);
+    void registerTried(bool successful);
+
     void pointsSetReceived(const PointsSetDto& pointsSetDto);
     void lineReceived(const LineDto& lineDto);
     void textReceived(const TextDto& textDto);

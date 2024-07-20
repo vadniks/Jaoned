@@ -18,8 +18,11 @@
 
 #include "AuthWidget.hpp"
 #include "Consts.hpp"
+#include "Network.hpp"
+#include "MainWindow.hpp"
+#include <QMessageBox>
 
-AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButtonsLayout(&mButtonsWidget), loggingIn(true) {
+AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButtonsLayout(&mButtonsWidget) {
     mLayout.setAlignment(Qt::AlignCenter);
 
     mAppNameLabel.setText("Jaoned");
@@ -28,11 +31,11 @@ AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButton
     mLayout.addWidget(&mAppNameLabel);
 
     mUsernameField.setPlaceholderText("Username");
-//    mUsernameField.setMaxLength(Network::MAX_CREDENTIAL_SIZE);
+    mUsernameField.setMaxLength(Network::MAX_CREDENTIAL_SIZE);
     mFieldsLayout.addWidget(&mUsernameField);
 
     mPasswordField.setPlaceholderText("Password");
-//    mPasswordField.setMaxLength(Network::MAX_CREDENTIAL_SIZE);
+    mPasswordField.setMaxLength(Network::MAX_CREDENTIAL_SIZE);
     mPasswordField.setEchoMode(QLineEdit::EchoMode::Password);
     mFieldsLayout.addWidget(&mPasswordField);
 
@@ -40,11 +43,11 @@ AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButton
     mLayout.addWidget(&mFieldsWidget);
 
     mLogInButton.setText("Log In");
-//    connect(&mLogInButton, &QPushButton::clicked, this, &AuthWidget::logInClicked);
+    connect(&mLogInButton, &QPushButton::clicked, this, &AuthWidget::logInClicked);
     mButtonsLayout.addWidget(&mLogInButton);
 
     mRegisterButton.setText("Register");
-//    connect(&mRegisterButton, &QPushButton::clicked, this, &AuthWidget::registerClicked);
+    connect(&mRegisterButton, &QPushButton::clicked, this, &AuthWidget::registerClicked);
     mButtonsLayout.addWidget(&mRegisterButton);
 
     mLayout.addWidget(&mButtonsWidget);
@@ -55,10 +58,14 @@ AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButton
     mProgressBar.setFixedSize(16 * 20, 9 * 5);
     mProgressBar.setVisible(false);
     mLayout.addWidget(&mProgressBar);
+
+    connect(Network::instance(), &Network::logInTried, this, &AuthWidget::logInTried);
+    connect(Network::instance(), &Network::registerTried, this, &AuthWidget::registerTried);
 }
 
 AuthWidget::~AuthWidget() {
-
+    disconnect(Network::instance(), &Network::logInTried, this, &AuthWidget::logInTried);
+    disconnect(Network::instance(), &Network::registerTried, this, &AuthWidget::registerTried);
 }
 
 QSize AuthWidget::minimumSizeHint() const {
@@ -71,4 +78,31 @@ void AuthWidget::loading(bool enable) {
     mPasswordField.setEnabled(!enable);
     mLogInButton.setEnabled(!enable);
     mRegisterButton.setEnabled(!enable);
+}
+
+void AuthWidget::logInClicked() {
+    Network::instance()->logIn(mUsernameField.text(), mPasswordField.text());
+}
+
+void AuthWidget::registerClicked() {
+    Network::instance()->registerUser(mUsernameField.text(), mPasswordField.text());
+}
+
+void AuthWidget::logInTried(bool successful) {
+    if (successful) {
+        MainWindow::instance()->setCurrentWidget(MainWindow::HOME);
+        return;
+    }
+
+    QMessageBox box(this);
+    box.setModal(true);
+    box.setText("Logging in failed");
+    box.exec();
+}
+
+void AuthWidget::registerTried(bool successful) {
+    QMessageBox box(this);
+    box.setModal(true);
+    box.setText(successful ? "Registration succeeded" : "Registration failed");
+    box.exec();
 }

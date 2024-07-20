@@ -20,8 +20,20 @@
 #include <QMessageBox>
 
 MainWindow::MainWindow() : mCurrentWidget(Widget::AUTH), mMainWidget() {
+    assert(cInstance == nullptr);
+    cInstance = this;
+
     setCentralWidget(&mAuthWidget);
     connect(Network::instance(), &Network::eventOccurred, this, &MainWindow::eventOccurred);
+}
+
+MainWindow::~MainWindow() {
+    cInstance = nullptr;
+}
+
+MainWindow* MainWindow::instance() {
+    assert(cInstance != nullptr);
+    return cInstance;
 }
 
 void MainWindow::setCurrentWidget(Widget widget) {

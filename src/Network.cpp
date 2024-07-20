@@ -185,9 +185,11 @@ void Network::processMessage(const Message& message) {
     switch (message.flag) {
         case LOG_IN:
             qDebug() << (static_cast<int>(message.body.size()) > 0);
+            logInTried(static_cast<int>(message.body.size()) > 0);
             break;
         case REGISTER:
             qDebug() << (static_cast<int>(message.body.size()) > 0);
+            registerTried(static_cast<int>(message.body.size()) > 0);
             break;
         case ERROR:
             qDebug() << "error";
