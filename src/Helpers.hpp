@@ -18,24 +18,13 @@
 
 #pragma once
 
-#include <QString>
-#include <QColor>
+class QColor;
 
-class Board final {
-private:
-    int mId;
-    QColor mColor;
-//    int mSize;
-    QString mTitle;
+class Helpers final {
 public:
-    static const int MAX_TITLE_SIZE = 32;
-public:
-    Board(int id, const QColor& color, const QString& title);
+    Helpers() = delete;
+    ~Helpers() = delete;
 
-    int id() const;
-    QColor color() const;
-    QString title() const;
-
-    QList<char> pack() const;
-    static Board unpack(const QList<char>& bytes);
+    static int packQColor(const QColor& color);
+    static QColor unpackQColor(int color);
 };

@@ -16,26 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#include <QString>
+#include "Helpers.hpp"
 #include <QColor>
 
-class Board final {
-private:
-    int mId;
-    QColor mColor;
-//    int mSize;
-    QString mTitle;
-public:
-    static const int MAX_TITLE_SIZE = 32;
-public:
-    Board(int id, const QColor& color, const QString& title);
+int Helpers::packQColor(const QColor& color) {
+    return
+        ((color.red() & 0xff) << 0) |
+        ((color.green() & 0xff) << 8) |
+        ((color.blue() & 0xff) << 16) |
+        ((color.alpha() & 0xff) << 24);
+}
 
-    int id() const;
-    QColor color() const;
-    QString title() const;
-
-    QList<char> pack() const;
-    static Board unpack(const QList<char>& bytes);
-};
+QColor Helpers::unpackQColor(int color) {
+    return {
+        static_cast<int>((color >> 0) & 0xff),
+        static_cast<int>((color >> 8) & 0xff),
+        static_cast<int>((color >> 16) & 0xff),
+        static_cast<int>((color >> 24) & 0xff)
+    };
+}

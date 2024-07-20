@@ -43,10 +43,6 @@ struct Network::Message {
     Message() : flag(Flag::ERROR), index(0), count(0), timestamp(0), body() {}
 };
 
-static const int MESSAGE_HEAD_SIZE = 4 + 4 + 4 + 8 + 4; // 24
-static const int MAX_MESSAGE_SIZE = 0x80; // 128
-static const int MAX_MESSAGE_BODY_SIZE = MAX_MESSAGE_SIZE - MESSAGE_HEAD_SIZE; // 104
-
 Network::Network() {
     assert(cInstance == nullptr);
     cInstance = this;

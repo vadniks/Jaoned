@@ -17,17 +17,14 @@
  */
 
 #include "Board.hpp"
+#include "Helpers.hpp"
 
 Board::Board(int id, const QColor& color, const QString& title) :
-    mId(id), mColor(color), mSize(static_cast<int>(title.size())), mTitle(title)
+    mId(id), mColor(color), mTitle(title)
 {}
 
 int Board::id() const {
     return mId;
-}
-
-int Board::size() const {
-    return mSize;
 }
 
 QString Board::title() const {
@@ -36,4 +33,33 @@ QString Board::title() const {
 
 QColor Board::color() const {
     return mColor;
+}
+
+QList<char> Board::pack() const {
+    const auto title = mTitle.toUtf8();
+    assert(title.size() <= MAX_TITLE_SIZE);
+
+    const int size = static_cast<int>(title.size());
+
+    const int color = Helpers::packQColor(mColor);
+
+    QList<char> bytes(4 + 4 + 4 + size);
+    memcpy(&(bytes.data()[0]), &mId, 4);
+    memcpy(&(bytes.data()[4]), &color, 4);
+    memcpy(&(bytes.data()[8]), &size, 4);
+    memcpy(&(bytes.data()[12]), title.data(), title.size());
+    return bytes;
+}
+
+Board Board::unpack(const QList<char>& bytes) {
+    int id, color, size;
+
+    memcpy(&id, &(bytes.data()[0]), 4);
+    memcpy(&color, &(bytes.data()[4]), 4);
+    memcpy(&size, &(bytes.data()[8]), 4);
+
+    QByteArray title(size, 0);
+    memcpy(title.data(), &(bytes.data()[12]), size);
+
+    return {id, Helpers::unpackQColor(color), QString::fromUtf8(title)};
 }
