@@ -52,10 +52,10 @@ public:
     void logIn(const QString& username, const QString& password);
     void registerUser(const QString& username, const QString& password);
 
-    void sendPointsSet(PointsSetDto pointsSetDto);
-    void sendLine(LineDto lineDto);
-    void sendText(TextDto textDto);
-    void sendImage(ImageDto imageDto);
+    void sendPointsSet(const PointsSetDto& pointsSetDto);
+    void sendLine(const LineDto& lineDto);
+    void sendText(const TextDto& textDto);
+    void sendImage(const ImageDto& imageDto);
 
     DISABLE_COPY(Network)
     DISABLE_MOVE(Network)

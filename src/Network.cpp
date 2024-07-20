@@ -23,7 +23,11 @@ enum Network::Flag : int {
     ERROR = 0,
     LOG_IN = 1,
     REGISTER = 2,
-    SHUTDOWN = 3
+    SHUTDOWN = 3,
+    POINTS_SET = 4,
+    LINE = 5,
+    TEXT = 6,
+    IMAGE = 7
 };
 
 struct Network::Message {
@@ -65,6 +69,22 @@ void Network::logIn(const QString& username, const QString& password) {
 
 void Network::registerUser(const QString& username, const QString& password) {
     sendUsernameAndPassword(username, password, Flag::REGISTER);
+}
+
+void Network::sendPointsSet(const PointsSetDto& pointsSetDto) {
+    sendBytes(pointsSetDto.pack(), Flag::POINTS_SET);
+}
+
+void Network::sendLine(const LineDto& lineDto) {
+    sendBytes(lineDto.pack(), Flag::LINE);
+}
+
+void Network::sendText(const TextDto& textDto) {
+    sendBytes(textDto.pack(), Flag::TEXT);
+}
+
+void Network::sendImage(const ImageDto& imageDto) {
+    sendBytes(imageDto.pack(), Flag::IMAGE);
 }
 
 Network* Network::instance() {
