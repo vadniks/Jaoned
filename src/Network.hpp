@@ -54,6 +54,9 @@ public:
     DISABLE_MOVE(Network)
 
     static Network* instance();
+private:
+    static long currentTimestamp();
+    void sendUsernameAndPassword(const QString& username, const QString& password, Flag flag);
 private slots:
     void connected();
     void disconnected();

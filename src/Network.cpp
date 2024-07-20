@@ -60,16 +60,34 @@ void Network::disconnectFromHost() {
 }
 
 void Network::logIn(const QString& username, const QString& password) {
-
+    sendUsernameAndPassword(username, password, Flag::LOG_IN);
 }
 
 void Network::registerUser(const QString& username, const QString& password) {
-
+    sendUsernameAndPassword(username, password, Flag::REGISTER);
 }
 
 Network* Network::instance() {
     assert(cInstance != nullptr);
     return cInstance;
+}
+
+long Network::currentTimestamp() {
+    return QDateTime::currentMSecsSinceEpoch();
+}
+
+void Network::sendUsernameAndPassword(const QString& username, const QString& password, Flag flag) {
+    Message message;
+    message.flag = flag;
+    message.index = 0;
+    message.count = 0;
+    message.timestamp = currentTimestamp();
+
+    message.body = QList<char>(MAX_CREDENTIAL_SIZE * 2);
+    memcpy(message.body.data() + 0, username.toUtf8().data(), username.toUtf8().size());
+    memcpy(message.body.data() + MAX_CREDENTIAL_SIZE, password.toUtf8().data(), password.toUtf8().size());
+
+    sendMessage(message);
 }
 
 void Network::connected() {
@@ -105,10 +123,6 @@ void Network::readyRead() {
 
         processMessage(message);
     }
-}
-
-static long currentTimestamp() {
-    return QDateTime::currentMSecsSinceEpoch();
 }
 
 void Network::sendBytes(const QList<char>& bytes, Flag flag) {
