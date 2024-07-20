@@ -131,3 +131,49 @@ Line Line::unpack(const QList<char>& bytes) {
 
     return {start, end, width, color};
 }
+
+Text::Text(Point pos, int fontSize, int color, const QList<char>& text)
+    : mPos(pos), mFontSize(fontSize), mColor(color), mText(text)
+{}
+
+Point Text::pos() const {
+    return mPos;
+}
+
+int Text::fontSize() const {
+    return mFontSize;
+}
+
+int Text::color() const {
+    return mColor;
+}
+
+QList<char> Text::text() const {
+    return mText;
+}
+
+QList<char> Text::pack() const {
+    const auto size = static_cast<int>(mText.size());
+
+    QList<char> bytes(8 + 4 + 4 + 4 + size);
+    memcpy(bytes.data() + 0, mPos.pack().data(), 8);
+    memcpy(bytes.data() + 8, &mFontSize, 4);
+    memcpy(bytes.data() + 12, &mColor, 4);
+    memcpy(bytes.data() + 16, &size, 4);
+    memcpy(bytes.data() + 20, mText.data(), size);
+    return bytes;
+}
+
+Text Text::unpack(const QList<char>& bytes) {
+    const auto pos = Point::unpack(bytes.mid(0, 8));
+    int fontSize, color, size;
+
+    memcpy(&fontSize, bytes.data() + 8, 4);
+    memcpy(&color, bytes.data() + 12, 4);
+    memcpy(&size, bytes.data() + 16, 4);
+
+    QList<char> text(size);
+    memcpy(text.data(), bytes.data() + 20, size);
+
+    return {pos, fontSize, color, text};
+}

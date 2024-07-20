@@ -20,6 +20,8 @@
 
 #include <QList>
 
+// TODO: append Dto to all class names
+
 class Point final {
 private:
     int mX, mY;
@@ -68,4 +70,23 @@ public:
 
     QList<char> pack() const;
     static Line unpack(const QList<char>& bytes);
+};
+
+class Text final {
+private:
+    Point mPos;
+    int mFontSize;
+    int mColor;
+    // int mSize;
+    QList<char> mText;
+public:
+    Text(Point pos, int fontSize, int color, const QList<char>& text);
+
+    Point pos() const;
+    int fontSize() const;
+    int color() const;
+    QList<char> text() const;
+
+    QList<char> pack() const;
+    static Text unpack(const QList<char>& bytes);
 };
