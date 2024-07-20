@@ -51,3 +51,21 @@ public:
     QList<char> pack() const;
     static PointsSet unpack(const QList<char>& bytes);
 };
+
+class Line final {
+private:
+    Point mStart;
+    Point mEnd;
+    int mWidth;
+    int mColor;
+public:
+    Line(Point start, Point end, int width, int color);
+
+    Point start() const;
+    Point end() const;
+    int width() const;
+    int color() const;
+
+    QList<char> pack() const;
+    static Line unpack(const QList<char>& bytes);
+};

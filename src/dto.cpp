@@ -93,3 +93,41 @@ PointsSet PointsSet::unpack(const QList<char>& bytes) {
 
     return {erase, width, color, points};
 }
+
+Line::Line(Point start, Point end, int width, int color) : mStart(start), mEnd(end), mWidth(width), mColor(color) {}
+
+Point Line::start() const {
+    return mStart;
+}
+
+Point Line::end() const {
+    return mEnd;
+}
+
+int Line::width() const {
+    return mWidth;
+}
+
+int Line::color() const {
+    return mColor;
+}
+
+QList<char> Line::pack() const {
+    QList<char> bytes(8 + 8 + 4 + 4);
+    memcpy(bytes.data() + 0, mStart.pack().data(), 8);
+    memcpy(bytes.data() + 8, mEnd.pack().data(), 8);
+    memcpy(bytes.data() + 16, &mWidth, 4);
+    memcpy(bytes.data() + 20, &mColor, 4);
+    return bytes;
+}
+
+Line Line::unpack(const QList<char>& bytes) {
+    const auto start = Point::unpack(bytes.mid(0, 8));
+    const auto end = Point::unpack(bytes.mid(8, 8));
+
+    int width, color;
+    memcpy(&width, bytes.data() + 16, 4);
+    memcpy(&color, bytes.data() + 20, 4);
+
+    return {start, end, width, color};
+}
