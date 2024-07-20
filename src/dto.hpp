@@ -22,90 +22,90 @@
 
 // TODO: append Dto to all class names
 
-class Point final {
+class PointDto final {
 private:
     int mX, mY;
 public:
-    Point(int x, int y);
+    PointDto(int x, int y);
 
     int x() const;
     int y() const;
 
     QList<char> pack() const;
-    static Point unpack(const QList<char>& bytes);
+    static PointDto unpack(const QList<char>& bytes);
 };
 
-class PointsSet final {
+class PointsSetDto final {
 private:
     bool mErase;
     int mWidth;
     int mColor;
     // int mSize;
-    QList<Point> mPoints;
+    QList<PointDto> mPoints;
 public:
-    PointsSet(bool erase, int width, int color, const QList<Point>& points);
+    PointsSetDto(bool erase, int width, int color, const QList<PointDto>& points);
 
     bool erase() const;
     int width() const;
     int color() const;
-    const QList<Point>& points() const;
+    const QList<PointDto>& points() const;
 
     QList<char> pack() const;
-    static PointsSet unpack(const QList<char>& bytes);
+    static PointsSetDto unpack(const QList<char>& bytes);
 };
 
-class Line final {
+class LineDto final {
 private:
-    Point mStart;
-    Point mEnd;
+    PointDto mStart;
+    PointDto mEnd;
     int mWidth;
     int mColor;
 public:
-    Line(Point start, Point end, int width, int color);
+    LineDto(PointDto start, PointDto end, int width, int color);
 
-    Point start() const;
-    Point end() const;
+    PointDto start() const;
+    PointDto end() const;
     int width() const;
     int color() const;
 
     QList<char> pack() const;
-    static Line unpack(const QList<char>& bytes);
+    static LineDto unpack(const QList<char>& bytes);
 };
 
-class Text final {
+class TextDto final {
 private:
-    Point mPos;
+    PointDto mPos;
     int mFontSize;
     int mColor;
     // int mSize;
     QList<char> mText;
 public:
-    Text(Point pos, int fontSize, int color, const QList<char>& text);
+    TextDto(PointDto pos, int fontSize, int color, const QList<char>& text);
 
-    Point pos() const;
+    PointDto pos() const;
     int fontSize() const;
     int color() const;
     QList<char> text() const;
 
     QList<char> pack() const;
-    static Text unpack(const QList<char>& bytes);
+    static TextDto unpack(const QList<char>& bytes);
 };
 
-class Image final {
+class ImageDto final {
 private:
-    Point mPos;
+    PointDto mPos;
     int mWidth;
     int mHeight;
     // int mSize;
     QList<char> mTexture;
 public:
-    Image(Point pos, int width, int height, const QList<char>& texture);
+    ImageDto(PointDto pos, int width, int height, const QList<char>& texture);
 
-    Point pos() const;
+    PointDto pos() const;
     int width() const;
     int height() const;
     const QList<char>& texture() const;
 
     QList<char> pack() const;
-    static Image unpack(const QList<char>& bytes);
+    static ImageDto unpack(const QList<char>& bytes);
 };
