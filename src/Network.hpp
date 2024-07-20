@@ -22,6 +22,7 @@
 #include "dto.hpp"
 #include <QObject>
 #include <QTcpSocket>
+#include <QQueue>
 
 class Network final : public QObject {
     Q_OBJECT
@@ -37,6 +38,7 @@ private:
 private:
     static inline Network* cInstance = nullptr;
     QTcpSocket mSocket;
+    QQueue<Message> mPendingMessages;
 public:
     static const int MESSAGE_HEAD_SIZE = 4 + 4 + 4 + 8 + 4; // 24
     static const int MAX_MESSAGE_SIZE = 0x80; // 128
@@ -73,6 +75,16 @@ private:
     void sendBytes(const QList<char>& bytes, Flag flag);
     void sendMessage(const Message& message);
     void processMessage(const Message& message);
+
+    void processPointsSet();
+    void processLine();
+    void processText();
+    void processImage();
 signals: // those are implemented elsewhere
     void eventOccurred(Network::Event event);
+
+    void pointsSetReceived(const PointsSetDto& pointsSetDto);
+    void lineReceived(const LineDto& lineDto);
+    void textReceived(const TextDto& textDto);
+    void imageReceived(const ImageDto& imageDto);
 };

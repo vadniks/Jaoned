@@ -100,7 +100,7 @@ void Network::sendUsernameAndPassword(const QString& username, const QString& pa
     Message message;
     message.flag = flag;
     message.index = 0;
-    message.count = 0;
+    message.count = 1;
     message.timestamp = currentTimestamp();
 
     message.body = QList<char>(MAX_CREDENTIAL_SIZE * 2);
@@ -194,6 +194,65 @@ void Network::processMessage(const Message& message) {
             emit eventOccurred(Event::ERROR_OCCURRED);
             break;
         case SHUTDOWN:
+            assert(false);
+        case POINTS_SET:
+            mPendingMessages.enqueue(message);
+            if (message.index == message.count - 1)
+                processPointsSet();
+            break;
+        case LINE:
+            mPendingMessages.enqueue(message);
+            if (message.index == message.count - 1)
+                processLine();
+            break;
+        case TEXT:
+            mPendingMessages.enqueue(message);
+            if (message.index == message.count - 1)
+                processText();
+            break;
+        case IMAGE:
+            mPendingMessages.enqueue(message);
+            if (message.index == message.count - 1)
+                processImage();
             break;
     }
+}
+
+void Network::processPointsSet() {
+    QList<char> bytes;
+
+    while (!mPendingMessages.empty())
+        bytes.append(mPendingMessages.dequeue().body);
+
+    const auto pointsSet = PointsSetDto::unpack(bytes);
+    qDebug() << pointsSet.erase() << ' ' << pointsSet.width() << ' ' << pointsSet.color() << ' ' << pointsSet.points().size();
+    emit pointsSetReceived(pointsSet);
+}
+
+void Network::processLine() {
+    const auto line = LineDto::unpack(mPendingMessages.dequeue().body);
+    qDebug() << line.start().x() << ' ' << line.start().y() << ' ' << line.end().x() << ' ' << line.end().y() << ' ' << line.width() << ' ' << line.color();
+    emit lineReceived(line);
+}
+
+void Network::processText() {
+    QList<char> bytes;
+
+    while (!mPendingMessages.empty())
+        bytes.append(mPendingMessages.dequeue().body);
+
+    const auto text = TextDto::unpack(bytes);
+    qDebug() << text.pos().x() << ' ' << text.pos().y() << ' ' << text.fontSize() << ' ' << text.color() << ' ' << text.text();
+    emit textReceived(text);
+}
+
+void Network::processImage() {
+    QList<char> bytes;
+
+    while (!mPendingMessages.empty())
+        bytes.append(mPendingMessages.dequeue().body);
+
+    const auto image = ImageDto::unpack(bytes);
+    qDebug() << image.pos().x() << ' ' << image.pos().y() << ' ' << image.width() << ' ' << image.height() << ' ' << image.texture().size();
+    emit imageReceived(image);
 }
