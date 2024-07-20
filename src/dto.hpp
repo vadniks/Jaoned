@@ -29,7 +29,7 @@ public:
     int x() const;
     int y() const;
 
-    QList<char> pack();
+    QList<char> pack() const;
     static Point unpack(const QList<char>& bytes);
 };
 
@@ -38,12 +38,16 @@ private:
     bool mErase;
     int mWidth;
     int mColor;
-    QList<const Point> mPoints;
+    // int mSize;
+    QList<Point> mPoints;
 public:
-    PointsSet(bool erase, int width, int color, const QList<const Point>& points);
+    PointsSet(bool erase, int width, int color, const QList<Point>& points);
 
     bool erase() const;
     int width() const;
     int color() const;
-    const QList<const Point>& points() const;
+    const QList<Point>& points() const;
+
+    QList<char> pack() const;
+    static PointsSet unpack(const QList<char>& bytes);
 };

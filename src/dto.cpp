@@ -28,7 +28,7 @@ int Point::y() const {
     return mY;
 }
 
-QList<char> Point::pack() {
+QList<char> Point::pack() const {
     QList<char> bytes(4 + 4);
     memcpy(bytes.data() + 0, &mX, 4);
     memcpy(bytes.data() + 4, &mY, 4);
@@ -40,4 +40,56 @@ Point Point::unpack(const QList<char>& bytes) {
     memcpy(&x, bytes.data() + 0, 4);
     memcpy(&y, bytes.data() + 4, 4);
     return {x, y};
+}
+
+PointsSet::PointsSet(bool erase, int width, int color, const QList<Point>& points)
+    : mErase(erase), mWidth(width), mColor(color), mPoints(points)
+{}
+
+bool PointsSet::erase() const {
+    return mErase;
+}
+
+int PointsSet::width() const {
+    return mWidth;
+}
+
+int PointsSet::color() const {
+    return mColor;
+}
+
+const QList<Point>& PointsSet::points() const {
+    return mPoints;
+}
+
+QList<char> PointsSet::pack() const {
+    const auto size = static_cast<int>(mPoints.size());
+
+    QList<char> bytes(1 + 4 + 4 + 4 + size * 8);
+
+    memcpy(bytes.data() + 0, &mErase, 1);
+    memcpy(bytes.data() + 1, &mWidth, 4);
+    memcpy(bytes.data() + 5, &mColor, 4);
+    memcpy(bytes.data() + 9, &size, 4);
+
+    for (int i = 0; i < mPoints.size(); i++)
+        memcpy(bytes.data() + 13 + i * 8, mPoints[i].pack().data(), 8);
+
+    return bytes;
+}
+
+PointsSet PointsSet::unpack(const QList<char>& bytes) {
+    bool erase;
+    int width, color, size;
+
+    memcpy(&erase, bytes.data() + 0, 1);
+    memcpy(&width, bytes.data() + 1, 4);
+    memcpy(&color, bytes.data() + 5, 4);
+    memcpy(&size, bytes.data() + 9, 4);
+
+    QList<Point> points;
+    for (int i = 0; i < size; i++)
+        points.append(Point::unpack(bytes.mid(13 + i * 8, 8)));
+
+    return {erase, width, color, points};
 }
