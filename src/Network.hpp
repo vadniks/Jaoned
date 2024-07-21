@@ -20,6 +20,7 @@
 
 #include "defs.hpp"
 #include "dto.hpp"
+#include "Board.hpp"
 #include <QObject>
 #include <QTcpSocket>
 #include <QQueue>
@@ -60,6 +61,11 @@ public:
     void sendText(const TextDto& textDto);
     void sendImage(const ImageDto& imageDto);
 
+    void createBoard(const Board& board);
+    void getBoard(int id);
+    void getBoards();
+    void deleteBoard(int id);
+
     bool connectedToHost();
 
     DISABLE_COPY(Network)
@@ -88,6 +94,11 @@ signals: // those are implemented elsewhere
 
     void logInTried(bool successful);
     void registerTried(bool successful);
+
+    void createBoardTried(bool successful);
+    void boardReceived(const Board& board);
+    void boardsReceived(const QList<Board>& boards);
+    void deleteBoardTried(bool successful);
 
     void pointsSetReceived(const PointsSetDto& pointsSetDto);
     void lineReceived(const LineDto& lineDto);

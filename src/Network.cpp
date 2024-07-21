@@ -24,10 +24,13 @@ enum Network::Flag : int {
     LOG_IN = 1,
     REGISTER = 2,
     SHUTDOWN = 3,
-    POINTS_SET = 4,
-    LINE = 5,
-    TEXT = 6,
-    IMAGE = 7
+    CREATE_BOARD = 4,
+    GET_BOARD = 5,
+    DELETE_BOARD = 6,
+    POINTS_SET = 7,
+    LINE = 8,
+    TEXT = 9,
+    IMAGE = 10,
 };
 
 struct Network::Message {
@@ -85,6 +88,51 @@ void Network::sendText(const TextDto& textDto) {
 
 void Network::sendImage(const ImageDto& imageDto) {
     sendBytes(imageDto.pack(), Flag::IMAGE);
+}
+
+void Network::createBoard(const Board& board) {
+    Message message;
+    message.flag = Flag::CREATE_BOARD;
+    message.index = 0;
+    message.count = 1;
+    message.timestamp = currentTimestamp();
+    message.body = board.pack();
+    sendMessage(message);
+}
+
+void Network::getBoard(int id) {
+    Message message;
+    message.flag = Flag::GET_BOARD;
+    message.index = 0;
+    message.count = 1;
+    message.timestamp = currentTimestamp();
+
+    message.body = QList<char>(4);
+    memcpy(message.body.data(), &id, 4);
+
+    sendMessage(message);
+}
+
+void Network::getBoards() {
+    Message message;
+    message.flag = Flag::GET_BOARD;
+    message.index = 0;
+    message.count = 1;
+    message.timestamp = currentTimestamp();
+    sendMessage(message);
+}
+
+void Network::deleteBoard(int id) {
+    Message message;
+    message.flag = Flag::DELETE_BOARD;
+    message.index = 0;
+    message.count = 1;
+    message.timestamp = currentTimestamp();
+
+    message.body = QList<char>(4);
+    memcpy(message.body.data(), &id, 4);
+
+    sendMessage(message);
 }
 
 bool Network::connectedToHost() {
@@ -203,6 +251,15 @@ void Network::processMessage(const Message& message) {
             break;
         case SHUTDOWN:
             assert(false);
+        case CREATE_BOARD:
+
+            break;
+        case GET_BOARD:
+
+            break;
+        case DELETE_BOARD:
+
+            break;
         case POINTS_SET:
             mPendingMessages.enqueue(message);
             if (message.index == message.count - 1)
