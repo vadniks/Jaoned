@@ -19,11 +19,13 @@
 #include "MainWindow.hpp"
 #include <QMessageBox>
 
-MainWindow::MainWindow() : mCurrentWidget(Widget::AUTH), mMainWidget() {
+MainWindow::MainWindow() : mLayout(&mWidget), mCurrentWidget(&mAuthWidget) {
     assert(cInstance == nullptr);
     cInstance = this;
 
-    setCentralWidget(&mAuthWidget);
+    mLayout.addWidget(&mAuthWidget);
+    setCentralWidget(&mWidget);
+
     connect(Network::instance(), &Network::eventOccurred, this, &MainWindow::eventOccurred);
 }
 
@@ -37,15 +39,17 @@ MainWindow* MainWindow::instance() {
 }
 
 void MainWindow::setCurrentWidget(Widget widget) {
-    switch ((mCurrentWidget = widget)) {
+    mLayout.removeWidget(mCurrentWidget);
+
+    switch (widget) {
         case AUTH:
-            setCentralWidget(&mAuthWidget);
+            mLayout.addWidget((mCurrentWidget = &mAuthWidget));
             break;
         case HOME:
-            setCentralWidget(&mHomeWidget);
+            mLayout.addWidget((mCurrentWidget = &mHomeWidget));
             break;
         case MAIN:
-            setCentralWidget(&mMainWidget);
+            mLayout.addWidget((mCurrentWidget = &mMainWidget));
             break;
     }
 }

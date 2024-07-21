@@ -34,7 +34,9 @@ public:
         MAIN
     };
 private:
-    Widget mCurrentWidget;
+    QWidget mWidget;
+    QVBoxLayout mLayout;
+    QWidget* mCurrentWidget;
     AuthWidget mAuthWidget;
     HomeWidget mHomeWidget;
     MainWidget mMainWidget;
