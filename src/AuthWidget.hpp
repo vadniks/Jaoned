@@ -41,6 +41,7 @@ private:
     QPushButton mLogInButton;
     QPushButton mRegisterButton;
     QProgressBar mProgressBar;
+    bool mLoggingIn;
 public:
     AuthWidget();
     ~AuthWidget() override;
@@ -52,6 +53,7 @@ public:
 private:
     void loading(bool enable);
 public slots:
+    void connected();
     void logInClicked();
     void registerClicked();
     void logInTried(bool successful);

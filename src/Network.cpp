@@ -41,7 +41,7 @@ struct Network::Message {
     Message() : flag(Flag::ERROR), index(0), count(0), timestamp(0), body() {}
 };
 
-Network::Network() {
+Network::Network() : mConnected(false) {
     assert(cInstance == nullptr);
     cInstance = this;
 
@@ -87,6 +87,10 @@ void Network::sendImage(const ImageDto& imageDto) {
     sendBytes(imageDto.pack(), Flag::IMAGE);
 }
 
+bool Network::connectedToHost() {
+    return mConnected;
+}
+
 Network* Network::instance() {
     assert(cInstance != nullptr);
     return cInstance;
@@ -111,10 +115,12 @@ void Network::sendUsernameAndPassword(const QString& username, const QString& pa
 }
 
 void Network::connected() {
+    mConnected = true;
     emit eventOccurred(Event::CONNECTED);
 }
 
 void Network::disconnected() {
+    mConnected = false;
     emit eventOccurred(Event::DISCONNECTED);
 }
 
@@ -185,11 +191,11 @@ void Network::processMessage(const Message& message) {
     switch (message.flag) {
         case LOG_IN:
             qDebug() << (static_cast<int>(message.body.size()) > 0);
-            logInTried(static_cast<int>(message.body.size()) > 0);
+            emit logInTried(static_cast<int>(message.body.size()) > 0);
             break;
         case REGISTER:
             qDebug() << (static_cast<int>(message.body.size()) > 0);
-            registerTried(static_cast<int>(message.body.size()) > 0);
+            emit registerTried(static_cast<int>(message.body.size()) > 0);
             break;
         case ERROR:
             qDebug() << "error";

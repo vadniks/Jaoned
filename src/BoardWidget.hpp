@@ -70,7 +70,7 @@ protected:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
 private:
-    void updateProjection();
+    void updateProjection(); // TODO: glm::look_at (camera and zoom)
     QColor themeColor();
     void paintPointsSet(DrawnPointsSet* /*nullable*/ pointsSet);
     void paintLine(DrawnLine* /*nullable*/ line);

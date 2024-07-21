@@ -22,7 +22,12 @@
 #include "MainWindow.hpp"
 #include <QMessageBox>
 
-AuthWidget::AuthWidget() : mLayout(this), mFieldsLayout(&mFieldsWidget), mButtonsLayout(&mButtonsWidget) {
+AuthWidget::AuthWidget() :
+    mLayout(this),
+    mFieldsLayout(&mFieldsWidget),
+    mButtonsLayout(&mButtonsWidget),
+    mLoggingIn(true)
+{
     mLayout.setAlignment(Qt::AlignCenter);
 
     mAppNameLabel.setText("Jaoned");
@@ -80,15 +85,36 @@ void AuthWidget::loading(bool enable) {
     mRegisterButton.setEnabled(!enable);
 }
 
+void AuthWidget::connected() {
+    if (mLoggingIn)
+        Network::instance()->logIn(mUsernameField.text(), mPasswordField.text());
+    else
+        Network::instance()->registerUser(mUsernameField.text(), mPasswordField.text());
+}
+
 void AuthWidget::logInClicked() {
-    Network::instance()->logIn(mUsernameField.text(), mPasswordField.text());
+    loading(true);
+    mLoggingIn = true;
+
+    if (Network::instance()->connectedToHost())
+        emit connected();
+    else
+        Network::instance()->connectToHost();
 }
 
 void AuthWidget::registerClicked() {
-    Network::instance()->registerUser(mUsernameField.text(), mPasswordField.text());
+    loading(true);
+    mLoggingIn = false;
+
+    if (Network::instance()->connectedToHost())
+        emit connected();
+    else
+        Network::instance()->connectToHost();
 }
 
 void AuthWidget::logInTried(bool successful) {
+    loading(false);
+
     if (successful) {
         MainWindow::instance()->setCurrentWidget(MainWindow::HOME);
         return;
@@ -101,6 +127,8 @@ void AuthWidget::logInTried(bool successful) {
 }
 
 void AuthWidget::registerTried(bool successful) {
+    loading(false);
+
     QMessageBox box(this);
     box.setModal(true);
     box.setText(successful ? "Registration succeeded" : "Registration failed");

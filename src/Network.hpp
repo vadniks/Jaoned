@@ -39,6 +39,7 @@ private:
     static inline Network* cInstance = nullptr;
     QTcpSocket mSocket;
     QQueue<Message> mPendingMessages;
+    bool mConnected;
 public:
     static const int MESSAGE_HEAD_SIZE = 4 + 4 + 4 + 8 + 4; // 24
     static const int MAX_MESSAGE_SIZE = 0x80; // 128
@@ -58,6 +59,8 @@ public:
     void sendLine(const LineDto& lineDto);
     void sendText(const TextDto& textDto);
     void sendImage(const ImageDto& imageDto);
+
+    bool connectedToHost();
 
     DISABLE_COPY(Network)
     DISABLE_MOVE(Network)
