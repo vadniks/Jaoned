@@ -187,7 +187,7 @@ void Network::sendMessage(const Message& message) {
 }
 
 void Network::processMessage(const Message& message) {
-    qDebug() << message.flag;
+    qDebug() << "flag " << message.flag;
     switch (message.flag) {
         case LOG_IN:
             qDebug() << (static_cast<int>(message.body.size()) > 0);

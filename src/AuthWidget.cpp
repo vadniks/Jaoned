@@ -18,7 +18,6 @@
 
 #include "AuthWidget.hpp"
 #include "Consts.hpp"
-#include "Network.hpp"
 #include "MainWindow.hpp"
 #include <QMessageBox>
 
@@ -66,11 +65,13 @@ AuthWidget::AuthWidget() :
 
     connect(Network::instance(), &Network::logInTried, this, &AuthWidget::logInTried);
     connect(Network::instance(), &Network::registerTried, this, &AuthWidget::registerTried);
+    connect(Network::instance(), &Network::eventOccurred, this, &AuthWidget::eventOccurred);
 }
 
 AuthWidget::~AuthWidget() {
     disconnect(Network::instance(), &Network::logInTried, this, &AuthWidget::logInTried);
     disconnect(Network::instance(), &Network::registerTried, this, &AuthWidget::registerTried);
+    disconnect(Network::instance(), &Network::eventOccurred, this, &AuthWidget::eventOccurred);
 }
 
 QSize AuthWidget::minimumSizeHint() const {
@@ -85,6 +86,11 @@ void AuthWidget::loading(bool enable) {
     mRegisterButton.setEnabled(!enable);
 }
 
+void AuthWidget::eventOccurred(Network::Event event) {
+    if (event != Network::Event::CONNECTED) return;
+    connected();
+}
+
 void AuthWidget::connected() {
     if (mLoggingIn)
         Network::instance()->logIn(mUsernameField.text(), mPasswordField.text());
@@ -92,9 +98,9 @@ void AuthWidget::connected() {
         Network::instance()->registerUser(mUsernameField.text(), mPasswordField.text());
 }
 
-void AuthWidget::logInClicked() {
+void AuthWidget::logInOrRegisterClicked(bool logIn) {
     loading(true);
-    mLoggingIn = true;
+    mLoggingIn = logIn;
 
     if (Network::instance()->connectedToHost())
         emit connected();
@@ -102,14 +108,12 @@ void AuthWidget::logInClicked() {
         Network::instance()->connectToHost();
 }
 
-void AuthWidget::registerClicked() {
-    loading(true);
-    mLoggingIn = false;
+void AuthWidget::logInClicked() {
+    logInOrRegisterClicked(true);
+}
 
-    if (Network::instance()->connectedToHost())
-        emit connected();
-    else
-        Network::instance()->connectToHost();
+void AuthWidget::registerClicked() {
+    logInOrRegisterClicked(false);
 }
 
 void AuthWidget::logInTried(bool successful) {

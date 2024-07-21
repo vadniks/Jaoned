@@ -19,6 +19,7 @@
 #pragma once
 
 #include "defs.hpp"
+#include "Network.hpp"
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -52,8 +53,10 @@ public:
     DISABLE_MOVE(AuthWidget)
 private:
     void loading(bool enable);
-public slots:
+private slots:
+    void eventOccurred(Network::Event event);
     void connected();
+    void logInOrRegisterClicked(bool logIn);
     void logInClicked();
     void registerClicked();
     void logInTried(bool successful);
