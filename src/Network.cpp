@@ -26,11 +26,12 @@ enum Network::Flag : int {
     SHUTDOWN = 3,
     CREATE_BOARD = 4,
     GET_BOARD = 5,
-    DELETE_BOARD = 6,
-    POINTS_SET = 7,
-    LINE = 8,
-    TEXT = 9,
-    IMAGE = 10,
+    GET_BOARDS = 6,
+    DELETE_BOARD = 7,
+    POINTS_SET = 8,
+    LINE = 9,
+    TEXT = 10,
+    IMAGE = 11,
 };
 
 struct Network::Message {
@@ -115,7 +116,7 @@ void Network::getBoard(int id) {
 
 void Network::getBoards() {
     Message message;
-    message.flag = Flag::GET_BOARD;
+    message.flag = Flag::GET_BOARDS;
     message.index = 0;
     message.count = 1;
     message.timestamp = currentTimestamp();
@@ -235,14 +236,13 @@ void Network::sendMessage(const Message& message) {
 }
 
 void Network::processMessage(const Message& message) {
-    qDebug() << "flag " << message.flag;
     switch (message.flag) {
         case LOG_IN:
-            qDebug() << (static_cast<int>(message.body.size()) > 0);
+            qDebug() << "logIn " << (static_cast<int>(message.body.size()) > 0);
             emit logInTried(static_cast<int>(message.body.size()) > 0);
             break;
         case REGISTER:
-            qDebug() << (static_cast<int>(message.body.size()) > 0);
+            qDebug() << "register " << (static_cast<int>(message.body.size()) > 0);
             emit registerTried(static_cast<int>(message.body.size()) > 0);
             break;
         case ERROR:
@@ -252,13 +252,25 @@ void Network::processMessage(const Message& message) {
         case SHUTDOWN:
             assert(false);
         case CREATE_BOARD:
-
+            qDebug() << "createBoard " << (static_cast<int>(message.body.size()) > 0);
             break;
         case GET_BOARD:
-
+            {
+                auto board = Board::unpack(message.body);
+                qDebug() << "getBoard " << board.id() << ' ' << board.color() << ' ' << board.title();
+            }
+            break;
+        case GET_BOARDS:
+            mPendingMessages.enqueue(message);
+            if (message.index == message.count - 1) {
+                while (!mPendingMessages.empty()) {
+                    auto board = Board::unpack(mPendingMessages.dequeue().body);
+                    qDebug() << "getBoards " << board.id() << ' ' << board.color() << ' ' << board.title();
+                }
+            }
             break;
         case DELETE_BOARD:
-
+            qDebug() << "deleteBoard " << (static_cast<int>(message.body.size()) > 0);
             break;
         case POINTS_SET:
             mPendingMessages.enqueue(message);

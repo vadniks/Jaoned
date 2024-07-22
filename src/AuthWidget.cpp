@@ -87,8 +87,10 @@ void AuthWidget::loading(bool enable) {
 }
 
 void AuthWidget::eventOccurred(Network::Event event) {
-    if (event != Network::Event::CONNECTED) return;
-    connected();
+    if (event == Network::Event::ERROR_OCCURRED)
+        loading(false);
+    else if (event == Network::Event::CONNECTED)
+        connected();
 }
 
 void AuthWidget::connected() {
