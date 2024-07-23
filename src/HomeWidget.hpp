@@ -19,6 +19,7 @@
 #pragma once
 
 #include "Board.hpp"
+#include <functional>
 #include <QWidget>
 #include <QLabel>
 #include <QListWidget>
@@ -36,8 +37,9 @@ private:
         QPushButton mDeleteButton;
         QListWidgetItem mListItem;
         int mId;
+        std::function<void ()> mParentUpdater;
     public:
-        explicit BoardListItem(const Board& board);
+        BoardListItem(const Board& board, const std::function<void ()>& parentUpdater);
         QListWidgetItem* listItem();
     private:
         void deleteClicked();
@@ -46,7 +48,7 @@ private:
     QVBoxLayout mLayout;
     QLabel mBoardsLabel;
     QListWidget mBoardsListWidget;
-    QList<BoardListItem*> mBoardListItems;
+    QList<BoardListItem*> mBoardListItems; // TODO: add refresh list button
     QPushButton mNewBoardButton;
 public:
     HomeWidget();

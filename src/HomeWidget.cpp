@@ -21,7 +21,11 @@
 #include "Network.hpp"
 #include <QMessageBox>
 
-HomeWidget::BoardListItem::BoardListItem(const Board& board) : mLayout(this), mId(board.id()) {
+HomeWidget::BoardListItem::BoardListItem(const Board& board, const std::function<void ()>& parentUpdater) :
+    mLayout(this),
+    mId(board.id()),
+    mParentUpdater(parentUpdater)
+{
     QPixmap pixmap(25, 25);
     pixmap.fill(board.color());
 
@@ -56,6 +60,8 @@ void HomeWidget::BoardListItem::deleteClicked() {
     switch (box.exec()) {
         case QMessageBox::Yes:
             qDebug() << "y";
+            Network::instance()->deleteBoard(mId);
+            mParentUpdater();
             break;
         case QMessageBox::No:
             qDebug() << "n";
@@ -96,15 +102,18 @@ QSize HomeWidget::minimumSizeHint() const {
 }
 
 void HomeWidget::addBoardToList(const Board& board) {
-    auto boardListItem = new BoardListItem(board);
+    auto boardListItem = new BoardListItem(board, [this](){ updateContent(); });
     mBoardsListWidget.addItem(boardListItem->listItem());
     mBoardsListWidget.setItemWidget(boardListItem->listItem(), boardListItem);
     mBoardListItems.push_back(boardListItem);
 }
 
 void HomeWidget::clearBoardsList() {
-    for (auto i : mBoardListItems)
-        delete i;
+    int j = 0;
+    for (auto i : mBoardListItems) {
+        qDebug() << i;
+        delete i; // TODO: munmap_chunk(): invalid pointer
+    }
 
     mBoardListItems.clear();
     mBoardsListWidget.clear();
@@ -119,6 +128,7 @@ void HomeWidget::newBoardClicked() {
 }
 
 void HomeWidget::updateContent() {
+    clearBoardsList();
     Network::instance()->getBoards();
 }
 
