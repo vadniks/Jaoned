@@ -58,4 +58,6 @@ public:
 private slots:
     void boardsListItemClicked(QListWidgetItem* item);
     void newBoardClicked();
+public slots:
+    void updateContent();
 };

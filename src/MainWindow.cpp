@@ -47,6 +47,7 @@ void MainWindow::setCurrentWidget(Widget widget) {
             break;
         case HOME:
             mLayout.addWidget((mCurrentWidget = &mHomeWidget));
+            mHomeWidget.updateContent();
             break;
         case MAIN:
             mLayout.addWidget((mCurrentWidget = &mMainWidget));

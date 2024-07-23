@@ -18,6 +18,7 @@
 
 #include "HomeWidget.hpp"
 #include "Consts.hpp"
+#include "Network.hpp"
 #include <QMessageBox>
 
 HomeWidget::BoardListItem::BoardListItem(const Board& board) : mLayout(this), mId(board.id()) {
@@ -121,4 +122,8 @@ void HomeWidget::boardsListItemClicked(QListWidgetItem* item) {
 
 void HomeWidget::newBoardClicked() {
 
+}
+
+void HomeWidget::updateContent() {
+    Network::instance()->getBoards();
 }

@@ -193,8 +193,10 @@ void Network::readyRead() {
         memcpy(&(message.timestamp), &(head.data()[12]), 8);
         memcpy(&bodySize, &(head.data()[20]), 4);
 
-        message.body = QList<char>(bodySize);
-        if (mSocket.read(message.body.data(), bodySize) < bodySize) return;
+        if (bodySize > 0) {
+            message.body = QList<char>(bodySize);
+            if (mSocket.read(message.body.data(), bodySize) < bodySize) return;
+        }
 
         processMessage(message);
     }
@@ -261,7 +263,13 @@ void Network::processMessage(const Message& message) {
             }
             break;
         case GET_BOARDS:
-            mPendingMessages.enqueue(message);
+            if (message.count == 1 && message.body.isEmpty()) {
+                qDebug() << "@ empty";
+                break;
+            }
+
+            mPendingMessages.enqueue(message); // TODO: extract to a separate function
+            qDebug() << "@ " << message.body.size() << ' ' << message.index << ' ' << message.count;
             if (message.index == message.count - 1) {
                 while (!mPendingMessages.empty()) {
                     auto board = Board::unpack(mPendingMessages.dequeue().body);
