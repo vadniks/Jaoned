@@ -85,6 +85,8 @@ private:
     void sendMessage(const Message& message);
     void processMessage(const Message& message);
 
+    void processBoards(const Message& message);
+
     void processPointsSet();
     void processLine();
     void processText();
@@ -96,8 +98,8 @@ signals: // those are implemented elsewhere
     void registerTried(bool successful);
 
     void createBoardTried(bool successful);
-    void boardReceived(const Board& board);
-    void boardsReceived(const QList<Board>& boards);
+    void boardReceived(const Board& board, bool oneOfMany);
+    void noBoardsReceived(bool oneOfMany);
     void deleteBoardTried(bool successful);
 
     void pointsSetReceived(const PointsSetDto& pointsSetDto);

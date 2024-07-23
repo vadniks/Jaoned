@@ -52,7 +52,6 @@ public:
     HomeWidget();
     ~HomeWidget() override;
     QSize minimumSizeHint() const override;
-    void refillList();
     void addBoardToList(const Board& board);
     void clearBoardsList();
 private slots:
@@ -60,4 +59,6 @@ private slots:
     void newBoardClicked();
 public slots:
     void updateContent();
+    void boardReceived(const Board& board, bool oneOfMany);
+    void noBoardsReceived(bool oneOfMany);
 };

@@ -79,34 +79,27 @@ HomeWidget::HomeWidget() : mLayout(this) {
     connect(&mNewBoardButton, &QPushButton::clicked, this, &HomeWidget::newBoardClicked);
     mLayout.addWidget(&mNewBoardButton, 0, Qt::AlignCenter);
 
-    // TODO: test only
-    addBoardToList(Board(0, QColor(255, 255, 255), "Test 1"));
-    addBoardToList(Board(1, QColor(170, 170, 170), "Test 2"));
-    addBoardToList(Board(2, QColor(85, 85, 85), "Test 3"));
-    refillList();
+    connect(Network::instance(), &Network::boardReceived, this, &HomeWidget::boardReceived);
+    connect(Network::instance(), &Network::noBoardsReceived, this, &HomeWidget::noBoardsReceived);
 }
 
 HomeWidget::~HomeWidget() {
     for (auto i : mBoardListItems)
         delete i;
+
+    disconnect(Network::instance(), &Network::boardReceived, this, &HomeWidget::boardReceived);
+    disconnect(Network::instance(), &Network::noBoardsReceived, this, &HomeWidget::noBoardsReceived);
 }
 
 QSize HomeWidget::minimumSizeHint() const {
     return {Consts::MIN_WINDOW_WIDTH, Consts::MIN_WINDOW_HEIGHT};
 }
 
-void HomeWidget::refillList() {
-    mBoardsListWidget.clear();
-
-    for (auto boardListItem : mBoardListItems) {
-        const auto item = boardListItem->listItem();
-        mBoardsListWidget.addItem(item);
-        mBoardsListWidget.setItemWidget(item, boardListItem);
-    }
-}
-
 void HomeWidget::addBoardToList(const Board& board) {
-    mBoardListItems.push_back(new BoardListItem(board));
+    auto boardListItem = new BoardListItem(board);
+    mBoardsListWidget.addItem(boardListItem->listItem());
+    mBoardsListWidget.setItemWidget(boardListItem->listItem(), boardListItem);
+    mBoardListItems.push_back(boardListItem);
 }
 
 void HomeWidget::clearBoardsList() {
@@ -114,6 +107,7 @@ void HomeWidget::clearBoardsList() {
         delete i;
 
     mBoardListItems.clear();
+    mBoardsListWidget.clear();
 }
 
 void HomeWidget::boardsListItemClicked(QListWidgetItem* item) {
@@ -126,4 +120,12 @@ void HomeWidget::newBoardClicked() {
 
 void HomeWidget::updateContent() {
     Network::instance()->getBoards();
+}
+
+void HomeWidget::boardReceived(const Board& board, bool oneOfMany) {
+    addBoardToList(board);
+}
+
+void HomeWidget::noBoardsReceived(bool oneOfMany) {
+
 }

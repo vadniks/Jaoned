@@ -30,6 +30,7 @@ MainWindow::MainWindow() : mLayout(&mWidget), mCurrentWidget(&mAuthWidget) {
 }
 
 MainWindow::~MainWindow() {
+    disconnect(Network::instance(), &Network::eventOccurred, this, &MainWindow::eventOccurred);
     cInstance = nullptr;
 }
 

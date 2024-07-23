@@ -263,19 +263,7 @@ void Network::processMessage(const Message& message) {
             }
             break;
         case GET_BOARDS:
-            if (message.count == 1 && message.body.isEmpty()) {
-                qDebug() << "@ empty";
-                break;
-            }
-
-            mPendingMessages.enqueue(message); // TODO: extract to a separate function
-            qDebug() << "@ " << message.body.size() << ' ' << message.index << ' ' << message.count;
-            if (message.index == message.count - 1) {
-                while (!mPendingMessages.empty()) {
-                    auto board = Board::unpack(mPendingMessages.dequeue().body);
-                    qDebug() << "getBoards " << board.id() << ' ' << board.color() << ' ' << board.title();
-                }
-            }
+            processBoards(message);
             break;
         case DELETE_BOARD:
             qDebug() << "deleteBoard " << (static_cast<int>(message.body.size()) > 0);
@@ -300,6 +288,20 @@ void Network::processMessage(const Message& message) {
             if (message.index == message.count - 1)
                 processImage();
             break;
+    }
+}
+
+void Network::processBoards(const Message& message) {
+    if (message.count == 1 && message.body.isEmpty()) {
+        noBoardsReceived(true);
+        return;
+    }
+
+    mPendingMessages.enqueue(message);
+
+    if (message.index == message.count - 1) {
+        while (!mPendingMessages.empty())
+            boardReceived(Board::unpack(mPendingMessages.dequeue().body), true);
     }
 }
 
