@@ -87,6 +87,7 @@ HomeWidget::HomeWidget() : mLayout(this) {
 
     connect(Network::instance(), &Network::boardReceived, this, &HomeWidget::boardReceived);
     connect(Network::instance(), &Network::noBoardsReceived, this, &HomeWidget::noBoardsReceived);
+    connect(Network::instance(), &Network::deleteBoardTried, this, &HomeWidget::deleteBoardTried);
 }
 
 HomeWidget::~HomeWidget() {
@@ -95,6 +96,7 @@ HomeWidget::~HomeWidget() {
 
     disconnect(Network::instance(), &Network::boardReceived, this, &HomeWidget::boardReceived);
     disconnect(Network::instance(), &Network::noBoardsReceived, this, &HomeWidget::noBoardsReceived);
+    disconnect(Network::instance(), &Network::deleteBoardTried, this, &HomeWidget::deleteBoardTried);
 }
 
 QSize HomeWidget::minimumSizeHint() const {
@@ -126,7 +128,7 @@ void HomeWidget::boardsListItemClicked(QListWidgetItem* item) {
 }
 
 void HomeWidget::newBoardClicked() {
-
+    Network::instance()->deleteBoard(0); // TODO: test only
 }
 
 void HomeWidget::updateContent() {
@@ -140,4 +142,8 @@ void HomeWidget::boardReceived(const Board& board, bool oneOfMany) {
 
 void HomeWidget::noBoardsReceived(bool oneOfMany) {
 
+}
+
+void HomeWidget::deleteBoardTried(bool successful) {
+    updateContent();
 }

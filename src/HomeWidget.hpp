@@ -56,6 +56,8 @@ public:
     QSize minimumSizeHint() const override;
     void addBoardToList(const Board& board);
     void clearBoardsList();
+private:
+    void loading(bool enable); // TODO
 private slots:
     void boardsListItemClicked(QListWidgetItem* item);
     void newBoardClicked();
@@ -63,4 +65,5 @@ public slots:
     void updateContent();
     void boardReceived(const Board& board, bool oneOfMany);
     void noBoardsReceived(bool oneOfMany);
+    void deleteBoardTried(bool successful);
 };

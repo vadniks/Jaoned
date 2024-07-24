@@ -266,7 +266,7 @@ void Network::processMessage(const Message& message) {
             processBoards(message);
             break;
         case DELETE_BOARD:
-            qDebug() << "deleteBoard " << (static_cast<int>(message.body.size()) > 0);
+            emit deleteBoardTried(static_cast<int>(message.body.size()) > 0);
             break;
         case POINTS_SET:
             mPendingMessages.enqueue(message);
