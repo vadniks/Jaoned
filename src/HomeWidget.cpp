@@ -22,10 +22,10 @@
 #include <QMessageBox>
 #include <QTimer>
 
-HomeWidget::BoardListItem::BoardListItem(const Board& board, const std::function<void ()>& parentUpdater) :
+HomeWidget::BoardListItem::BoardListItem(const Board& board, const std::function<void (int)>& deleteItemImpl) :
     mLayout(this),
     mId(board.id()),
-    mParentUpdater(parentUpdater)
+    mDeleteItemImpl(deleteItemImpl)
 {
     QPixmap pixmap(25, 25);
     pixmap.fill(board.color());
@@ -58,13 +58,8 @@ void HomeWidget::BoardListItem::deleteClicked() {
     box.setText("Delete this board?");
     box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 
-    if (box.exec() == QMessageBox::Yes) {
-        Network::instance()->deleteBoard(mId);
-
-        QTimer timer;
-        connect(&timer, &QTimer::timeout, this, [this](){ mParentUpdater(); }); // works properly only with timer
-        timer.start();
-    }
+    if (box.exec() == QMessageBox::Yes)
+        mDeleteItemImpl(mId);
 }
 
 HomeWidget::HomeWidget() : mLayout(this), mButtonsLayout(&mButtonsWidget) {
@@ -108,7 +103,7 @@ QSize HomeWidget::minimumSizeHint() const {
 }
 
 void HomeWidget::addBoardToList(const Board& board) {
-    auto boardListItem = new BoardListItem(board, [this](){ updateContent(); });
+    auto boardListItem = new BoardListItem(board, [this](int id){ deleteItem(id); });
     mBoardsListWidget.addItem(boardListItem->listItem());
     mBoardsListWidget.setItemWidget(boardListItem->listItem(), boardListItem);
     mBoardListItems.push_back(boardListItem);
@@ -118,16 +113,20 @@ void HomeWidget::clearBoardsList() {
     for (int i = 0; i < mBoardsListWidget.count(); i++)
         mBoardsListWidget.takeItem(i);
 
-    for (auto i : mBoardListItems) {
-        qDebug() << i;
+    for (auto i : mBoardListItems)
         delete i;
-    }
 
     mBoardListItems.clear();
     mBoardsListWidget.clear();
 }
 
+void HomeWidget::deleteItem(int id) {
+    loading(true);
+    Network::instance()->deleteBoard(id);
+}
+
 void HomeWidget::loading(bool enable) {
+    // TODO: show progressbar
     mBoardsListWidget.setEnabled(!enable);
     mNewBoardButton.setEnabled(!enable);
     mRefreshButton.setEnabled(!enable);
@@ -142,16 +141,18 @@ void HomeWidget::newBoardClicked() {
 }
 
 void HomeWidget::updateContent() {
+    loading(true);
     clearBoardsList();
     Network::instance()->getBoards();
 }
 
-void HomeWidget::boardReceived(const Board& board, bool oneOfMany) {
+void HomeWidget::boardReceived(const Board& board, bool finished) {
     addBoardToList(board);
+    if (finished) loading(false);
 }
 
-void HomeWidget::noBoardsReceived(bool oneOfMany) {
-
+void HomeWidget::noBoardsReceived() {
+    loading(false);
 }
 
 void HomeWidget::deleteBoardTried(bool successful) {

@@ -98,8 +98,8 @@ signals: // those are implemented elsewhere
     void registerTried(bool successful);
 
     void createBoardTried(bool successful);
-    void boardReceived(const Board& board, bool oneOfMany);
-    void noBoardsReceived(bool oneOfMany);
+    void boardReceived(const Board& board, bool finished);
+    void noBoardsReceived();
     void deleteBoardTried(bool successful);
 
     void pointsSetReceived(const PointsSetDto& pointsSetDto);

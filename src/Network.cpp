@@ -293,15 +293,17 @@ void Network::processMessage(const Message& message) {
 
 void Network::processBoards(const Message& message) {
     if (message.count == 1 && message.body.isEmpty()) {
-        noBoardsReceived(true);
+        noBoardsReceived();
         return;
     }
 
     mPendingMessages.enqueue(message);
 
     if (message.index == message.count - 1) {
-        while (!mPendingMessages.empty())
-            boardReceived(Board::unpack(mPendingMessages.dequeue().body), true);
+        while (!mPendingMessages.empty()) {
+            const auto xMessage = mPendingMessages.dequeue();
+            boardReceived(Board::unpack(xMessage.body), xMessage.index == xMessage.count - 1);
+        }
     }
 }
 

@@ -37,9 +37,9 @@ private:
         QPushButton mDeleteButton;
         QListWidgetItem mListItem;
         int mId;
-        std::function<void ()> mParentUpdater;
+        std::function<void (int)> mDeleteItemImpl;
     public:
-        BoardListItem(const Board& board, const std::function<void ()>& parentUpdater);
+        BoardListItem(const Board& board, const std::function<void (int)>& deleteItemImpl);
         QListWidgetItem* listItem();
     private:
         void deleteClicked();
@@ -60,13 +60,14 @@ public:
     void addBoardToList(const Board& board);
     void clearBoardsList();
 private:
+    void deleteItem(int id);
     void loading(bool enable);
 private slots:
     void boardsListItemClicked(QListWidgetItem* item);
     void newBoardClicked();
 public slots:
     void updateContent();
-    void boardReceived(const Board& board, bool oneOfMany);
-    void noBoardsReceived(bool oneOfMany);
+    void boardReceived(const Board& board, bool finished);
+    void noBoardsReceived();
     void deleteBoardTried(bool successful);
 };
