@@ -44,14 +44,21 @@ void MainWindow::setCurrentWidget(Widget widget) {
 
     switch (widget) {
         case Widget::AUTH:
+            mCurrentWidget->setVisible(false);
             mLayout.addWidget((mCurrentWidget = &mAuthWidget));
+            mCurrentWidget->setVisible(true);
             break;
         case Widget::HOME:
+            mCurrentWidget->setVisible(false);
             mLayout.addWidget((mCurrentWidget = &mHomeWidget));
+            mCurrentWidget->setVisible(true);
+
             mHomeWidget.updateContent();
             break;
         case Widget::MAIN:
+            mCurrentWidget->setVisible(false);
             mLayout.addWidget((mCurrentWidget = &mMainWidget));
+            mCurrentWidget->setVisible(true);
             break;
     }
 }
