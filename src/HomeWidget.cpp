@@ -109,10 +109,12 @@ void HomeWidget::addBoardToList(const Board& board) {
 }
 
 void HomeWidget::clearBoardsList() {
-    int j = 0;
+    for (int i = 0; i < mBoardsListWidget.count(); i++)
+        mBoardsListWidget.takeItem(i);
+
     for (auto i : mBoardListItems) {
         qDebug() << i;
-        delete i; // TODO: munmap_chunk(): invalid pointer
+        delete i;
     }
 
     mBoardListItems.clear();
