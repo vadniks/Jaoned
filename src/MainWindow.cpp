@@ -43,14 +43,14 @@ void MainWindow::setCurrentWidget(Widget widget) {
     mLayout.removeWidget(mCurrentWidget);
 
     switch (widget) {
-        case AUTH:
+        case Widget::AUTH:
             mLayout.addWidget((mCurrentWidget = &mAuthWidget));
             break;
-        case HOME:
+        case Widget::HOME:
             mLayout.addWidget((mCurrentWidget = &mHomeWidget));
             mHomeWidget.updateContent();
             break;
-        case MAIN:
+        case Widget::MAIN:
             mLayout.addWidget((mCurrentWidget = &mMainWidget));
             break;
     }
