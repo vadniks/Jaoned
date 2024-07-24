@@ -20,6 +20,7 @@
 #include "Consts.hpp"
 #include "Network.hpp"
 #include <QMessageBox>
+#include <QTimer>
 
 HomeWidget::BoardListItem::BoardListItem(const Board& board, const std::function<void ()>& parentUpdater) :
     mLayout(this),
@@ -57,15 +58,12 @@ void HomeWidget::BoardListItem::deleteClicked() {
     box.setText("Delete this board?");
     box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 
-    switch (box.exec()) {
-        case QMessageBox::Yes:
-            qDebug() << "y";
-            Network::instance()->deleteBoard(mId);
-            mParentUpdater();
-            break;
-        case QMessageBox::No:
-            qDebug() << "n";
-            break;
+    if (box.exec() == QMessageBox::Yes) {
+        Network::instance()->deleteBoard(mId);
+
+        QTimer timer;
+        connect(&timer, &QTimer::timeout, this, [this](){ mParentUpdater(); }); // works properly only with timer
+        timer.start();
     }
 }
 
@@ -128,7 +126,7 @@ void HomeWidget::boardsListItemClicked(QListWidgetItem* item) {
 }
 
 void HomeWidget::newBoardClicked() {
-    Network::instance()->deleteBoard(0); // TODO: test only
+
 }
 
 void HomeWidget::updateContent() {
