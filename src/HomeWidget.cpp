@@ -67,7 +67,7 @@ void HomeWidget::BoardListItem::deleteClicked() {
     }
 }
 
-HomeWidget::HomeWidget() : mLayout(this) {
+HomeWidget::HomeWidget() : mLayout(this), mButtonsLayout(&mButtonsWidget) {
     QFont font(mBoardsLabel.font());
     font.setPointSize(14);
 
@@ -81,7 +81,13 @@ HomeWidget::HomeWidget() : mLayout(this) {
 
     mNewBoardButton.setText("New");
     connect(&mNewBoardButton, &QPushButton::clicked, this, &HomeWidget::newBoardClicked);
-    mLayout.addWidget(&mNewBoardButton, 0, Qt::AlignCenter);
+    mButtonsLayout.addWidget(&mNewBoardButton);
+
+    mRefreshButton.setText("Refresh");
+    connect(&mRefreshButton, &QPushButton::clicked, this, &HomeWidget::updateContent);
+    mButtonsLayout.addWidget(&mRefreshButton);
+
+    mLayout.addWidget(&mButtonsWidget, 0, Qt::AlignCenter);
 
     connect(Network::instance(), &Network::boardReceived, this, &HomeWidget::boardReceived);
     connect(Network::instance(), &Network::noBoardsReceived, this, &HomeWidget::noBoardsReceived);
@@ -119,6 +125,12 @@ void HomeWidget::clearBoardsList() {
 
     mBoardListItems.clear();
     mBoardsListWidget.clear();
+}
+
+void HomeWidget::loading(bool enable) {
+    mBoardsListWidget.setEnabled(!enable);
+    mNewBoardButton.setEnabled(!enable);
+    mRefreshButton.setEnabled(!enable);
 }
 
 void HomeWidget::boardsListItemClicked(QListWidgetItem* item) {

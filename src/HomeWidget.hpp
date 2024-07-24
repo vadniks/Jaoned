@@ -49,7 +49,10 @@ private:
     QLabel mBoardsLabel;
     QListWidget mBoardsListWidget;
     QList<BoardListItem*> mBoardListItems; // TODO: add refresh list button
+    QWidget mButtonsWidget;
+    QHBoxLayout mButtonsLayout;
     QPushButton mNewBoardButton;
+    QPushButton mRefreshButton;
 public:
     HomeWidget();
     ~HomeWidget() override;
@@ -57,7 +60,7 @@ public:
     void addBoardToList(const Board& board);
     void clearBoardsList();
 private:
-    void loading(bool enable); // TODO
+    void loading(bool enable);
 private slots:
     void boardsListItemClicked(QListWidgetItem* item);
     void newBoardClicked();
