@@ -42,25 +42,22 @@ MainWindow* MainWindow::instance() {
 void MainWindow::setCurrentWidget(Widget widget) {
     mLayout.removeWidget(mCurrentWidget);
 
+    mCurrentWidget->setVisible(false);
+
     switch (widget) {
         case Widget::AUTH:
-            mCurrentWidget->setVisible(false);
             mLayout.addWidget((mCurrentWidget = &mAuthWidget));
-            mCurrentWidget->setVisible(true);
             break;
         case Widget::HOME:
-            mCurrentWidget->setVisible(false);
             mLayout.addWidget((mCurrentWidget = &mHomeWidget));
-            mCurrentWidget->setVisible(true);
-
             mHomeWidget.updateContent();
             break;
         case Widget::MAIN:
-            mCurrentWidget->setVisible(false);
             mLayout.addWidget((mCurrentWidget = &mMainWidget));
-            mCurrentWidget->setVisible(true);
             break;
     }
+
+    mCurrentWidget->setVisible(true);
 }
 
 void MainWindow::eventOccurred(Network::Event event) {
