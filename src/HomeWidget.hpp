@@ -25,6 +25,7 @@
 #include <QListWidget>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QProgressBar>
 
 class HomeWidget final : public QWidget {
     Q_OBJECT
@@ -53,6 +54,7 @@ private:
     QHBoxLayout mButtonsLayout;
     QPushButton mNewBoardButton;
     QPushButton mRefreshButton;
+    QProgressBar mProgressBar;
 public:
     HomeWidget();
     ~HomeWidget() override;

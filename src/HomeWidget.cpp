@@ -84,6 +84,13 @@ HomeWidget::HomeWidget() : mLayout(this), mButtonsLayout(&mButtonsWidget) {
 
     mLayout.addWidget(&mButtonsWidget, 0, Qt::AlignCenter);
 
+    mProgressBar.setMaximum(0);
+    mProgressBar.setMinimum(0);
+    mProgressBar.setValue(0);
+    mProgressBar.setFixedSize(16 * 20, 9 * 5);
+    mProgressBar.setVisible(false);
+    mLayout.addWidget(&mProgressBar);
+
     connect(Network::instance(), &Network::boardReceived, this, &HomeWidget::boardReceived);
     connect(Network::instance(), &Network::noBoardsReceived, this, &HomeWidget::noBoardsReceived);
     connect(Network::instance(), &Network::deleteBoardTried, this, &HomeWidget::deleteBoardTried);
@@ -126,7 +133,7 @@ void HomeWidget::deleteItem(int id) {
 }
 
 void HomeWidget::loading(bool enable) {
-    // TODO: show progressbar
+    mProgressBar.setVisible(enable);
     mBoardsListWidget.setEnabled(!enable);
     mNewBoardButton.setEnabled(!enable);
     mRefreshButton.setEnabled(!enable);
