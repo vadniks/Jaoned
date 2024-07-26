@@ -144,6 +144,9 @@ void HomeWidget::loading(bool enable) {
 
 void HomeWidget::boardsListItemClicked(QListWidgetItem* item) {
     mBoardsListWidget.clearSelection();
+    for (auto& boardListItem : mBoardListItems)
+        if (boardListItem->listItem() == item)
+            qDebug() << "list item";
 }
 
 void HomeWidget::newBoardClicked() {
