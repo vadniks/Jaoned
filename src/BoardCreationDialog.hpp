@@ -39,5 +39,9 @@ private:
     QPushButton mCreateButton;
     QPushButton mExitButton;
 public:
-    BoardCreationDialog();
+    explicit BoardCreationDialog(QWidget* parent = nullptr);
+private slots:
+    void colorClicked();
+    void createClicked();
+    void exitClicked();
 };

@@ -19,7 +19,12 @@
 #include "BoardCreationDialog.hpp"
 #include "Board.hpp"
 
-BoardCreationDialog::BoardCreationDialog() : mLayout(this), mColorLayout(&mColorWidget), mButtonsLayout(&mButtonsWidget) {
+BoardCreationDialog::BoardCreationDialog(QWidget* parent) :
+    QDialog(parent),
+    mLayout(this),
+    mColorLayout(&mColorWidget),
+    mButtonsLayout(&mButtonsWidget)
+{
     setLayout(&mLayout);
 
     mLayout.addStretch();
@@ -35,6 +40,7 @@ BoardCreationDialog::BoardCreationDialog() : mLayout(this), mColorLayout(&mColor
     mColorLayout.addWidget(&mColorLabel);
 
     mColorButton.setText("Select color");
+    connect(&mColorButton, &QPushButton::clicked, this, &BoardCreationDialog::colorClicked);
     mColorLayout.addWidget(&mColorButton);
 
     mLayout.addWidget(&mColorWidget, 0, Qt::AlignCenter);
@@ -44,9 +50,11 @@ BoardCreationDialog::BoardCreationDialog() : mLayout(this), mColorLayout(&mColor
     mLayout.addWidget(&mTitleField, 0, Qt::AlignCenter);
 
     mCreateButton.setText("Create");
+    connect(&mCreateButton, &QPushButton::clicked, this, &BoardCreationDialog::createClicked);
     mButtonsLayout.addWidget(&mCreateButton);
 
     mExitButton.setText("Exit");
+    connect(&mExitButton, &QPushButton::clicked, this, &BoardCreationDialog::exitClicked);
     mButtonsLayout.addWidget(&mExitButton);
 
     mLayout.addWidget(&mButtonsWidget, 0, Qt::AlignCenter);
@@ -54,4 +62,16 @@ BoardCreationDialog::BoardCreationDialog() : mLayout(this), mColorLayout(&mColor
     mLayout.addStretch();
 
     setFixedSize(200, 200);
+}
+
+void BoardCreationDialog::colorClicked() {
+
+}
+
+void BoardCreationDialog::createClicked() {
+    accept();
+}
+
+void BoardCreationDialog::exitClicked() {
+    reject();
 }

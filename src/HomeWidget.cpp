@@ -145,7 +145,9 @@ void HomeWidget::boardsListItemClicked(QListWidgetItem* item) {
 }
 
 void HomeWidget::newBoardClicked() {
-    BoardCreationDialog().exec();
+    BoardCreationDialog dialog(this);
+    dialog.setModal(true);
+    const int result = dialog.exec();
 }
 
 void HomeWidget::updateContent() {
