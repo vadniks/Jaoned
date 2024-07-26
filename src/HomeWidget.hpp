@@ -72,4 +72,5 @@ public slots:
     void boardReceived(const Board& board, bool finished);
     void noBoardsReceived();
     void deleteBoardTried(bool successful);
+    void createBoardTried(bool successful);
 };

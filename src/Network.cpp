@@ -254,7 +254,7 @@ void Network::processMessage(const Message& message) {
         case SHUTDOWN:
             assert(false);
         case CREATE_BOARD:
-            qDebug() << "createBoard " << (static_cast<int>(message.body.size()) > 0);
+            emit createBoardTried(static_cast<int>(message.body.size()) > 0);
             break;
         case GET_BOARD:
             {

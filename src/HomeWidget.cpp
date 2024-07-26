@@ -95,6 +95,7 @@ HomeWidget::HomeWidget() : mLayout(this), mButtonsLayout(&mButtonsWidget) {
     connect(Network::instance(), &Network::boardReceived, this, &HomeWidget::boardReceived);
     connect(Network::instance(), &Network::noBoardsReceived, this, &HomeWidget::noBoardsReceived);
     connect(Network::instance(), &Network::deleteBoardTried, this, &HomeWidget::deleteBoardTried);
+    connect(Network::instance(), &Network::createBoardTried, this, &HomeWidget::createBoardTried);
 }
 
 HomeWidget::~HomeWidget() {
@@ -104,6 +105,7 @@ HomeWidget::~HomeWidget() {
     disconnect(Network::instance(), &Network::boardReceived, this, &HomeWidget::boardReceived);
     disconnect(Network::instance(), &Network::noBoardsReceived, this, &HomeWidget::noBoardsReceived);
     disconnect(Network::instance(), &Network::deleteBoardTried, this, &HomeWidget::deleteBoardTried);
+    disconnect(Network::instance(), &Network::createBoardTried, this, &HomeWidget::createBoardTried);
 }
 
 QSize HomeWidget::minimumSizeHint() const {
@@ -147,7 +149,7 @@ void HomeWidget::boardsListItemClicked(QListWidgetItem* item) {
 void HomeWidget::newBoardClicked() {
     BoardCreationDialog dialog(this);
     dialog.setModal(true);
-    connect(&dialog, &BoardCreationDialog::resultFormed, this, [this](const Board& board){ Network::instance()->createBoard(board); });
+    connect(&dialog, &BoardCreationDialog::resultFormed, this, [](const Board& board){ Network::instance()->createBoard(board); });
     dialog.exec();
 }
 
@@ -167,5 +169,9 @@ void HomeWidget::noBoardsReceived() {
 }
 
 void HomeWidget::deleteBoardTried(bool successful) {
+    updateContent();
+}
+
+void HomeWidget::createBoardTried(bool successful) {
     updateContent();
 }
