@@ -19,6 +19,7 @@
 #include "HomeWidget.hpp"
 #include "Consts.hpp"
 #include "Network.hpp"
+#include "BoardCreationDialog.hpp"
 #include <QMessageBox>
 #include <QTimer>
 
@@ -144,7 +145,7 @@ void HomeWidget::boardsListItemClicked(QListWidgetItem* item) {
 }
 
 void HomeWidget::newBoardClicked() {
-
+    BoardCreationDialog().exec();
 }
 
 void HomeWidget::updateContent() {
