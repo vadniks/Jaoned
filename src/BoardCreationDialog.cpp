@@ -17,7 +17,7 @@
  */
 
 #include "BoardCreationDialog.hpp"
-#include "Board.hpp"
+#include <QColorDialog>
 
 BoardCreationDialog::BoardCreationDialog(QWidget* parent) :
     QDialog(parent),
@@ -34,7 +34,7 @@ BoardCreationDialog::BoardCreationDialog(QWidget* parent) :
     mLayout.addWidget(&mHintLabel, 0, Qt::AlignCenter);
 
     QPixmap pixmap(25, 25);
-    pixmap.fill();
+    pixmap.fill(Qt::black);
 
     mColorLabel.setPixmap(pixmap);
     mColorLayout.addWidget(&mColorLabel);
@@ -65,10 +65,14 @@ BoardCreationDialog::BoardCreationDialog(QWidget* parent) :
 }
 
 void BoardCreationDialog::colorClicked() {
-
+    QColorDialog dialog(this);
+    dialog.setModal(true);
+    connect(&dialog, &QColorDialog::colorSelected, this, [this](const QColor& color){ mColor = color; });
+    dialog.exec();
 }
 
 void BoardCreationDialog::createClicked() {
+    emit resultFormed(Board(Board::INVALID_ID, mColor, mTitleField.text()));
     accept();
 }
 

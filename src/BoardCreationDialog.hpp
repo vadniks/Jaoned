@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "Board.hpp"
 #include <QDialog>
 #include <QVBoxLayout>
 #include <QLabel>
@@ -38,10 +39,13 @@ private:
     QHBoxLayout mButtonsLayout;
     QPushButton mCreateButton;
     QPushButton mExitButton;
+    QColor mColor;
 public:
-    explicit BoardCreationDialog(QWidget* parent = nullptr);
+    explicit BoardCreationDialog(QWidget* parent);
 private slots:
     void colorClicked();
     void createClicked();
     void exitClicked();
+signals:
+    void resultFormed(const Board& board);
 };

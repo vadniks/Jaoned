@@ -147,7 +147,8 @@ void HomeWidget::boardsListItemClicked(QListWidgetItem* item) {
 void HomeWidget::newBoardClicked() {
     BoardCreationDialog dialog(this);
     dialog.setModal(true);
-    const int result = dialog.exec();
+    connect(&dialog, &BoardCreationDialog::resultFormed, this, [this](const Board& board){ Network::instance()->createBoard(board); });
+    dialog.exec();
 }
 
 void HomeWidget::updateContent() {

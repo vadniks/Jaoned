@@ -28,6 +28,7 @@ private:
 //    int mSize;
     QString mTitle;
 public:
+    static const int INVALID_ID = -1;
     static const int MAX_TITLE_SIZE = 16;
 public:
     Board(int id, const QColor& color, const QString& title);
