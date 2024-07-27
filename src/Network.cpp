@@ -316,7 +316,7 @@ void Network::processPointsSet(long timestamp) {
     mPendingMessagesMap.remove(timestamp);
 
     const auto pointsSet = PointsSetDto::unpack(bytes);
-    qDebug() << pointsSet.erase() << ' ' << pointsSet.width() << ' ' << pointsSet.color() << ' ' << pointsSet.points().size();
+    qDebug() << "pointsSet received" << pointsSet.erase() << ' ' << pointsSet.width() << ' ' << pointsSet.color() << ' ' << pointsSet.points().size();
     emit pointsSetReceived(pointsSet);
 }
 
@@ -324,7 +324,7 @@ void Network::processLine(long timestamp) {
     const auto line = LineDto::unpack(mPendingMessagesMap[timestamp].dequeue().body);
     mPendingMessagesMap.remove(timestamp);
 
-    qDebug() << line.start().x() << ' ' << line.start().y() << ' ' << line.end().x() << ' ' << line.end().y() << ' ' << line.width() << ' ' << line.color();
+    qDebug() << "line received" << line.start().x() << ' ' << line.start().y() << ' ' << line.end().x() << ' ' << line.end().y() << ' ' << line.width() << ' ' << line.color();
     emit lineReceived(line);
 }
 
@@ -336,7 +336,7 @@ void Network::processText(long timestamp) {
     mPendingMessagesMap.remove(timestamp);
 
     const auto text = TextDto::unpack(bytes);
-    qDebug() << text.pos().x() << ' ' << text.pos().y() << ' ' << text.fontSize() << ' ' << text.color() << ' ' << text.text();
+    qDebug() << "text received" << text.pos().x() << ' ' << text.pos().y() << ' ' << text.fontSize() << ' ' << text.color() << ' ' << text.text();
     emit textReceived(text);
 }
 
@@ -348,6 +348,6 @@ void Network::processImage(long timestamp) {
     mPendingMessagesMap.remove(timestamp);
 
     const auto image = ImageDto::unpack(bytes);
-    qDebug() << image.pos().x() << ' ' << image.pos().y() << ' ' << image.width() << ' ' << image.height() << ' ' << image.texture().size();
+    qDebug() << "image received" << image.pos().x() << ' ' << image.pos().y() << ' ' << image.width() << ' ' << image.height() << ' ' << image.texture().size();
     emit imageReceived(image);
 }
