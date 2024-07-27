@@ -216,6 +216,8 @@ void Network::sendBytes(const QList<char>& bytes, Flag flag) {
         message.timestamp = timestamp;
         message.body = bytes.mid(start, MAX_MESSAGE_BODY_SIZE);
 
+        start += static_cast<int>(message.body.size());
+
         if (message.body.isEmpty()) break;
         sendMessage(message);
     }
