@@ -487,6 +487,8 @@ void BoardWidget::undo() {
 
     delete mElements.pop();
     update();
+
+    emit lastElementRemoved();
 }
 
 void BoardWidget::clear() {
