@@ -19,9 +19,25 @@
 #include "MainWidget.hpp"
 #include <QResizeEvent>
 
-MainWidget::MainWidget() : mLayout(this), mBoardWidget(new BoardWidget([this](){ mControlsWidget.updateMode(); })), mControlsWidget(mBoardWidget) {
+MainWidget::MainWidget() :
+    mLayout(this),
+    mInfoLayout(&mInfoWidget),
+    mBoardWidget(new BoardWidget([this](){ mControlsWidget.updateMode(); })),
+    mControlsWidget(mBoardWidget),
+    mBoard(-1, QColor(), "Board")
+{
+    mTitleLabel.setText(mBoard.title());
+    mTitleLabel.setFont(QFont("Roboto", 18));
+    mInfoLayout.addWidget(&mTitleLabel);
+
+    mInfoLayout.addStretch();
+
+    mExitButton.setText("Exit");
+    mInfoLayout.addWidget(&mExitButton);
+
     connect(&mControlsWidget, &ControlsWidget::updated, this, &MainWidget::controlsWidgetUpdated);
 
+    mLayout.addWidget(&mInfoWidget, 0, Qt::AlignTop);
     mLayout.addWidget(&mControlsWidget, 0, Qt::AlignTop);
     mLayout.addWidget(mBoardWidget, 0, Qt::AlignVCenter);
     mLayout.addStretch();
@@ -29,6 +45,11 @@ MainWidget::MainWidget() : mLayout(this), mBoardWidget(new BoardWidget([this](){
 
 MainWidget::~MainWidget() {
     delete mBoardWidget;
+}
+
+void MainWidget::setBoard(const Board& board) {
+    mBoard = board;
+    mTitleLabel.setText(board.title());
 }
 
 void MainWidget::resizeEvent(QResizeEvent* event) {

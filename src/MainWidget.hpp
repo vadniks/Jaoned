@@ -21,21 +21,31 @@
 #include "defs.hpp"
 #include "BoardWidget.hpp"
 #include "ControlsWidget.hpp"
+#include "Board.hpp"
 #include <QWidget>
 #include <QVBoxLayout>
+#include <QLabel>
+#include <QPushButton>
 
 class MainWidget final : public QWidget {
     Q_OBJECT
 private:
     QVBoxLayout mLayout;
+    QWidget mInfoWidget;
+    QHBoxLayout mInfoLayout;
+    QLabel mTitleLabel;
+    QPushButton mExitButton;
     BoardWidget* mBoardWidget;
     ControlsWidget mControlsWidget;
+    Board mBoard;
 public:
     MainWidget();
     ~MainWidget() override;
 
     DISABLE_COPY(MainWidget)
     DISABLE_MOVE(MainWidget)
+
+    void setBoard(const Board& board);
 
     void resizeEvent(QResizeEvent* event) override;
 private:

@@ -52,6 +52,7 @@ public:
     static MainWindow* instance();
 
     void setCurrentWidget(Widget widget);
+    QWidget* currentWidget();
 private slots:
     void eventOccurred(Network::Event event);
 };

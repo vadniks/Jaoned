@@ -60,6 +60,10 @@ void MainWindow::setCurrentWidget(Widget widget) {
     mCurrentWidget->setVisible(true);
 }
 
+QWidget* MainWindow::currentWidget() {
+    return mCurrentWidget;
+}
+
 void MainWindow::eventOccurred(Network::Event event) {
     if (event == Network::Event::CONNECTED) return;
 

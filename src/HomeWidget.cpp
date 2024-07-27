@@ -20,6 +20,8 @@
 #include "Consts.hpp"
 #include "Network.hpp"
 #include "BoardCreationDialog.hpp"
+#include "MainWindow.hpp"
+#include "MainWidget.hpp"
 #include <QMessageBox>
 #include <QTimer>
 
@@ -144,9 +146,13 @@ void HomeWidget::loading(bool enable) {
 
 void HomeWidget::boardsListItemClicked(QListWidgetItem* item) {
     mBoardsListWidget.clearSelection();
+
     for (auto& boardListItem : mBoardListItems)
-        if (boardListItem->listItem() == item)
-            qDebug() << "list item";
+        if (boardListItem->listItem() == item) {
+            MainWindow::instance()->setCurrentWidget(MainWindow::Widget::MAIN);
+            dynamic_cast<MainWidget*>(MainWindow::instance()->currentWidget())->setBoard(Board(1, QColor(), "Test"));
+            break;
+        }
 }
 
 void HomeWidget::newBoardClicked() {
@@ -171,10 +177,10 @@ void HomeWidget::noBoardsReceived() {
     loading(false);
 }
 
-void HomeWidget::deleteBoardTried(bool successful) {
+void HomeWidget::deleteBoardTried(bool) {
     updateContent();
 }
 
-void HomeWidget::createBoardTried(bool successful) {
+void HomeWidget::createBoardTried(bool) {
     updateContent();
 }
