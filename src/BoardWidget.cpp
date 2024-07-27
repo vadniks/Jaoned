@@ -17,6 +17,7 @@
  */
 
 #include "BoardWidget.hpp"
+#include "Helpers.hpp"
 #include <QKeyEvent>
 #include <glm/ext/matrix_clip_space.hpp>
 
@@ -261,16 +262,50 @@ void BoardWidget::mouseReleaseEvent(QMouseEvent*) {
         case Mode::ERASE:
             [[gnu::fallthrough]];
         case Mode::DRAW:
-            mElements.push(mCurrentPointsSet);
-            mCurrentPointsSet = nullptr;
+            {
+                mElements.push(mCurrentPointsSet);
+
+                QList<PointDto> points;
+                for (const auto& point : mCurrentPointsSet->points)
+                    points.append(PointDto(static_cast<int>(point.x), static_cast<int>(point.y)));
+
+                emit pointsSetAdded(PointsSetDto(
+                    mCurrentPointsSet->erase,
+                    mCurrentPointsSet->width,
+                    Helpers::packQColor(mCurrentPointsSet->color),
+                    points
+                ));
+
+                mCurrentPointsSet = nullptr;
+            }
             break;
         case Mode::LINE:
             mElements.push(mCurrentLine);
+
+            emit lineAdded(LineDto(
+                PointDto(static_cast<int>(mCurrentLine->start.x), static_cast<int>(mCurrentLine->start.y)),
+                PointDto(static_cast<int>(mCurrentLine->end.x), static_cast<int>(mCurrentLine->end.y)),
+                mCurrentLine->width,
+                Helpers::packQColor(mCurrentLine->color)
+            ));
+
             mCurrentLine = nullptr;
             break;
         case Mode::TEXT:
             if (!mCurrentText->text.isEmpty()) {
                 mElements.push(mCurrentText);
+
+                QList<char> text;
+                for (auto byte : mCurrentText->text.toUtf8())
+                    text.append(byte);
+
+                emit textAdded(TextDto(
+                    PointDto(static_cast<int>(mCurrentText->pos.x), static_cast<int>(mCurrentText->pos.y)),
+                    mCurrentText->size,
+                    Helpers::packQColor(mCurrentText->color),
+                    text
+                ));
+
                 mCurrentText = nullptr;
             } else {
                 delete mCurrentText;

@@ -22,6 +22,7 @@
 #include "Mode.hpp"
 #include "Theme.hpp"
 #include "Renderer.hpp"
+#include "dto.hpp"
 #include <functional>
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions_3_3_Core>
@@ -34,7 +35,7 @@ struct DrawnLine;
 struct DrawnText;
 struct DrawnImage;
 
-class BoardWidget final : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core {
+class BoardWidget final : public QOpenGLWidget, private QOpenGLFunctions_3_3_Core {
     Q_OBJECT
 private:
     Mode mMode;
@@ -90,4 +91,10 @@ public:
     QColor color() const;
     int pointWidth() const;
     std::vector<uchar> pixels();
+signals:
+    void pointsSetAdded(const PointsSetDto& pointsSetDto);
+    void lineAdded(const LineDto& lineDto);
+    void textAdded(const TextDto& textDto);
+    void imageAdded(const ImageDto& imageDto);
+    void lastElementRemoved();
 };

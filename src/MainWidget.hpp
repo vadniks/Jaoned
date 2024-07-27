@@ -22,6 +22,7 @@
 #include "BoardWidget.hpp"
 #include "ControlsWidget.hpp"
 #include "Board.hpp"
+#include "dto.hpp"
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QLabel>
@@ -52,4 +53,10 @@ private:
     void resizeBoardWidget();
 private slots:
     void controlsWidgetUpdated();
+public slots:
+    void pointsSetAdded(const PointsSetDto& pointsSetDto);
+    void lineAdded(const LineDto& lineDto);
+    void textAdded(const TextDto& textDto);
+    void imageAdded(const ImageDto& imageDto);
+    void lastElementRemoved();
 };

@@ -68,3 +68,23 @@ void MainWidget::resizeBoardWidget() {
 void MainWidget::controlsWidgetUpdated() {
     resizeBoardWidget();
 }
+
+void MainWidget::pointsSetAdded(const PointsSetDto& pointsSetDto) {
+
+}
+
+void MainWidget::lineAdded(const LineDto& lineDto) {
+
+}
+
+void MainWidget::textAdded(const TextDto& textDto) {
+
+}
+
+void MainWidget::imageAdded(const ImageDto& imageDto) {
+
+}
+
+void MainWidget::lastElementRemoved() {
+
+}
