@@ -524,21 +524,60 @@ std::vector<uchar> BoardWidget::pixels() {
 }
 
 void BoardWidget::addPointsSet(const PointsSetDto& pointsSetDto) {
+    auto pointsSet = new DrawnPointsSet(pointsSetDto.erase(), pointsSetDto.width(), Helpers::unpackQColor(pointsSetDto.color()));
 
+    for (auto point : pointsSetDto.points())
+        pointsSet->points.append(glm::vec2(point.x(), point.y()));
+
+    mElements.push(pointsSet);
+
+    update();
 }
 
 void BoardWidget::addLine(const LineDto& lineDto) {
+    mElements.push(new DrawnLine(
+        glm::vec2(lineDto.start().x(), lineDto.start().y()),
+        glm::vec2(lineDto.end().x(), lineDto.end().y()),
+        lineDto.width(),
+        Helpers::unpackQColor(lineDto.color())
+    ));
 
+    update();
 }
 
 void BoardWidget::addText(const TextDto& textDto) {
+    QByteArray bytes(textDto.text().size(), 0);
+    for (int i = 0; i < textDto.text().size(); i++)
+        bytes[i] = textDto.text()[i];
 
+    mElements.push(new DrawnText(
+        QString::fromUtf8(bytes),
+        glm::vec2(textDto.pos().x(), textDto.pos().y()),
+        textDto.fontSize(),
+        Helpers::unpackQColor(textDto.color())
+    ));
+
+    update();
 }
 
 void BoardWidget::addImage(const ImageDto& imageDto) {
+    mElements.push(new DrawnImage(
+        glm::vec2(imageDto.pos().x(), imageDto.pos().y()),
+        glm::vec2(imageDto.width(), imageDto.height()),
+        new Texture(
+            *this,
+            imageDto.width(),
+            imageDto.height(),
+            reinterpret_cast<const uchar*>(imageDto.texture().data())
+        )
+    ));
 
+    update();
 }
 
 void BoardWidget::removeLastElement() {
+    if (mElements.isEmpty()) return;
 
+    delete mElements.pop();
+    update();
 }
