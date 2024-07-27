@@ -35,12 +35,18 @@ MainWidget::MainWidget() :
     mExitButton.setText("Exit");
     mInfoLayout.addWidget(&mExitButton);
 
-    connect(&mControlsWidget, &ControlsWidget::updated, this, &MainWidget::controlsWidgetUpdated);
-
     mLayout.addWidget(&mInfoWidget, 0, Qt::AlignTop);
     mLayout.addWidget(&mControlsWidget, 0, Qt::AlignTop);
     mLayout.addWidget(mBoardWidget, 0, Qt::AlignVCenter);
     mLayout.addStretch();
+
+    connect(&mControlsWidget, &ControlsWidget::updated, this, &MainWidget::controlsWidgetUpdated);
+
+    connect(mBoardWidget, &BoardWidget::pointsSetAdded, this, &MainWidget::pointsSetAdded);
+    connect(mBoardWidget, &BoardWidget::lineAdded, this, &MainWidget::lineAdded);
+    connect(mBoardWidget, &BoardWidget::textAdded, this, &MainWidget::textAdded);
+    connect(mBoardWidget, &BoardWidget::imageAdded, this, &MainWidget::imageAdded);
+    connect(mBoardWidget, &BoardWidget::lastElementRemoved, this, &MainWidget::lastElementRemoved);
 }
 
 MainWidget::~MainWidget() {
