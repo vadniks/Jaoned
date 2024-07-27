@@ -91,6 +91,12 @@ public:
     QColor color() const;
     int pointWidth() const;
     std::vector<uchar> pixels();
+public slots:
+    void addPointsSet(const PointsSetDto& pointsSetDto);
+    void addLine(const LineDto& lineDto);
+    void addText(const TextDto& textDto);
+    void addImage(const ImageDto& imageDto);
+    void removeLastElement();
 signals:
     void pointsSetAdded(const PointsSetDto& pointsSetDto);
     void lineAdded(const LineDto& lineDto);

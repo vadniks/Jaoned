@@ -522,3 +522,23 @@ std::vector<uchar> BoardWidget::pixels() {
     glReadPixels(0, 0, size.width(), size.height(), GL_RGBA, GL_UNSIGNED_BYTE, bytes.data());
     return bytes;
 }
+
+void BoardWidget::addPointsSet(const PointsSetDto& pointsSetDto) {
+
+}
+
+void BoardWidget::addLine(const LineDto& lineDto) {
+
+}
+
+void BoardWidget::addText(const TextDto& textDto) {
+
+}
+
+void BoardWidget::addImage(const ImageDto& imageDto) {
+
+}
+
+void BoardWidget::removeLastElement() {
+
+}
