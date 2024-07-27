@@ -23,7 +23,6 @@
 #include "Board.hpp"
 #include <QObject>
 #include <QTcpSocket>
-#include <QMap>
 #include <QQueue>
 
 class Network final : public QObject {
@@ -40,7 +39,7 @@ private:
 private:
     static inline Network* cInstance = nullptr;
     QTcpSocket mSocket;
-    QMap<long, QQueue<Message>> mPendingMessagesMap;
+    QQueue<Message> mPendingMessages;
     bool mConnected;
 public:
     static const int MESSAGE_HEAD_SIZE = 4 + 4 + 4 + 8 + 4; // 24
@@ -88,10 +87,10 @@ private:
 
     void processBoards(const Message& message);
 
-    void processPointsSet(long timestamp);
-    void processLine(long timestamp);
-    void processText(long timestamp);
-    void processImage(long timestamp);
+    void processPointsSet();
+    void processLine();
+    void processText();
+    void processImage();
 signals: // those are implemented elsewhere
     void eventOccurred(Network::Event event);
 

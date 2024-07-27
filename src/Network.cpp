@@ -271,24 +271,24 @@ void Network::processMessage(const Message& message) {
             emit deleteBoardTried(static_cast<int>(message.body.size()) > 0);
             break;
         case POINTS_SET:
-            mPendingMessagesMap[message.timestamp].enqueue(message);
+            mPendingMessages.enqueue(message);
             if (message.index == message.count - 1)
-                processPointsSet(message.timestamp);
+                processPointsSet();
             break;
         case LINE:
-            mPendingMessagesMap[message.timestamp].enqueue(message);
+            mPendingMessages.enqueue(message);
             if (message.index == message.count - 1)
-                processLine(message.timestamp);
+                processLine();
             break;
         case TEXT:
-            mPendingMessagesMap[message.timestamp].enqueue(message);
+            mPendingMessages.enqueue(message);
             if (message.index == message.count - 1)
-                processText(message.timestamp);
+                processText();
             break;
         case IMAGE:
-            mPendingMessagesMap[message.timestamp].enqueue(message);
+            mPendingMessages.enqueue(message);
             if (message.index == message.count - 1)
-                processImage(message.timestamp);
+                processImage();
             break;
     }
 }
@@ -299,55 +299,50 @@ void Network::processBoards(const Message& message) {
         return;
     }
 
-    mPendingMessagesMap[message.timestamp].enqueue(message);
+    mPendingMessages.enqueue(message);
 
     if (message.index == message.count - 1) {
-        while (!mPendingMessagesMap[message.timestamp].empty()) {
-            const auto xMessage = mPendingMessagesMap[message.timestamp].dequeue();
+        while (!mPendingMessages.empty()) {
+            const auto xMessage = mPendingMessages.dequeue();
             boardReceived(Board::unpack(xMessage.body), xMessage.index == xMessage.count - 1);
         }
-        mPendingMessagesMap.remove(message.timestamp);
     }
 }
 
-void Network::processPointsSet(long timestamp) {
+void Network::processPointsSet() {
     QList<char> bytes;
 
-    while (!mPendingMessagesMap[timestamp].empty())
-        bytes.append(mPendingMessagesMap[timestamp].dequeue().body);
-    mPendingMessagesMap.remove(timestamp);
+    while (!mPendingMessages.empty())
+        bytes.append(mPendingMessages.dequeue().body);
 
     const auto pointsSet = PointsSetDto::unpack(bytes);
     qDebug() << "pointsSet received" << pointsSet.erase() << ' ' << pointsSet.width() << ' ' << pointsSet.color() << ' ' << pointsSet.points().size();
     emit pointsSetReceived(pointsSet);
 }
 
-void Network::processLine(long timestamp) {
-    const auto line = LineDto::unpack(mPendingMessagesMap[timestamp].dequeue().body);
-    mPendingMessagesMap.remove(timestamp);
+void Network::processLine() {
+    const auto line = LineDto::unpack(mPendingMessages.dequeue().body);
 
     qDebug() << "line received" << line.start().x() << ' ' << line.start().y() << ' ' << line.end().x() << ' ' << line.end().y() << ' ' << line.width() << ' ' << line.color();
     emit lineReceived(line);
 }
 
-void Network::processText(long timestamp) {
+void Network::processText() {
     QList<char> bytes;
 
-    while (!mPendingMessagesMap[timestamp].empty())
-        bytes.append(mPendingMessagesMap[timestamp].dequeue().body);
-    mPendingMessagesMap.remove(timestamp);
+    while (!mPendingMessages.empty())
+        bytes.append(mPendingMessages.dequeue().body);
 
     const auto text = TextDto::unpack(bytes);
     qDebug() << "text received" << text.pos().x() << ' ' << text.pos().y() << ' ' << text.fontSize() << ' ' << text.color() << ' ' << text.text();
     emit textReceived(text);
 }
 
-void Network::processImage(long timestamp) {
+void Network::processImage() {
     QList<char> bytes;
 
-    while (!mPendingMessagesMap[timestamp].empty())
-        bytes.append(mPendingMessagesMap[timestamp].dequeue().body);
-    mPendingMessagesMap.remove(timestamp);
+    while (!mPendingMessages.empty())
+        bytes.append(mPendingMessages.dequeue().body);
 
     const auto image = ImageDto::unpack(bytes);
     qDebug() << "image received" << image.pos().x() << ' ' << image.pos().y() << ' ' << image.width() << ' ' << image.height() << ' ' << image.texture().size();
