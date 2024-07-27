@@ -316,6 +316,18 @@ void BoardWidget::mouseReleaseEvent(QMouseEvent*) {
             mDrawCurrentImage = false;
 
             mElements.push(mCurrentImage);
+
+            QList<char> texture;
+            for (auto byte : mCurrentImage->texture->data())
+                texture.append(static_cast<char>(byte));
+
+            emit imageAdded(ImageDto(
+                PointDto(static_cast<int>(mCurrentImage->pos.x), static_cast<int>(mCurrentImage->pos.y)),
+                static_cast<int>(mCurrentImage->size.x),
+                static_cast<int>(mCurrentImage->size.y),
+                texture
+            ));
+
             mCurrentImage = nullptr;
 
             mMode = Mode::DRAW;

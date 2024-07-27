@@ -26,6 +26,7 @@ private:
     QOpenGLFunctions_3_3_Core& mGl;
     unsigned mId;
     int mWidth, mHeight;
+    QList<uchar> mData;
 public:
     Texture(QOpenGLFunctions_3_3_Core& gl, int width, int height, const uchar* data, int format = GL_RGBA);
     ~Texture();
@@ -35,4 +36,5 @@ public:
 
     void bind();
     QSize size();
+    QList<uchar> data();
 };

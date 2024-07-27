@@ -19,11 +19,21 @@
 #include "Texture.hpp"
 #include <QSize>
 
-Texture::Texture(QOpenGLFunctions_3_3_Core& gl, int width, int height, const uchar* data, int format) : mGl(gl), mId(0), mWidth(width), mHeight(height) {
+Texture::Texture(QOpenGLFunctions_3_3_Core& gl, int width, int height, const uchar* data, int format) :
+    mGl(gl),
+    mId(0),
+    mWidth(width),
+    mHeight(height),
+    mData(width * height, 0)
+{
     assert(format == GL_RED || format == GL_RGB || format == GL_RGBA);
+
     mGl.glGenTextures(1, &mId);
     mGl.glBindTexture(GL_TEXTURE_2D, mId);
-    if (format == GL_RED) mGl.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    if (format == GL_RED)
+        mGl.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
     mGl.glTexImage2D(
         GL_TEXTURE_2D,
         0,
@@ -35,11 +45,14 @@ Texture::Texture(QOpenGLFunctions_3_3_Core& gl, int width, int height, const uch
         GL_UNSIGNED_BYTE,
         data
     );
+
     mGl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     mGl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     mGl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     mGl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     mGl.glBindTexture(GL_TEXTURE_2D, 0);
+
+    memcpy(mData.data(), data, width * height);
 }
 
 Texture::~Texture() {
@@ -52,4 +65,8 @@ void Texture::bind() {
 
 QSize Texture::size() {
     return {mWidth, mHeight};
+}
+
+QList<uchar> Texture::data() {
+    return mData;
 }
