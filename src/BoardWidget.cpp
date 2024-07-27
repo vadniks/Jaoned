@@ -261,7 +261,7 @@ void BoardWidget::mouseReleaseEvent(QMouseEvent*) {
     switch (mMode) {
         case Mode::ERASE:
             [[gnu::fallthrough]];
-        case Mode::DRAW:
+        case Mode::DRAW: // TODO: move each case to a separate function
             {
                 mElements.push(mCurrentPointsSet);
 
