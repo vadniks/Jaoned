@@ -24,7 +24,7 @@ Texture::Texture(QOpenGLFunctions_3_3_Core& gl, int width, int height, const uch
     mId(0),
     mWidth(width),
     mHeight(height),
-    mData(width * height, 0)
+    mData(width * height * 4, 0)
 {
     assert(format == GL_RED || format == GL_RGB || format == GL_RGBA);
 
@@ -52,7 +52,7 @@ Texture::Texture(QOpenGLFunctions_3_3_Core& gl, int width, int height, const uch
     mGl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     mGl.glBindTexture(GL_TEXTURE_2D, 0);
 
-    memcpy(mData.data(), data, width * height);
+    memcpy(mData.data(), data, width * height * 4);
 }
 
 Texture::~Texture() {
