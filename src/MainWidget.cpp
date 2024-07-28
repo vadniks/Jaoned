@@ -50,6 +50,10 @@ MainWidget::MainWidget() :
     connect(mBoardWidget, &BoardWidget::lastElementRemoved, this, &MainWidget::lastElementRemoved);
 
     connect(Network::instance(), &Network::boardElementsReceiveFinished, this, &MainWidget::boardElementsReceiveFinished);
+    connect(Network::instance(), &Network::pointsSetReceived, this, &MainWidget::pointsSetReceived);
+    connect(Network::instance(), &Network::lineReceived, this, &MainWidget::lineReceived);
+    connect(Network::instance(), &Network::textReceived, this, &MainWidget::textReceived);
+    connect(Network::instance(), &Network::imageReceived, this, &MainWidget::imageReceived);
 }
 
 MainWidget::~MainWidget() {
@@ -86,6 +90,26 @@ void MainWidget::controlsWidgetUpdated() {
 
 void MainWidget::boardElementsReceiveFinished() {
 
+}
+
+void MainWidget::pointsSetReceived(const PointsSetDto& pointsSetDto) {
+    mBoardWidget->addPointsSet(pointsSetDto);
+}
+
+void MainWidget::lineReceived(const LineDto& lineDto) {
+    mBoardWidget->addLine(lineDto);
+}
+
+void MainWidget::textReceived(const TextDto& textDto) {
+    mBoardWidget->addText(textDto);
+}
+
+void MainWidget::imageReceived(const ImageDto& imageDto) {
+    mBoardWidget->addImage(imageDto);
+}
+
+void MainWidget::undoReceived() {
+    mBoardWidget->removeLastElement();
 }
 
 void MainWidget::pointsSetAdded(const PointsSetDto& pointsSetDto) {

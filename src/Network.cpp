@@ -380,6 +380,21 @@ void Network::processBoardElements(const Message& message) {
     ElementType type;
     memcpy(&type, bytes.data(), 4);
     qDebug() << "pbe " << type;
+
+    switch (type) {
+        case POINTS_SET_TYPE:
+            emit pointsSetReceived(PointsSetDto::unpack(bytes.mid(4)));
+            break;
+        case LINE_TYPE:
+            emit lineReceived(LineDto::unpack(bytes.mid(4)));
+            break;
+        case TEXT_TYPE:
+            emit textReceived(TextDto::unpack(bytes.mid(4)));
+            break;
+        case IMAGE_TYPE:
+            emit imageReceived(ImageDto::unpack(bytes.mid(4)));
+            break;
+    }
 }
 
 void Network::processPointsSet(long timestamp) {

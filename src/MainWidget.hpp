@@ -55,6 +55,11 @@ private:
 private slots:
     void controlsWidgetUpdated();
     void boardElementsReceiveFinished();
+    void pointsSetReceived(const PointsSetDto& pointsSetDto);
+    void lineReceived(const LineDto& lineDto);
+    void textReceived(const TextDto& textDto);
+    void imageReceived(const ImageDto& imageDto);
+    void undoReceived();
 public slots:
     void pointsSetAdded(const PointsSetDto& pointsSetDto);
     void lineAdded(const LineDto& lineDto);
