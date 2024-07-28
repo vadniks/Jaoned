@@ -39,7 +39,7 @@ private:
 private:
     static inline Network* cInstance = nullptr;
     QTcpSocket mSocket;
-    QQueue<Message> mPendingMessages;
+    QQueue<Message> mPendingMessages; // TODO: map of queues
     bool mConnected;
 public:
     static const int MESSAGE_HEAD_SIZE = 4 + 4 + 4 + 8 + 4; // 24
@@ -61,6 +61,8 @@ public:
     void sendText(const TextDto& textDto);
     void sendImage(const ImageDto& imageDto);
     void sendUndo();
+
+    void selectBoard(int id);
 
     void createBoard(const Board& board);
     void getBoard(int id);

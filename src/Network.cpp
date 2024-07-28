@@ -32,7 +32,8 @@ enum Network::Flag : int {
     LINE = 9,
     TEXT = 10,
     IMAGE = 11,
-    UNDO = 12
+    UNDO = 12,
+    SELECT_BOARD = 13
 };
 
 struct Network::Message {
@@ -98,6 +99,19 @@ void Network::sendUndo() {
     message.index = 0;
     message.count = 1;
     message.timestamp = currentTimestamp();
+    sendMessage(message);
+}
+
+void Network::selectBoard(int id) {
+    Message message;
+    message.flag = Flag::SELECT_BOARD;
+    message.index = 0;
+    message.count = 1;
+    message.timestamp = currentTimestamp();
+
+    message.body = QList<char>(4);
+    memcpy(message.body.data(), &id, 4);
+
     sendMessage(message);
 }
 
@@ -303,6 +317,8 @@ void Network::processMessage(const Message& message) {
         case Flag::UNDO:
             emit undoReceived();
             break;
+        case Flag::SELECT_BOARD:
+            assert(false);
     }
 }
 
