@@ -48,15 +48,23 @@ MainWidget::MainWidget() :
     connect(mBoardWidget, &BoardWidget::textAdded, this, &MainWidget::textAdded);
     connect(mBoardWidget, &BoardWidget::imageAdded, this, &MainWidget::imageAdded);
     connect(mBoardWidget, &BoardWidget::lastElementRemoved, this, &MainWidget::lastElementRemoved);
+
+    connect(Network::instance(), &Network::boardElementsReceiveFinished, this, &MainWidget::boardElementsReceiveFinished);
 }
 
 MainWidget::~MainWidget() {
+    disconnect(Network::instance(), &Network::boardElementsReceiveFinished, this, &MainWidget::boardElementsReceiveFinished);
+
     delete mBoardWidget;
 }
 
 void MainWidget::setBoard(const Board& board) {
     mBoard = board;
     mTitleLabel.setText(board.title());
+}
+
+void MainWidget::updateContent() {
+    Network::instance()->boardElements();
 }
 
 void MainWidget::resizeEvent(QResizeEvent* event) {
@@ -74,6 +82,10 @@ void MainWidget::resizeBoardWidget() {
 
 void MainWidget::controlsWidgetUpdated() {
     resizeBoardWidget();
+}
+
+void MainWidget::boardElementsReceiveFinished() {
+
 }
 
 void MainWidget::pointsSetAdded(const PointsSetDto& pointsSetDto) {

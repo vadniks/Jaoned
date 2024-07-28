@@ -47,12 +47,14 @@ public:
     DISABLE_MOVE(MainWidget)
 
     void setBoard(const Board& board);
+    void updateContent();
 
     void resizeEvent(QResizeEvent* event) override;
 private:
     void resizeBoardWidget();
 private slots:
     void controlsWidgetUpdated();
+    void boardElementsReceiveFinished();
 public slots:
     void pointsSetAdded(const PointsSetDto& pointsSetDto);
     void lineAdded(const LineDto& lineDto);

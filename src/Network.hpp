@@ -64,6 +64,7 @@ public:
     void sendUndo();
 
     void selectBoard(int id);
+    void boardElements();
 
     void createBoard(const Board& board);
     void getBoard(int id);
@@ -90,6 +91,7 @@ private:
     void processMessage(const Message& message);
 
     void processBoards(const Message& message);
+    void processBoardElements(const Message& message);
 
     void processPointsSet(long timestamp);
     void processText(long timestamp);
@@ -110,4 +112,6 @@ signals: // those are implemented elsewhere
     void textReceived(const TextDto& textDto);
     void imageReceived(const ImageDto& imageDto);
     void undoReceived();
+
+    void boardElementsReceiveFinished();
 };

@@ -33,7 +33,15 @@ enum Network::Flag : int {
     TEXT = 10,
     IMAGE = 11,
     UNDO = 12,
-    SELECT_BOARD = 13
+    SELECT_BOARD = 13,
+    GET_BOARD_ELEMENTS = 14
+};
+
+enum ElementType : int {
+    POINTS_SET_TYPE = 0,
+    LINE_TYPE = 1,
+    TEXT_TYPE = 2,
+    IMAGE_TYPE = 3
 };
 
 struct Network::Message {
@@ -112,6 +120,15 @@ void Network::selectBoard(int id) {
     message.body = QList<char>(4);
     memcpy(message.body.data(), &id, 4);
 
+    sendMessage(message);
+}
+
+void Network::boardElements() {
+    Message message;
+    message.flag = Flag::GET_BOARD_ELEMENTS;
+    message.index = 0;
+    message.count = 1;
+    message.timestamp = currentTimestamp();
     sendMessage(message);
 }
 
@@ -321,6 +338,9 @@ void Network::processMessage(const Message& message) {
             break;
         case Flag::SELECT_BOARD:
             assert(false);
+        case Flag::GET_BOARD_ELEMENTS:
+            processBoardElements(message);
+            break;
     }
 }
 
@@ -339,6 +359,27 @@ void Network::processBoards(const Message& message) {
         }
         mPendingMessages.remove(message.timestamp);
     }
+}
+
+void Network::processBoardElements(const Message& message) {
+    if (message.body.isEmpty()) {
+        qDebug() << "pbe finish";
+        emit boardElementsReceiveFinished();
+        return;
+    }
+
+    mPendingMessages[message.timestamp].enqueue(message);
+    if (message.index < message.count - 1) return;
+
+    QList<char> bytes;
+
+    while (!mPendingMessages[message.timestamp].empty())
+        bytes.append(mPendingMessages[message.timestamp].dequeue().body);
+    mPendingMessages.remove(message.timestamp);
+
+    ElementType type;
+    memcpy(&type, bytes.data(), 4);
+    qDebug() << "pbe " << type;
 }
 
 void Network::processPointsSet(long timestamp) {
