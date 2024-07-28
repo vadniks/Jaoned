@@ -24,6 +24,7 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QQueue>
+#include <QMap>
 
 class Network final : public QObject {
     Q_OBJECT
@@ -39,7 +40,7 @@ private:
 private:
     static inline Network* cInstance = nullptr;
     QTcpSocket mSocket;
-    QQueue<Message> mPendingMessages; // TODO: map of queues
+    QMap<long, QQueue<Message>> mPendingMessages;
     bool mConnected;
 public:
     static const int MESSAGE_HEAD_SIZE = 4 + 4 + 4 + 8 + 4; // 24
@@ -90,10 +91,9 @@ private:
 
     void processBoards(const Message& message);
 
-    void processPointsSet();
-    void processLine();
-    void processText();
-    void processImage();
+    void processPointsSet(long timestamp);
+    void processText(long timestamp);
+    void processImage(long timestamp);
 signals: // those are implemented elsewhere
     void eventOccurred(Network::Event event);
 
