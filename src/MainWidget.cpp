@@ -97,5 +97,6 @@ void MainWidget::imageAdded(const ImageDto& imageDto) {
 }
 
 void MainWidget::lastElementRemoved() {
-
+    qDebug() << "undo sent";
+    Network::instance()->sendUndo();
 }

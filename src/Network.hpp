@@ -60,6 +60,7 @@ public:
     void sendLine(const LineDto& lineDto);
     void sendText(const TextDto& textDto);
     void sendImage(const ImageDto& imageDto);
+    void sendUndo();
 
     void createBoard(const Board& board);
     void getBoard(int id);
@@ -106,4 +107,5 @@ signals: // those are implemented elsewhere
     void lineReceived(const LineDto& lineDto);
     void textReceived(const TextDto& textDto);
     void imageReceived(const ImageDto& imageDto);
+    void undoReceived();
 };

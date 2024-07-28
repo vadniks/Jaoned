@@ -32,6 +32,7 @@ enum Network::Flag : int {
     LINE = 9,
     TEXT = 10,
     IMAGE = 11,
+    UNDO = 12
 };
 
 struct Network::Message {
@@ -89,6 +90,15 @@ void Network::sendText(const TextDto& textDto) {
 
 void Network::sendImage(const ImageDto& imageDto) {
     sendBytes(imageDto.pack(), Flag::IMAGE);
+}
+
+void Network::sendUndo() {
+    Message message;
+    message.flag = Flag::UNDO;
+    message.index = 0;
+    message.count = 1;
+    message.timestamp = currentTimestamp();
+    sendMessage(message);
 }
 
 void Network::createBoard(const Board& board) {
@@ -241,54 +251,57 @@ void Network::sendMessage(const Message& message) {
 
 void Network::processMessage(const Message& message) {
     switch (message.flag) {
-        case LOG_IN:
+        case Flag::LOG_IN:
             qDebug() << "logIn " << (static_cast<int>(message.body.size()) > 0);
             emit logInTried(static_cast<int>(message.body.size()) > 0);
             break;
-        case REGISTER:
+        case Flag::REGISTER:
             qDebug() << "register " << (static_cast<int>(message.body.size()) > 0);
             emit registerTried(static_cast<int>(message.body.size()) > 0);
             break;
-        case ERROR:
+        case Flag::ERROR:
             qDebug() << "error";
             emit eventOccurred(Event::ERROR_OCCURRED);
             break;
-        case SHUTDOWN:
+        case Flag::SHUTDOWN:
             assert(false);
-        case CREATE_BOARD:
+        case Flag::CREATE_BOARD:
             emit createBoardTried(static_cast<int>(message.body.size()) > 0);
             break;
-        case GET_BOARD:
+        case Flag::GET_BOARD:
             {
                 auto board = Board::unpack(message.body);
                 qDebug() << "getBoard " << board.id() << ' ' << board.color() << ' ' << board.title();
             }
             break;
-        case GET_BOARDS:
+        case Flag::GET_BOARDS:
             processBoards(message);
             break;
-        case DELETE_BOARD:
+        case Flag::DELETE_BOARD:
             emit deleteBoardTried(static_cast<int>(message.body.size()) > 0);
             break;
-        case POINTS_SET:
+        case Flag::POINTS_SET:
             mPendingMessages.enqueue(message);
             if (message.index == message.count - 1)
                 processPointsSet();
             break;
-        case LINE:
+        case Flag::LINE:
             mPendingMessages.enqueue(message);
             if (message.index == message.count - 1)
                 processLine();
             break;
-        case TEXT:
+        case Flag::TEXT:
             mPendingMessages.enqueue(message);
             if (message.index == message.count - 1)
                 processText();
             break;
-        case IMAGE:
+        case Flag::IMAGE:
             mPendingMessages.enqueue(message);
             if (message.index == message.count - 1)
                 processImage();
+            break;
+        case Flag::UNDO:
+            emit undoReceived();
             break;
     }
 }
