@@ -179,9 +179,7 @@ void ControlsWidget::imageSelected(const QString& path) {
 
     modeSelected(Mode::IMAGE);
 
-    auto converted = image.toImage().convertToFormat(QImage::Format::Format_RGBA8888);
-    qDebug() << "image size " << image.width() * image.height() << ' ' << converted.sizeInBytes();
-    mBoardWidget->setCurrentTexture(glm::vec2(image.width(), image.height()), converted.constBits());
+    mBoardWidget->setCurrentTexture(glm::vec2(image.width(), image.height()), image.toImage().convertToFormat(QImage::Format::Format_RGBA8888).constBits());
 
     emit updated();
 }
