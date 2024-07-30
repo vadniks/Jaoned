@@ -63,10 +63,12 @@ private slots:
     void textReceived(const TextDto& textDto);
     void imageReceived(const ImageDto& imageDto);
     void undoReceived();
+    void clearReceived();
 public slots:
     void pointsSetAdded(const PointsSetDto& pointsSetDto);
     void lineAdded(const LineDto& lineDto);
     void textAdded(const TextDto& textDto);
     void imageAdded(const ImageDto& imageDto);
     void lastElementRemoved();
+    void cleared();
 };

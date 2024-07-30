@@ -62,6 +62,7 @@ public:
     void sendText(const TextDto& textDto);
     void sendImage(const ImageDto& imageDto);
     void sendUndo();
+    void sendClear();
 
     void selectBoard(int id);
     void boardElements();
@@ -112,6 +113,7 @@ signals: // those are implemented elsewhere
     void textReceived(const TextDto& textDto);
     void imageReceived(const ImageDto& imageDto);
     void undoReceived();
+    void clearReceived();
 
     void boardElementsReceiveFinished();
 };

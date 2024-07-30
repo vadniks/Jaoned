@@ -483,21 +483,13 @@ void BoardWidget::setCurrentTexture(const glm::vec2& size, const uchar* data) {
 }
 
 void BoardWidget::undo() {
-    if (mElements.isEmpty()) return;
-
-    delete mElements.pop();
-    update();
-
+    removeLastElement();
     emit lastElementRemoved();
 }
 
 void BoardWidget::clear() {
-    for (auto i : mElements)
-        delete i;
-
-    mElements.clear();
-
-    update();
+    removeAllElements();
+    emit cleared();
 }
 
 Mode BoardWidget::mode() const {
@@ -579,5 +571,14 @@ void BoardWidget::removeLastElement() {
     if (mElements.isEmpty()) return;
 
     delete mElements.pop();
+    update();
+}
+
+void BoardWidget::removeAllElements() {
+    for (auto i : mElements)
+        delete i;
+
+    mElements.clear();
+
     update();
 }

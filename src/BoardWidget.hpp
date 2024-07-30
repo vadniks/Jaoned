@@ -97,10 +97,12 @@ public slots:
     void addText(const TextDto& textDto);
     void addImage(const ImageDto& imageDto);
     void removeLastElement();
+    void removeAllElements();
 signals:
     void pointsSetAdded(const PointsSetDto& pointsSetDto);
     void lineAdded(const LineDto& lineDto);
     void textAdded(const TextDto& textDto);
     void imageAdded(const ImageDto& imageDto);
     void lastElementRemoved();
+    void cleared();
 };

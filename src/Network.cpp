@@ -33,8 +33,9 @@ enum Network::Flag : int {
     TEXT = 10,
     IMAGE = 11,
     UNDO = 12,
-    SELECT_BOARD = 13,
-    GET_BOARD_ELEMENTS = 14
+    CLEAR = 13,
+    SELECT_BOARD = 14,
+    GET_BOARD_ELEMENTS = 15
 };
 
 enum ElementType : int {
@@ -104,6 +105,15 @@ void Network::sendImage(const ImageDto& imageDto) {
 void Network::sendUndo() {
     Message message;
     message.flag = Flag::UNDO;
+    message.index = 0;
+    message.count = 1;
+    message.timestamp = currentTimestamp();
+    sendMessage(message);
+}
+
+void Network::sendClear() {
+    Message message;
+    message.flag = Flag::CLEAR;
     message.index = 0;
     message.count = 1;
     message.timestamp = currentTimestamp();
@@ -335,6 +345,9 @@ void Network::processMessage(const Message& message) {
             break;
         case Flag::UNDO:
             emit undoReceived();
+            break;
+        case Flag::CLEAR:
+            emit clearReceived();
             break;
         case Flag::SELECT_BOARD:
             assert(false);

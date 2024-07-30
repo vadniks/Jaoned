@@ -59,16 +59,27 @@ MainWidget::MainWidget() :
     connect(mBoardWidget, &BoardWidget::textAdded, this, &MainWidget::textAdded);
     connect(mBoardWidget, &BoardWidget::imageAdded, this, &MainWidget::imageAdded);
     connect(mBoardWidget, &BoardWidget::lastElementRemoved, this, &MainWidget::lastElementRemoved);
+    connect(mBoardWidget, &BoardWidget::cleared, this, &MainWidget::cleared);
 
     connect(Network::instance(), &Network::boardElementsReceiveFinished, this, &MainWidget::boardElementsReceiveFinished);
+
     connect(Network::instance(), &Network::pointsSetReceived, this, &MainWidget::pointsSetReceived);
     connect(Network::instance(), &Network::lineReceived, this, &MainWidget::lineReceived);
     connect(Network::instance(), &Network::textReceived, this, &MainWidget::textReceived);
     connect(Network::instance(), &Network::imageReceived, this, &MainWidget::imageReceived);
+    connect(Network::instance(), &Network::undoReceived, this, &MainWidget::undoReceived);
+    connect(Network::instance(), &Network::clearReceived, this, &MainWidget::clearReceived);
 }
 
 MainWidget::~MainWidget() {
     disconnect(Network::instance(), &Network::boardElementsReceiveFinished, this, &MainWidget::boardElementsReceiveFinished);
+
+    disconnect(Network::instance(), &Network::pointsSetReceived, this, &MainWidget::pointsSetReceived);
+    disconnect(Network::instance(), &Network::lineReceived, this, &MainWidget::lineReceived);
+    disconnect(Network::instance(), &Network::textReceived, this, &MainWidget::textReceived);
+    disconnect(Network::instance(), &Network::imageReceived, this, &MainWidget::imageReceived);
+    disconnect(Network::instance(), &Network::undoReceived, this, &MainWidget::undoReceived);
+    disconnect(Network::instance(), &Network::clearReceived, this, &MainWidget::clearReceived);
 
     delete mBoardWidget;
 }
@@ -133,6 +144,10 @@ void MainWidget::undoReceived() {
     mBoardWidget->removeLastElement();
 }
 
+void MainWidget::clearReceived() {
+    mBoardWidget->removeAllElements();
+}
+
 void MainWidget::pointsSetAdded(const PointsSetDto& pointsSetDto) {
     qDebug() << "pointsSet sent" << pointsSetDto.erase() << ' ' << pointsSetDto.width() << ' ' << pointsSetDto.color() << ' ' << pointsSetDto.points().size();
     Network::instance()->sendPointsSet(pointsSetDto);
@@ -156,4 +171,9 @@ void MainWidget::imageAdded(const ImageDto& imageDto) {
 void MainWidget::lastElementRemoved() {
     qDebug() << "undo sent";
     Network::instance()->sendUndo();
+}
+
+void MainWidget::cleared() {
+    qDebug() << "clear sent";
+    Network::instance()->sendClear();
 }
