@@ -26,6 +26,7 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QProgressBar>
 #include <QPushButton>
 
 class MainWidget final : public QWidget {
@@ -35,6 +36,7 @@ private:
     QWidget mInfoWidget;
     QHBoxLayout mInfoLayout;
     QLabel mTitleLabel;
+    QProgressBar mProgressBar;
     QPushButton mExitButton;
     BoardWidget* mBoardWidget;
     ControlsWidget mControlsWidget;
@@ -52,6 +54,7 @@ public:
     void resizeEvent(QResizeEvent* event) override;
 private:
     void resizeBoardWidget();
+    void loading(bool enabled);
 private slots:
     void controlsWidgetUpdated();
     void boardElementsReceiveFinished();

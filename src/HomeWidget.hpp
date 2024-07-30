@@ -37,11 +37,12 @@ private:
         QLabel mTitleLabel;
         QPushButton mDeleteButton;
         QListWidgetItem mListItem;
-        int mId;
+        Board mBoard;
         std::function<void (int)> mDeleteItemImpl;
     public:
         BoardListItem(const Board& board, const std::function<void (int)>& deleteItemImpl);
         QListWidgetItem* listItem();
+        Board board();
     private:
         void deleteClicked();
     };

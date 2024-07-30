@@ -27,7 +27,7 @@
 
 HomeWidget::BoardListItem::BoardListItem(const Board& board, const std::function<void (int)>& deleteItemImpl) :
     mLayout(this),
-    mId(board.id()),
+    mBoard(board),
     mDeleteItemImpl(deleteItemImpl)
 {
     QPixmap pixmap(25, 25);
@@ -55,6 +55,10 @@ QListWidgetItem* HomeWidget::BoardListItem::listItem() {
     return &mListItem;
 }
 
+Board HomeWidget::BoardListItem::board() {
+    return mBoard;
+}
+
 void HomeWidget::BoardListItem::deleteClicked() {
     QMessageBox box(this);
     box.setModal(true);
@@ -62,7 +66,7 @@ void HomeWidget::BoardListItem::deleteClicked() {
     box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
 
     if (box.exec() == QMessageBox::Yes)
-        mDeleteItemImpl(mId);
+        mDeleteItemImpl(mBoard.id());
 }
 
 HomeWidget::HomeWidget() : mLayout(this), mButtonsLayout(&mButtonsWidget) {
@@ -149,8 +153,9 @@ void HomeWidget::boardsListItemClicked(QListWidgetItem* item) {
 
     for (auto& boardListItem : mBoardListItems)
         if (boardListItem->listItem() == item) {
+            Network::instance()->selectBoard(boardListItem->board().id());
             MainWindow::instance()->setCurrentWidget(MainWindow::Widget::MAIN);
-            dynamic_cast<MainWidget*>(MainWindow::instance()->currentWidget())->setBoard(Board(1, QColor(), "Test"));
+            dynamic_cast<MainWidget*>(MainWindow::instance()->currentWidget())->setBoard(boardListItem->board());
             break;
         }
 }

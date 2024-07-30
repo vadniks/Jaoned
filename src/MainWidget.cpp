@@ -33,6 +33,15 @@ MainWidget::MainWidget() :
 
     mInfoLayout.addStretch();
 
+    mProgressBar.setMaximum(0);
+    mProgressBar.setMinimum(0);
+    mProgressBar.setValue(0);
+    mProgressBar.setFixedSize(16 * 20, 9 * 5);
+    mProgressBar.setVisible(false);
+    mInfoLayout.addWidget(&mProgressBar);
+
+    mInfoLayout.addStretch();
+
     mExitButton.setText("Exit");
     mInfoLayout.addWidget(&mExitButton);
 
@@ -40,6 +49,8 @@ MainWidget::MainWidget() :
     mLayout.addWidget(&mControlsWidget, 0, Qt::AlignTop);
     mLayout.addWidget(mBoardWidget, 0, Qt::AlignVCenter);
     mLayout.addStretch();
+
+    loading(true);
 
     connect(&mControlsWidget, &ControlsWidget::updated, this, &MainWidget::controlsWidgetUpdated);
 
@@ -68,6 +79,7 @@ void MainWidget::setBoard(const Board& board) {
 }
 
 void MainWidget::updateContent() {
+    loading(true);
     Network::instance()->boardElements();
 }
 
@@ -84,12 +96,21 @@ void MainWidget::resizeBoardWidget() {
     mBoardWidget->resize(probe.width(), size.height() - probe.height() - margin * 3);
 }
 
+void MainWidget::loading(bool enabled) {
+    mProgressBar.setVisible(enabled);
+
+    mExitButton.setEnabled(!enabled);
+
+    mControlsWidget.setEnabled(!enabled);
+    mBoardWidget->setEnabled(!enabled);
+}
+
 void MainWidget::controlsWidgetUpdated() {
     resizeBoardWidget();
 }
 
 void MainWidget::boardElementsReceiveFinished() {
-
+    loading(false);
 }
 
 void MainWidget::pointsSetReceived(const PointsSetDto& pointsSetDto) {
