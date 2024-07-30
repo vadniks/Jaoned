@@ -56,6 +56,7 @@ private:
     void resizeBoardWidget();
     void loading(bool enabled);
 private slots:
+    void exitClicked();
     void controlsWidgetUpdated();
     void boardElementsReceiveFinished();
     void pointsSetReceived(const PointsSetDto& pointsSetDto);

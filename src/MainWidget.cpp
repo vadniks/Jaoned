@@ -18,6 +18,7 @@
 
 #include "MainWidget.hpp"
 #include "Network.hpp"
+#include "MainWindow.hpp"
 #include <QResizeEvent>
 
 MainWidget::MainWidget() :
@@ -43,6 +44,7 @@ MainWidget::MainWidget() :
     mInfoLayout.addStretch();
 
     mExitButton.setText("Exit");
+    connect(&mExitButton, &QPushButton::clicked, this, &MainWidget::exitClicked);
     mInfoLayout.addWidget(&mExitButton);
 
     mLayout.addWidget(&mInfoWidget, 0, Qt::AlignTop);
@@ -114,6 +116,10 @@ void MainWidget::loading(bool enabled) {
 
     mControlsWidget.setEnabled(!enabled);
     mBoardWidget->setEnabled(!enabled);
+}
+
+void MainWidget::exitClicked() {
+    MainWindow::instance()->setCurrentWidget(MainWindow::Widget::HOME);
 }
 
 void MainWidget::controlsWidgetUpdated() {
