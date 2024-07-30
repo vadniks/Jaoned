@@ -293,15 +293,12 @@ void Network::sendMessage(const Message& message) {
 void Network::processMessage(const Message& message) {
     switch (message.flag) {
         case Flag::LOG_IN:
-            qDebug() << "logIn " << (static_cast<int>(message.body.size()) > 0);
             emit logInTried(static_cast<int>(message.body.size()) > 0);
             break;
         case Flag::REGISTER:
-            qDebug() << "register " << (static_cast<int>(message.body.size()) > 0);
             emit registerTried(static_cast<int>(message.body.size()) > 0);
             break;
         case Flag::ERROR:
-            qDebug() << "error";
             emit eventOccurred(Event::ERROR_OCCURRED);
             break;
         case Flag::SHUTDOWN:
@@ -310,10 +307,6 @@ void Network::processMessage(const Message& message) {
             emit createBoardTried(static_cast<int>(message.body.size()) > 0);
             break;
         case Flag::GET_BOARD:
-            {
-                auto board = Board::unpack(message.body);
-                qDebug() << "getBoard " << board.id() << ' ' << board.color() << ' ' << board.title();
-            }
             break;
         case Flag::GET_BOARDS:
             processBoards(message);
@@ -327,11 +320,7 @@ void Network::processMessage(const Message& message) {
                 processPointsSet(message.timestamp);
             break;
         case Flag::LINE:
-            {
-                const auto line = LineDto::unpack(message.body);
-                qDebug() << "line received" << line.start().x() << ' ' << line.start().y() << ' ' << line.end().x() << ' ' << line.end().y() << ' ' << line.width() << ' ' << line.color();
-                emit lineReceived(line);
-            }
+            emit lineReceived(LineDto::unpack(message.body));
             break;
         case Flag::TEXT:
             mPendingMessages[message.timestamp].enqueue(message);
@@ -376,7 +365,6 @@ void Network::processBoards(const Message& message) {
 
 void Network::processBoardElements(const Message& message) {
     if (message.body.isEmpty()) {
-        qDebug() << "pbe finish";
         emit boardElementsReceiveFinished();
         return;
     }
@@ -392,7 +380,6 @@ void Network::processBoardElements(const Message& message) {
 
     ElementType type;
     memcpy(&type, bytes.data(), 4);
-    qDebug() << "pbe " << type;
 
     switch (type) {
         case POINTS_SET_TYPE:
@@ -417,9 +404,7 @@ void Network::processPointsSet(long timestamp) {
         bytes.append(mPendingMessages[timestamp].dequeue().body);
     mPendingMessages.remove(timestamp);
 
-    const auto pointsSet = PointsSetDto::unpack(bytes);
-    qDebug() << "pointsSet received" << pointsSet.erase() << ' ' << pointsSet.width() << ' ' << pointsSet.color() << ' ' << pointsSet.points().size();
-    emit pointsSetReceived(pointsSet);
+    emit pointsSetReceived(PointsSetDto::unpack(bytes));
 }
 
 void Network::processText(long timestamp) {
@@ -429,9 +414,7 @@ void Network::processText(long timestamp) {
         bytes.append(mPendingMessages[timestamp].dequeue().body);
     mPendingMessages.remove(timestamp);
 
-    const auto text = TextDto::unpack(bytes);
-    qDebug() << "text received" << text.pos().x() << ' ' << text.pos().y() << ' ' << text.fontSize() << ' ' << text.color() << ' ' << text.text();
-    emit textReceived(text);
+    emit textReceived(TextDto::unpack(bytes));
 }
 
 void Network::processImage(long timestamp) {
@@ -441,7 +424,5 @@ void Network::processImage(long timestamp) {
         bytes.append(mPendingMessages[timestamp].dequeue().body);
     mPendingMessages.remove(timestamp);
 
-    const auto image = ImageDto::unpack(bytes);
-    qDebug() << "image received" << image.pos().x() << ' ' << image.pos().y() << ' ' << image.width() << ' ' << image.height() << ' ' << image.texture().size();
-    emit imageReceived(image);
+    emit imageReceived(ImageDto::unpack(bytes));
 }

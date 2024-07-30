@@ -155,31 +155,25 @@ void MainWidget::clearReceived() {
 }
 
 void MainWidget::pointsSetAdded(const PointsSetDto& pointsSetDto) {
-    qDebug() << "pointsSet sent" << pointsSetDto.erase() << ' ' << pointsSetDto.width() << ' ' << pointsSetDto.color() << ' ' << pointsSetDto.points().size();
     Network::instance()->sendPointsSet(pointsSetDto);
 }
 
 void MainWidget::lineAdded(const LineDto& lineDto) {
-    qDebug() << "line sent" << lineDto.start().x() << ' ' << lineDto.start().y() << ' ' << lineDto.end().x() << ' ' << lineDto.end().y() << ' ' << lineDto.width() << ' ' << lineDto.color();
     Network::instance()->sendLine(lineDto);
 }
 
 void MainWidget::textAdded(const TextDto& textDto) {
-    qDebug() << "text sent" << textDto.pos().x() << ' ' << textDto.pos().y() << ' ' << textDto.fontSize() << ' ' << textDto.color() << ' ' << textDto.text();
     Network::instance()->sendText(textDto);
 }
 
 void MainWidget::imageAdded(const ImageDto& imageDto) {
-    qDebug() << "image sent" << imageDto.pos().x() << ' ' << imageDto.pos().y() << ' ' << imageDto.width() << ' ' << imageDto.height() << ' ' << imageDto.texture().size();
     Network::instance()->sendImage(imageDto);
 }
 
 void MainWidget::lastElementRemoved() {
-    qDebug() << "undo sent";
     Network::instance()->sendUndo();
 }
 
 void MainWidget::cleared() {
-    qDebug() << "clear sent";
     Network::instance()->sendClear();
 }
