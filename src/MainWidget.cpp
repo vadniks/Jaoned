@@ -93,6 +93,7 @@ void MainWidget::setBoard(const Board& board) {
 
 void MainWidget::updateContent() {
     loading(true);
+    mBoardWidget->removeAllElements();
     Network::instance()->boardElements();
 }
 
