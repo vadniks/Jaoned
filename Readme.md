@@ -1,6 +1,8 @@
 
 # Jaoned - an OpenGL & QT based drawing board
 
+## Switch to `online` branch to check out remote cloud storage interaction features
+
 (OpenGL: v330Core, QT6)
 
 ## Screenshots
